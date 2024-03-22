@@ -1,0 +1,1 @@
+Basak, Sneha & Agrawal, Himanshi & Jena, Shreya & Gite, Shilpa & Bachute, Mrinal & Pradhan, Biswajeet & Assiri, Mazen. (2022). Challenges and Limitations in Speech Recognition Technology: A Critical Review of Speech Signal Processing Algorithms, Tools and Systems. Computer Modeling in Engineering & Sciences. 135. 1-37. 10.32604/cmes.2022.021755. 
