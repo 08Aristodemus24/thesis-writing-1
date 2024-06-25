@@ -1,0 +1,11 @@
+Zahra Jamshidzadeh, Mohammad Ehteram, Hanieh Shabanian,
+Bidirectional Long Short-Term Memory (BILSTM) - Support Vector Machine: A new machine learning model for predicting water quality parameters,
+Ain Shams Engineering Journal,
+Volume 15, Issue 3,
+2024,
+102510,
+ISSN 2090-4479,
+https://doi.org/10.1016/j.asej.2023.102510.
+(https://www.sciencedirect.com/science/article/pii/S2090447923003994)
+Abstract: Water pollution threatens human health, agriculture, and ecosystems. Accurate prediction of water quality parameters is crucial for effective protection. We suggest a novel hybrid deep learning model that enhances the efficiency of Support Vector Machines (SVMs) in predicting Electrical Conductivity (EC) and Total Dissolved Solids (TDS). Our model combines Bidirectional Long Short-Term Memory (BILSTM) and SVMs to extract essential features and predict output variables. We evaluated the models using input parameters (PH, Ca++, Mg++, Na+, K+, HCO3, SO4, and Cl) for one, two, and three-day predictions. Employing the Ali Baba and Forty Thieves (AFT) optimization algorithm, we identified optimal input combinations. The BILSTM-SVM model accurately estimated TDS values, with MAPE values of 2%, outperforming other models. Similarly, it successfully predicted EC values, exhibiting an R2 value of 0.94. Our proposed model processes complex relationships and captures crucial features from the data, contributing to improved water quality prediction.
+Keywords: Water quality; Deep learning; Optimization; Total dissolved solids; Bidirectional LSTM

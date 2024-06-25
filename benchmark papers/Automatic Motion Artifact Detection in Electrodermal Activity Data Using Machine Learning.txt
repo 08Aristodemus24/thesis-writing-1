@@ -1,0 +1,1 @@
+Md-Billal Hossain, Hugo F. Posada-Quintero, Youngsun Kong, Riley McNaboe, Ki H. Chon, Automatic motion artifact detection in electrodermal activity data using machine learning, Biomedical Signal Processing and Control, Volume 74, 2022, 103483, ISSN 1746-8094, https://doi.org/10.1016/j.bspc.2022.103483. (https://www.sciencedirect.com/science/article/pii/S1746809422000052)

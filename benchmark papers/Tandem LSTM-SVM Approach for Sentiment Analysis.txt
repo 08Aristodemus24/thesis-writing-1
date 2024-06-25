@@ -1,0 +1,1 @@
+Cimino, Andrea & Dell'Orletta, Felice. (2016). Tandem LSTM-SVM Approach for Sentiment Analysis. 10.4000/books.aaccademia.2003. 
