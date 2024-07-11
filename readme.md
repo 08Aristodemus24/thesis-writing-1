@@ -79,12 +79,18 @@
 |- readme.md
 ```
 
-# Articles, Videos, Papers:
+# Articles, Videos, Papers, Repositories:
 1. multiple/ensemble model training: 
 * https://www.geeksforgeeks.org/lazy-predict-library-in-python-for-machine-learning/
 * https://medium.com/omics-diary/how-to-use-the-lazy-predict-library-to-select-the-best-machine-learning-model-65378bf4568e
 
 2. evaluating ensemble models:
+
+3. repositories:
+* Hossains github profile: https://github.com/Md-Billal (confirmed thsi guys github profile and science direct profile both say university of connecticut and both have same names)
+* Hossains UCOnn profile: https://biosignal.uconn.edu/person/md-hossain/
+* Taylor et al. repo: https://github.com/MITMediaLabAffectiveComputing/eda-explorer
+* Llanes-Jurado et al repo: https://github.com/ASAPLableni/EDABE_LSTM_1DCNN
 
 # Insights:
 1. WESAD dataset may contain raw eda signals that are labeled with stress or not stressed
@@ -106,10 +112,19 @@
 ## stress detection:
 * beacuse stress detection requires raw eda signals be corrected deconvolved into phasic components we will have to find a dataset that has raw eda signals labeled with stress or non stress and train a second model
 * once the EDABE dataset has been denoised or the artifacts detected and subsequently corrected, we will have to use this second model trained on stress detection data to identify indeed what segments of our denoised EDABE dataset indicate a heightened level of stress
+* annotation guidelines for stress detection dataset once EDABE dataset is cleaned
+* 
 
 ## Task delegation
 * work around the clock like madmen 30min on and then off then repeat
 * Deseree and Johana on the paper
 * me and Taline sa implementation
+
+## Messaging Experts
+* message llanes jurado et al taylor et al hossain et al.
+* message armielyn
+* message other GDSC leads
+* message data science groups in facebook
+* message alex gamboa
 
 "Larry, Taline, Deseree, and Wana will graduaate in 2025"
