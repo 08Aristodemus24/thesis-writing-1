@@ -104,8 +104,18 @@
 (2) The Discrete Decomposition Analysis (DDA) perfroms a decomposition of SC data into distinct phasic components and a tonic component by means of Nonnegative Deconvolution. This method is especially advantageous for the study of the SCR shape.
 * http://www.ledalab.de/
 
+6. autoregressive modelling
+* https://www.geeksforgeeks.org/autoregressive-ar-model-for-time-series-forecasting/
+
+
 # Insights:
 1. WESAD dataset may contain raw eda signals that are labeled with stress or not stressed
+2. AR(1) Model:
+In the AR(1) model, the current value depends only on the previous value.
+It is expressed as: $Y_t = \beta + \theta_1Y_{t - 1} + \epsilon_t$
+3. AR(p) Model:
+The general autoregressive model of order `p` includes `p` lagged values.
+It is expressed as shown in the introduction.
 
 # To do:
 
