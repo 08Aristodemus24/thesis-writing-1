@@ -110,10 +110,10 @@
 
 # Insights:
 1. WESAD dataset may contain raw eda signals that are labeled with stress or not stressed
-2. AR(1) Model:
-In the AR(1) model, the current value depends only on the previous value.
+2. $AR(1)$ Model:
+In the $AR(1)$ model, the current value depends only on the previous value.
 It is expressed as: $Y_t = \beta + \theta_1Y_{t - 1} + \epsilon_t$
-3. AR(p) Model:
+3. $AR(p)$ Model:
 The general autoregressive model of order `p` includes `p` lagged values.
 It is expressed as: $Y_t = \beta + \theta_1Y_{t - 1} + \theta_2Y_{t - 2} + \cdots + \theta_{p}Y_{t - p} + \epsilon_t$
 
