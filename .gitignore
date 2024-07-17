@@ -1,1 +1,2 @@
 /eda-signal-classifier/data/*
+!/eda-signal-classifier/data/dummy.txt
