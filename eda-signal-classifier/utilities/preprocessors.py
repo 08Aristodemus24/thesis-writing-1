@@ -166,13 +166,13 @@ def butter_lowpass_filter(data, cutoff, samp_freq, order=5):
 
 
 
-def load_wavelet_data(data: pd.DataFrame | np.ndarray):
+def load_wavelet_data(data: pd.DataFrame | np.ndarray, samples_per_win_size=64):
     """
     function to create whole and half wavelet dataframes
     """
 
     # create timestamps
-    timestamp_list = pd.to_datetime(data['time'].iloc[0::64], unit='s')
+    timestamp_list = pd.to_datetime(data['time'].iloc[0::samples_per_win_size], unit='s')
 
     # 128hz with 0.5s window is to 1/16 and 1/32 and 8hz with 5s window is to 1/1 and 1/2
     whole_inc_ts = pd.date_range(start=timestamp_list[0], periods=data.shape[0], freq='62.5ms')
@@ -395,6 +395,9 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     
     return features
 
+def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray):
+    data
+
 def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1):
     """
     args:
@@ -419,7 +422,7 @@ def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, 
     # we also need to specify how large our windows/epochs/segments
     # would be in order to create the rows for our dataset and subsequently
     # each feature of that window or row
-    samples_per_win_size = samples_per_sec * window_size
+    samples_per_win_size = int(samples_per_sec * window_size)
 
     # get number of rows of 128hz timestamps and signals
     n_rows = data.shape[0]
@@ -430,6 +433,7 @@ def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, 
     num_labels = math.ceil(n_rows / samples_per_win_size)
     hours = math.ceil(n_rows / samples_per_hour)
 
+    features_per_hour = []
     for hour in range(hours):
         start = hour * samples_per_hour
         end = min((hour + 1) * samples_per_hour, n_rows)
@@ -438,7 +442,8 @@ def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, 
         print(f'start: {start} | end: {end}')
         print(curr_data)
 
-        whole_wave, half_wave = load_wavelet_data(curr_data)
+        whole_wave, half_wave = load_wavelet_data(curr_data, samples_per_win_size)
 
-        print(whole_wave)
-        print(half_wave)
+        features_per_hour.append(get_features(curr_data, whole_wave, half_wave))
+
+    return features_per_hour
