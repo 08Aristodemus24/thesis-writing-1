@@ -395,8 +395,47 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     
     return features
 
-def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray):
-    data
+def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_win_size: int=64):
+    """
+    creates and returns a dataframe containing all 
+    the features for a data slice of at least 1 hour
+    """
+
+    feature_names = [
+        "raw_amp", "raw_1d_max", "raw_1d_min", "raw_1d_max_abs", "raw_1d_avg_abs", "raw_2d_max", "raw_2d_min", "raw_2d_max_abs", "raw_2d_avg_abs",
+        "filt_amp", "filt_1d_max", "filt_1d_min", "filt_1d_max_abs", "filt_1d_avg_abs", "filt_2d_max", "filt_2d_min", "filt_2d_max_abs", "filt_2d_avg_abs",
+        "first_16thoas_max", "second_16thoas_max", "third_16thoas_max", "first_16thoas_mean", "second_16thoas_mean", "third_16thoas_mean", 
+        "first_16thoas_std", "second_16thoas_std", "third_16thoas_std", "first_16thoas_median", "second_16thoas_median", "third_16thoas_median",
+        "first_16thoas_n_coeffs_above_zero", "second_16thoas_n_coeffs_above_zero", "third_16thoas_n_coeffs_above_zero",
+        "first_32thoas_max", "second_32thoas_max", "first_32thoas_mean", "second_32thoas_mean", 
+        "first_32thoas_std", "second_32thoas_std", "first_32thoas_median", "second_32thoas_median", 
+        "first_32thoas_n_coeffs_above_zero", "second_32thoas_n_coeffs_above_zero"
+    ]
+
+    # create a list of timestamps from our data that 
+    # has step size samples_per_win_size i.e. if our 
+    # 128hz data increments by 7.8125s and takes 128 
+    # samples to get to 1 full second, then a 64 step
+    # size will get only a row of data every 64 rows
+    # thus effectively resulting in a timestamp list that
+    # increments by 0.5s
+    timestamp_list = data.index.tolist()[::samples_per_win_size]
+
+    X = pd.DataFrame(columns=feature_names)
+
+    for i in range(len(timestamp_list) - 1):
+        start_time = timestamp_list[i]
+        end_time = timestamp_list[i + 1]
+
+        data_segment = data[start_time:end_time]
+        whole_wave_segment = whole_wave[start_time:end_time]
+        half_wave_segment = half_wave[start_time:end_time]
+
+        row_features = compute_features(data_segment, whole_wave_segment, half_wave_segment)
+        
+
+
+
 
 def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1):
     """
