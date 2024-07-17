@@ -55,7 +55,6 @@ pyparsing==3.1.2
 python-dateutil==2.9.0.post0
 pytz==2024.1
 PyWavelets==1.6.0
-pywin32==306
 pywinauto==0.6.8
 pyzmq==26.0.3
 requests==2.32.3
@@ -66,10 +65,7 @@ seaborn==0.13.2
 setuptools==69.5.1
 six==1.16.0
 stack-data==0.6.3
-tensorboard==2.17.0
-tensorboard-data-server==0.7.2
 tensorflow==2.17.0
-tensorflow-intel==2.17.0
 termcolor==2.4.0
 threadpoolctl==3.5.0
 tornado==6.4.1

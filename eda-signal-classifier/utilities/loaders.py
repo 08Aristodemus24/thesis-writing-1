@@ -156,49 +156,6 @@ def create_classified_df(train_conf_matrix, val_conf_matrix, test_conf_matrix, t
     
     return classified_df
 
-def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1):
-    """
-    args:
-        data - 
-        hertz - 
-        window_size - amount of seconds for each segmented signal
-    """
-
-    # note this samples per sec is not arbitrary and a 
-    # user defined value but derived from our frequency 
-    # value entirely i.e. because we've recorded our
-    # raw data at 128hz then that means that the 
-    # samples of data we have per second would be 128
-    samples_per_sec = hertz
-    secs_per_min = 60
-    min_per_hour = 60
-
-    # here we would be calculating how many samples we would have 
-    # per hour given we have 128 samples per second
-    samples_per_hour = samples_per_sec * secs_per_min * min_per_hour
-
-    # we also need to specify how large our windows/epochs/segments
-    # would be in order to create the rows for our dataset and subsequently
-    # each feature of that window or row
-    samples_per_win_size = samples_per_sec * window_size
-
-    # get number of rows of 128hz timestamps and signals
-    n_rows = data.shape[0]
-
-    # dividing the number of rows by the number of samples per 0.5 seconds 
-    # will allow us to get a sense how many segments or rows of 0.5 seconds
-    # can we get from this time series dataframe of our signals
-    num_labels = math.ceil(n_rows / samples_per_win_size)
-    hours = math.ceil(n_rows / samples_per_hour)
-
-    for hour in range(hours):
-        start = hour * samples_per_hour
-        end = min((hour + 1) * samples_per_hour, n_rows)
-        curr_data = data.iloc[start:end]
-
-        print(f'start: {start} | end: {end}')
-        print(curr_data)
-
 
 def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=128, verbose=False):
     """
