@@ -23,7 +23,7 @@ from sklearn.manifold import TSNE
 
 import itertools
 
-def view_time_frame(raw_eda_df, samp_freq=128, begin_time_s=1750, end_time_s=1765, cols_to_use=['rawdata', 'cleandata', 'signal_automatic']):
+def view_time_frame(raw_eda_df, samp_freq=128, begin_time_s=1750, end_time_s=1765, cols_to_use=['rawdata', 'cleandata', 'signal_automatic'], save_img=True, img_title='untitled'):
     """
     ntoe cols to use must be equal to 5 or more
     """
@@ -53,11 +53,14 @@ def view_time_frame(raw_eda_df, samp_freq=128, begin_time_s=1750, end_time_s=176
             
     axis.legend(fontsize=14)
     axis.grid()
-            
+    
+    axis.set_title(f"{img_title}")
     axis.set_ylabel(r'$\mu S$', fontsize=16)
     axis.set_xlabel("Time (s)", fontsize=16)
 
-    plt.show()
+    if save_img:
+        plt.savefig(f'./figures & images/{img_title}.png')
+        plt.show()
 
 def view_wavelet_coeffs(coeffs):
     fig, axes = plt.subplots(nrows=4, ncols=1, figsize=(6, 6))
@@ -176,75 +179,6 @@ def data_split_metric_values(Y_true, Y_pred, metrics_to_use: list=['accuracy', '
 
     return metric_values
 
-def view_words(word_vec: dict, word_range: int, title: str="untitled", save_img: bool=True, style: str='dark'):
-    """
-    suitable for all discrete input
-
-    args:
-        word_vec - key value pairs of the words and respective embeddings
-
-        len_to_show - the limit in which each word vector is only allowed to show
-
-        word range - if false then all words are shown but if a value 
-        is given then number words shown are up to that value only
-        
-        word_range: int | bool=50
-    """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    # slice the dictionary to a particular range
-    sliced_word_vec = dict(itertools.islice(word_vec.items(), word_range))
-
-    # separate all word keys and their respective 
-    # embeddings from each other and place in separate arrays
-    words, embeddings = zip(*sliced_word_vec.items())
-    words = np.array(words)
-    embeddings = np.array(embeddings)
-
-    # reduce length/dimensions of embeddings from 300 to 2
-    tsne_model = TSNE(perplexity=50, n_components=2, init='pca', n_iter=5000, random_state=0)
-
-    # because there are 21624 words dimensionality of emb_red will go from 21624 x 300 to 21624 x 2
-    emb_red = tsne_model.fit_transform(embeddings)
-
-    # populate a new dictionary with new reduced embeddings with 2 dimensions
-    word_vec_red = {}
-    for index, key in enumerate(words):
-        # extract x and ys in emb_red array
-        x, y = emb_red[index]
-
-        # populate dictionary with x and y coordinates
-        if key not in word_vec_red:
-            word_vec_red[key] = (x, y)
-
-
-    # build and visualize
-    fig = plt.figure(figsize=(15, 15))
-    axis = fig.add_subplot()
-
-    # plot the points
-    axis.scatter(emb_red[:, 0], emb_red[:, 1], c=np.random.randn(emb_red.shape[0]), marker='p',alpha=0.75, cmap='magma')
-
-    # annotate the points
-    for iter, (word, coord) in enumerate(word_vec_red.items()):
-        x, y = coord
-        axis.annotate(word, xy=(x, y), xytext=(5, 2), textcoords='offset points', ha='right', va='bottom')
-
-    axis.set_xlabel('x', )
-    axis.set_ylabel('y', )
-    axis.set_title(title, )
-    
-    if save_img:
-        plt.savefig(f'./figures & images/{title}.png')
-        plt.show()
-
 def view_value_frequency(word_counts, colormap: str="plasma", title: str="untitled", save_img: bool=True, kind: str='barh', limit: int=6, asc: bool=False, style: str='dark'):
     """
     suitable for all discrete input
@@ -346,6 +280,7 @@ def view_metric_values(metrics_df, img_title: str="untitled", save_img: bool=Tru
         'f1-score': [train_f1, val_f1, test_f1]
     })
     """
+
     styles = {
         'dark': 'dark_background',
         'solarized': 'Solarized_Light2',
@@ -414,6 +349,7 @@ def view_classified_labels(df, img_title: str="untitled", save_img: bool=True, c
         'misclassified': [num_wrong_cm_train, num_wrong_cm_val, num_wrong_cm_test]}, 
         index=["training set", "validation set", "testing set"])
     """
+
     styles = {
         'dark': 'dark_background',
         'solarized': 'Solarized_Light2',
@@ -455,6 +391,7 @@ def view_label_freq(label_freq, img_title: str="untitled", save_img: bool=True, 
         labels - a list of all the labels we want to use in the 
         vertical bar graph
     """
+
     styles = {
         'dark': 'dark_background',
         'solarized': 'Solarized_Light2',
@@ -484,6 +421,7 @@ def disp_cat_feat(df, cat_cols: list, fig_dims: tuple=(3, 2), img_title: str="un
 
     displays frequency of categorical features of a dataframe
     """
+
     styles = {
         'dark': 'dark_background',
         'solarized': 'Solarized_Light2',
@@ -553,6 +491,7 @@ def plot_all_features(X, hue=None, colormap: str='mako', style: str='dark'):
         hue - a string that if provided will make the diagonals
         of the pairplot to be bell curves of the provided string feature
     """
+
     styles = {
         'dark': 'dark_background',
         'solarized': 'Solarized_Light2',
@@ -577,44 +516,6 @@ def describe_col(df: pd.DataFrame, column: str, style: str='dark'):
 
     unique_ids = df[column].unique()
     print(f'total unique values: {len(unique_ids)}')
-
-def visualize_graph(kg, node_limit: str=500, edge: str='film.film.genre', node_color: str='skyblue', img_title: str="untitled", save_img: bool=True, style: str='dark'):
-    """
-    args:
-        kg - is the knowledge graph represented as a dataframe with columns head, relation, tail
-        which are the triples that make up the knowledge graph
-
-        edge - the edges of the knowledge graph that will only be include in the
-        visualization, for instance if there are unique relations under the relation
-        column e.g. acted_in, directed, watched, etc. assigning 'directed' as the
-        argument value will only show the graph with node to node connections having
-        only the edge 'directed'
-
-        e.g. 
-        | head | relation | tail |
-        | brad | acted_in | fury |
-    """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-    
-    # see first 500 rows
-    G = nx.from_pandas_edgelist(kg[:node_limit].loc[kg['relation'] == edge], source='head', target='tail', edge_attr=True, create_using=nx.MultiDiGraph())
-    pos = nx.spring_layout(G, k=0.5)
-
-    plt.figure(figsize=(12, 12))
-
-    nx.draw(G, with_labels=True, node_color=node_color, edge_cmap=plt.cm.Blues, pos=pos)
-    nx.draw_networkx_edge_labels(G, pos=pos)
-
-    if save_img:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
 
 class ModelResults:
     def __init__(self, history, epochs, style: str='dark'):
@@ -803,167 +704,6 @@ class ModelResults:
         # delete figure
         del figure
 
-def plot_evolution(X, K, centroids, xs_centroids, features: list, dimension='2d', style: str='dark'):
-    """
-    args:
-        X - is the set of unlabeled datapoints of (m, n) dimensionality,
-        where m represents the total number of all data points, and n
-        is the number of features/columns/variables of each data point
-
-        centroids - a 3D tensor of shape (epochs, K, n) that represents all 
-        the previous centroids where K is the number of centroids, and n is
-        the number of features of each centroid
-
-        xs_centroids - is an array of m elements/indeces from 0 to K - 1
-        representing the optimal and respective centroids of each data point. 
-        To understand this say we had 3 cluster centroids, this array will
-        have m elements and in each index it is assigned either a 0, 1, or 2
-        depending if this index matching the set of unlabeled datapoints is
-        indeed a part of either centroid 0, 1, or 2. E.g. [0, 1, 0, 2]
-        means datapoint[0] is assigned as part of cluster centroid 0
-
-        features - a list of all the names of each feature/column/variable
-        of the dataset
-    """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    # define figure size
-    fig = plt.figure(figsize=(11, 11))
-
-    if dimension.lower() == '2d':
-        axis = fig.add_subplot()
-        axis.scatter(X[:, 0], X[:, 1], color='#90b2e8', marker='p',alpha=0.75,)
-
-        for k in range(K):
-            # gets all the centroids of cluster K at each epoch
-            cs_of_k = centroids[:, k, :]
-            m = cs_of_k.shape
-            print(f'm: {m}')
-            
-            print(f'centroids of cluster {k}: {cs_of_k}\n')
-            axis.plot(cs_of_k[:, 0], cs_of_k[:, 1], 'x--', alpha=0.25, color='black')
-            axis.plot(cs_of_k[-1, 0], cs_of_k[-1, 1], 'p', color='#d60f7d')
-
-    elif dimension.lower() == '3d':
-        # 3d figure
-        axis = fig.add_subplot(111, projection='3d')
-
-        # sample color maps without replacement
-        color_maps = ['viridis', 'magma', 'twilight', 'ocean', 'terrain', 'rainbow', 'gnuplot', 'RdPu', 'bone']
-        chosen_colors = np.random.choice(color_maps, 3, replace=False)
-
-        # iterate through all cluster centroid indeces
-        for k in range(K):
-
-            # extract all datapoints assigned to certain cluster
-            cluster_k = X[xs_centroids == k]
-            axis.scatter(cluster_k[:, 0], cluster_k[:, 1], cluster_k[:, 2], c=np.random.randn(cluster_k.shape[0]), marker='p',alpha=0.375, cmap=chosen_colors[k])
-
-        for k in range(K):
-            # get all the centroids of cluster K at each epoch
-            cs_of_k = centroids[:, k, :]
-            m = cs_of_k.shape
-            print(f'm: {m}')
-            
-            print(f'centroids of cluster {k}: {cs_of_k}\n')
-            axis.plot(cs_of_k[:, 0], cs_of_k[:, 1], cs_of_k[-1, 2], 'x--', color='black')
-            axis.plot(cs_of_k[-1, 0], cs_of_k[-1, 1], cs_of_k[-1, 2], 'p--', color='#ff00bf')
-
-        # n_clicks, amount_discount, amount_spent
-        axis.set_xlabel(f'x: {features[0]}', )
-        axis.set_ylabel(f'y: {features[1]}', )
-        axis.set_zlabel(f'z: {features[2]}', )
-
-def view_clusters_3d(X, features: list, style: str='dark'):
-    """
-    args:
-        X - set of unlabeled data points of (m, n) dimensionality
-        features - e.g. ['n_clicks', 'n_visits', 'amount_spent']
-    """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    fig = plt.figure(figsize=(12, 12))
-    ax = fig.add_subplot(projection='3d')
-
-    ax.scatter(X[features[0]], X[features[1]], X[features[2]], c=np.random.randn(X.shape[0]), marker='p',alpha=0.75, cmap='magma')
-    ax.set_xlabel(f'x: {features[0]}', )
-    ax.set_ylabel(f'y: {features[1]}', )
-    ax.set_zlabel(f'z: {features[2]}', )
-    plt.show()
-
-def view_images(data_gen, grid_dims: tuple=(2, 6), size: tuple=(25, 10), model=None, img_title="untitled", save_img: bool=True, style: str='dark'):
-    """
-    views images created by the ImageGenerator() class 
-    from tensorflow.keras.preprocessing.image
-
-    args: 
-        data_gen - the data generator created from the ImageGenerator()
-        method self.flow_from_directory()
-    """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    class_names = list(data_gen.class_indices.keys())
-    
-    # The plotting configurations
-    n_rows, n_cols = grid_dims
-    n_images = n_rows * n_cols
-    plt.figure(figsize=size)
-    
-    # gets a batch of the image data for visualization
-    # This process can take a little time because of 
-    # the large batch size
-    images, labels = next(data_gen) 
-
-    # sample n_images of indeces from array of indeces 
-    # of length len(images) without replacement
-    sampled_indeces = np.random.choice([num for num in range(len(images))], n_images, replace=False)
-
-    # Iterate through the subplots.
-    for i, id in enumerate(sampled_indeces, start=1):
-        # use the randomly sampled id as index to access 
-        # an image and its respective label
-        image, label = images[id], class_names[np.argmax(labels[id], axis=0)]
-        
-        # Plot the sub plot
-        plt.subplot(n_rows, n_cols, i)
-        plt.imshow(image)
-        plt.axis('off')
-        
-        # If model is available make predictions
-        if model is not None:
-            pred = class_names[np.argmax(model.predict(image[np.newaxis,...]))]
-            title = f"Class : {label}\nPred : {pred}"
-        else:
-            title = f"Class : {label}"
-        
-        plt.title(title, )
-    
-    if save_img == True:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
-
-
 def view_all_splits_results(history_dict: dict, save_img: bool=True, img_title: str="untitled", style: str='dark'):
     """
     
@@ -1005,15 +745,3 @@ def view_all_splits_results(history_dict: dict, save_img: bool=True, img_title: 
         print(save_img)
         plt.savefig(f'./figures & images/{img_title}.png')
         plt.show()
-
-def show_image(img, style: str='dark'):
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    plt.imshow(img)

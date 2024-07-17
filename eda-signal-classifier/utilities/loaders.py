@@ -1,19 +1,19 @@
 import math
 import csv
 import numpy as np
-import tqdm
 import pickle
 import json
 import os
 import pandas as pd
-
 from pathlib import Path
-from splitfolders import ratio
 
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing.text import tokenizer_from_json
 
+
+def get_time_frequency(sample_rate):
+    return f'{1000 / sample_rate}ms'
 
 def device_exists():
     """
@@ -156,9 +156,12 @@ def create_classified_df(train_conf_matrix, val_conf_matrix, test_conf_matrix, t
     
     return classified_df
 
-def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128):
+def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1):
     """
-    
+    args:
+        data - 
+        hertz - 
+        window_size - amount of seconds for each segmented signal
     """
 
     # note this samples per sec is not arbitrary and a 
@@ -177,25 +180,23 @@ def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128):
     # we also need to specify how large our windows/epochs/segments
     # would be in order to create the rows for our dataset and subsequently
     # each feature of that window or row
-    window = 0.5
-    samples_per_05s = samples_per_sec * window
+    samples_per_win_size = samples_per_sec * window_size
+
     # get number of rows of 128hz timestamps and signals
     n_rows = data.shape[0]
-    n_rows
 
     # dividing the number of rows by the number of samples per 0.5 seconds 
     # will allow us to get a sense how many segments or rows of 0.5 seconds
     # can we get from this time series dataframe of our signals
-    num_labels = math.ceil(n_rows / samples_per_05s)
-    
+    num_labels = math.ceil(n_rows / samples_per_win_size)
     hours = math.ceil(n_rows / samples_per_hour)
 
     for hour in range(hours):
         start = hour * samples_per_hour
         end = min((hour + 1) * samples_per_hour, n_rows)
-        print(f'start: {start} | end: {end}')
-
         curr_data = data.iloc[start:end]
+
+        print(f'start: {start} | end: {end}')
         print(curr_data)
 
 

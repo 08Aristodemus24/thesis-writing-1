@@ -103,13 +103,13 @@ def interpolate_signals(data: pd.DataFrame, sample_rate: int=128, start_time: da
     # since data resampling and then aggregation (i.e. mean, sum, etc.) 
     # from 500ms to 125ms for instance will likely generate empty or 
     # nan values we need to also interpolate these empty values
-    data = interpolate_empty_values(data)
+    data = _interpolate_empty_values(data)
 
     return data
 
 
 
-def interpolate_empty_values(data: pd.DataFrame):
+def _interpolate_empty_values(data: pd.DataFrame):
     """
     # since data resampling and then aggregation (i.e. mean, sum, etc.) 
     # from 500ms to 125ms for instance will likely generate empty or 
@@ -129,7 +129,7 @@ def interpolate_empty_values(data: pd.DataFrame):
 
 
 
-def butter_lowpass(cutoff, samp_freq, order):
+def _butter_lowpass(cutoff, samp_freq, order):
     """
     defines filter characteristics of the signal to be filtered
     which will be used by butter_lowpass_filter, by utilizing
@@ -156,7 +156,7 @@ def butter_lowpass_filter(data, cutoff, samp_freq, order=5):
     frequency noise components from signals
     """
     # call butter_lowpass to obtain filter coefficients
-    b, a = butter_lowpass(cutoff, samp_freq, order)
+    b, a = _butter_lowpass(cutoff, samp_freq, order)
 
     # apply coefficients to signal
     filt_signal = lfilter(b, a, data)
@@ -214,7 +214,7 @@ def load_wavelet_data(data: pd.DataFrame | np.ndarray):
     
 
 
-def reconstitute(wavelet_coeffs):
+def restructure_wavelets(wavelet_coeffs):
     """
     takes in the calculated wavelet coefficients and
     appends zeroes if needed to match the 3rd level
@@ -251,7 +251,7 @@ def reconstitute(wavelet_coeffs):
 
 
 
-def differentiate(data):
+def _differentiate(data):
     """
     computes the 1st and 2nd order derivative values 
     of the eda signal
@@ -264,7 +264,7 @@ def differentiate(data):
 
 
 
-def compute_stat_feats(data):
+def _compute_stat_feats(data):
     """
     computes the statistical features of both the 
     raw/unfiltered signal and the filtered signal
@@ -273,8 +273,8 @@ def compute_stat_feats(data):
     raw_signal = data['raw_signal']
     filt_signal = data['filtered_signal']
 
-    raw_1d_signal, raw_2d_signal = differentiate(raw_signal)
-    filt_1d_signal, filt_2d_signal = differentiate(filt_signal)
+    raw_1d_signal, raw_2d_signal = _differentiate(raw_signal)
+    filt_1d_signal, filt_2d_signal = _differentiate(filt_signal)
 
     raw_amp = np.mean(raw_signal)
     raw_1d_max = np.max(raw_1d_signal)
@@ -300,7 +300,7 @@ def compute_stat_feats(data):
 
 
 
-def compute_wave_feats(wave: pd.DataFrame | np.ndarray):
+def _compute_wave_feats(wave: pd.DataFrame | np.ndarray):
     """
     computes the maximum, mean, standard deviation, median, and 
     no. of coefficients above zero values of the given wavelet 
@@ -380,11 +380,11 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     """
 
     # compute statistical features
-    raw_amp, raw_1d_max, raw_1d_min, raw_1d_max_abs, raw_1d_avg_abs, raw_2d_max, raw_2d_min, raw_2d_max_abs, raw_2d_avg_abs, filt_amp, filt_1d_max, filt_1d_min, filt_1d_max_abs, filt_1d_avg_abs, filt_2d_max, filt_2d_min, filt_2d_max_abs, filt_2d_avg_abs = compute_stat_feats(data)
+    raw_amp, raw_1d_max, raw_1d_min, raw_1d_max_abs, raw_1d_avg_abs, raw_2d_max, raw_2d_min, raw_2d_max_abs, raw_2d_avg_abs, filt_amp, filt_1d_max, filt_1d_min, filt_1d_max_abs, filt_1d_avg_abs, filt_2d_max, filt_2d_min, filt_2d_max_abs, filt_2d_avg_abs = _compute_stat_feats(data)
 
     # compute wavelet features
-    wavelet_feats_16thofas_max, wavelet_feats_16thofas_mean, wavelet_feats_16thofas_std, wavelet_feats_16thofas_median, wavelet_feats_16thofas_n_coeffs_above_zero = compute_wave_feats(whole_wave)
-    wavelet_feats_32thofas_max, wavelet_feats_32thofas_mean, wavelet_feats_32thofas_std, wavelet_feats_32thofas_median, wavelet_feats_32thofas_n_coeffs_above_zero = compute_wave_feats(half_wave)
+    wavelet_feats_16thofas_max, wavelet_feats_16thofas_mean, wavelet_feats_16thofas_std, wavelet_feats_16thofas_median, wavelet_feats_16thofas_n_coeffs_above_zero = _compute_wave_feats(whole_wave)
+    wavelet_feats_32thofas_max, wavelet_feats_32thofas_mean, wavelet_feats_32thofas_std, wavelet_feats_32thofas_median, wavelet_feats_32thofas_n_coeffs_above_zero = _compute_wave_feats(half_wave)
 
     features = np.hstack([
         raw_amp, raw_1d_max, raw_1d_min, raw_1d_max_abs, raw_1d_avg_abs, raw_2d_max, raw_2d_min, raw_2d_max_abs, raw_2d_avg_abs, filt_amp, filt_1d_max, filt_1d_min, filt_1d_max_abs, filt_1d_avg_abs, filt_2d_max, filt_2d_min, filt_2d_max_abs, filt_2d_avg_abs,
