@@ -5,12 +5,28 @@ import pickle
 import json
 import os
 import pandas as pd
+import requests
+import zipfile
 from pathlib import Path
+
 
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing.text import tokenizer_from_json
 
+
+def download_dataset(url):
+    response = requests.get("https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/w8fxrg4pv5-2.zip", stream=True)
+    response.headers
+
+    # extract primary zip file
+    with open("./data/EDABE dataset.zip", mode="wb") as file:
+        for chunk in response.iter_content(chunk_size=10 * 1024):
+            file.write(chunk)
+
+    # extract secondary zip file
+    with zipfile.ZipFile('./data/EDABE dataset.zip', 'r') as zip_ref:
+        zip_ref.extractall('./data')
 
 def get_time_frequency(sample_rate):
     return f'{1000 / sample_rate}ms'
@@ -204,8 +220,10 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         x_window_list.append(x_signal_norm)
         
         if y_col is not None:
-            # returns the mean of a list or matrix of values given an 
-            # axis ignoring any nan values
+            # returns the mean of a list or matrix of values given an axis ignoring 
+            # any nan values. Here according to Llanes-Jurado et al. (2023)'s paper 
+            # if more than 50% of the segment was labeled as an artifact, such a
+            # segment of 0.5 s was labeled indeed as an artifact
             cond = np.nanmean(y_signal[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
             y_window_list.append(1 if cond else 0)
 

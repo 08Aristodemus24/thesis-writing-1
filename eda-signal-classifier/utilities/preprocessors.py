@@ -232,15 +232,15 @@ def restructure_wavelets(wavelet_coeffs):
     third_lvl_shape = cD_3.shape[0]
     second_lvl_shape = cD_2.shape[0]
     first_lvl_shape = cD_1.shape[0]
-    print(third_lvl_shape)
-    print(second_lvl_shape)
-    print(first_lvl_shape)
+    # print(third_lvl_shape)
+    # print(second_lvl_shape)
+    # print(first_lvl_shape)
 
     if (((third_lvl_shape * 2) - second_lvl_shape) > 0) or (((third_lvl_shape * 4) - first_lvl_shape) > 0) or (third_lvl_shape % 2 != 0):
         # calculate amount of zeros to append to 1st and 2nd level coefficients
         n_zeros_second_lvl = (third_lvl_shape * 2) - second_lvl_shape
         n_zeros_first_lvl = (third_lvl_shape * 4) - first_lvl_shape
-        print(n_zeros_first_lvl, n_zeros_second_lvl)
+        # print(n_zeros_first_lvl, n_zeros_second_lvl)
 
         # append the amount of calculated zeros to the 1st and 2nd level coefficients
         second_lvl_zeros = np.zeros(shape=(n_zeros_second_lvl, ))
@@ -411,6 +411,7 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
         "first_32thoas_std", "second_32thoas_std", "first_32thoas_median", "second_32thoas_median", 
         "first_32thoas_n_coeffs_above_zero", "second_32thoas_n_coeffs_above_zero"
     ]
+    feature_names_len = len(feature_names)
 
     # create a list of timestamps from our data that 
     # has step size samples_per_win_size i.e. if our 
@@ -420,24 +421,36 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     # thus effectively resulting in a timestamp list that
     # increments by 0.5s
     timestamp_list = data.index.tolist()[::samples_per_win_size]
+    timestamp_list_len = len(timestamp_list)
 
-    X = pd.DataFrame(columns=feature_names)
-
+    feature_segments = pd.DataFrame(np.zeros(shape=(timestamp_list_len, feature_names_len)), columns=feature_names, index=timestamp_list)
+    labels = pd.Series(np.zeros(shape=(timestamp_list_len)))
     for i in range(len(timestamp_list) - 1):
         start_time = timestamp_list[i]
         end_time = timestamp_list[i + 1]
 
-        data_segment = data[start_time:end_time]
-        whole_wave_segment = whole_wave[start_time:end_time]
-        half_wave_segment = half_wave[start_time:end_time]
+        data_segment = data[start_time:end_time].iloc[:-1]
+        whole_wave_segment = whole_wave[start_time:end_time].iloc[:-1]
+        half_wave_segment = half_wave[start_time:end_time].iloc[:-1]
 
-        row_features = compute_features(data_segment, whole_wave_segment, half_wave_segment)
-        
+        # compute the features for each 0.5s segment and assign to
+        # its respective index in the empty dataframe
+        feature_segment = compute_features(data_segment, whole_wave_segment, half_wave_segment)
+        feature_segments.iloc[i] = feature_segment
+
+        # returns the mean of a list or matrix of values given an axis ignoring 
+        # any nan values. Here according to Llanes-Jurado et al. (2023)'s paper 
+        # if more than 50% of the segment was labeled as an artifact, such a
+        # segment of 0.5 s was labeled indeed as an artifact
+        labels[i] = 1 if np.nanmean(data_segment['label']) > 0.5 else 0
+
+    """problem `timestamp_list` of 7200 elements does not match length of `features` list of 7199 elements"""
+
+    return feature_segments, labels
 
 
 
-
-def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1):
+def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1, verbose: bool=False):
     """
     args:
         data - 
@@ -478,8 +491,8 @@ def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, 
         end = min((hour + 1) * samples_per_hour, n_rows)
         curr_data = data.iloc[start:end]
 
-        print(f'start: {start} | end: {end}')
-        print(curr_data)
+        if verbose == True:
+            print(f'processing hour {hour} - start: {start} | end: {end}')
 
         whole_wave, half_wave = load_wavelet_data(curr_data, samples_per_win_size)
 
