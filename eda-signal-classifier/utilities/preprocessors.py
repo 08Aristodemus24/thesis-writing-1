@@ -166,17 +166,30 @@ def butter_lowpass_filter(data, cutoff, samp_freq, order=5):
 
 
 
-def load_wavelet_data(data: pd.DataFrame | np.ndarray, samples_per_win_size=64):
+def load_wavelet_data(data: pd.DataFrame | np.ndarray, hertz: int, samples_per_win_size: int):
     """
     function to create whole and half wavelet dataframes
     """
+    # determine frequency
+    # 128 / 8 is 16, then we use 16 as a divisor to 1
+    # 16 / 8 is 2, then we use 2 as a divisor to 1
+    # 8 / 8 is 1, then we use 1 as a divisor to 1
+    whole_freq = int(hertz / 8)
+    half_freq = int((hertz / 8) * 2)
+    print(whole_freq)
+    print(half_freq)
 
     # create timestamps
     timestamp_list = pd.to_datetime(data['time'].iloc[0::samples_per_win_size], unit='s')
+    print(timestamp_list)
 
-    # 128hz with 0.5s window is to 1/16 and 1/32 and 8hz with 5s window is to 1/1 and 1/2
-    whole_inc_ts = pd.date_range(start=timestamp_list[0], periods=data.shape[0], freq='62.5ms')
-    half_inc_ts = pd.date_range(start=timestamp_list[0], periods=data.shape[0], freq='31.25ms')
+    # 128hz with 0.5s window is to 1/16 of a second yielding timestamps of 
+    # 8 hours total and 1/32 of a second yielding timestamps of 4 hours total 
+    # 16hz with 0.5s window is to 1/2 of a second yielding timestamps of 
+    # 8 hours total and 1/4 of a second yielding timestamps of 4 hours total 
+    # and 8hz with 5s window is to 1/1 and 1/2
+    whole_inc_ts = pd.date_range(start=timestamp_list[0], periods=data.shape[0], freq=f'{((1 / whole_freq) * 1000)}ms')
+    half_inc_ts = pd.date_range(start=timestamp_list[0], periods=data.shape[0], freq=f'{((1 / half_freq) * 1000)}ms')
 
     # obtain wavelet coefficients
     coeffs = restructure_wavelets(pywt.wavedec(data['raw_signal'], wavelet='haar', level=3))
@@ -192,9 +205,9 @@ def load_wavelet_data(data: pd.DataFrame | np.ndarray, samples_per_win_size=64):
 
     # create whole wave features dataframe
     whole_wave_features = pd.DataFrame({
-        'first_16thofa_sec_feat': whole_coeff_1,
-        'second_16thofa_sec_feat': whole_coeff_2,
-        'third_16thofa_sec_feat': whole_coeff_3,
+        f'first_{whole_freq}thofa_sec_feat': whole_coeff_1,
+        f'second_{whole_freq}thofa_sec_feat': whole_coeff_2,
+        f'third_{whole_freq}thofa_sec_feat': whole_coeff_3,
     })
 
     # use whole increment timestamps as indices for the whole wave features dataframe
@@ -205,8 +218,8 @@ def load_wavelet_data(data: pd.DataFrame | np.ndarray, samples_per_win_size=64):
     half_coeff_2 = np.absolute(cD_2[:n_rows_wavelet * 2])
 
     half_wave_features = pd.DataFrame({
-        'first_32thofa_sec_feat': half_coeff_1,
-        'second_32thofa_sec_feat': half_coeff_2,
+        f'first_{half_freq}thofa_sec_feat': half_coeff_1,
+        f'second_{half_freq}thofa_sec_feat': half_coeff_2,
     })
 
     half_wave_features.set_index(half_inc_ts[:half_wave_features.shape[0]], inplace=True)
@@ -360,19 +373,14 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
 
     first_32thoas_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
     second_32thoas_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    third_32thoas_max - the maximum value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the half/32th of a second wavelet dataframe
     first_32thoas_mean - the average/mean value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
     second_32thoas_mean - the average/mean value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    third_32thoas_mean  - the average/mean value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the half/32th of a second wavelet dataframe
     first_32thoas_std - the standard deviation of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
     second_32thoas_std - the standard deviation of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    third_32thoas_std - the standard deviation of the 0.5s segment/window/epoch from the 3rd wavelet feature of the half/32th of a second wavelet dataframe
     first_32thoas_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
     second_32thoas_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    third_32thoas_median - the median value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the half/32th of a second wavelet dataframe
     first_32thoas_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
     second_32thoas_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    third_32thoas_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 3rd wavelet feature of the half/32th of a second wavelet dataframe
 
     args:
         data - data slice/segment/window of 0.5s 
@@ -404,12 +412,12 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     feature_names = [
         "raw_amp", "raw_1d_max", "raw_1d_min", "raw_1d_max_abs", "raw_1d_avg_abs", "raw_2d_max", "raw_2d_min", "raw_2d_max_abs", "raw_2d_avg_abs",
         "filt_amp", "filt_1d_max", "filt_1d_min", "filt_1d_max_abs", "filt_1d_avg_abs", "filt_2d_max", "filt_2d_min", "filt_2d_max_abs", "filt_2d_avg_abs",
-        "first_16thoas_max", "second_16thoas_max", "third_16thoas_max", "first_16thoas_mean", "second_16thoas_mean", "third_16thoas_mean", 
-        "first_16thoas_std", "second_16thoas_std", "third_16thoas_std", "first_16thoas_median", "second_16thoas_median", "third_16thoas_median",
-        "first_16thoas_n_coeffs_above_zero", "second_16thoas_n_coeffs_above_zero", "third_16thoas_n_coeffs_above_zero",
-        "first_32thoas_max", "second_32thoas_max", "first_32thoas_mean", "second_32thoas_mean", 
-        "first_32thoas_std", "second_32thoas_std", "first_32thoas_median", "second_32thoas_median", 
-        "first_32thoas_n_coeffs_above_zero", "second_32thoas_n_coeffs_above_zero"
+        "first_whole_max", "second_whole_max", "third_whole_max", "first_whole_mean", "second_whole_mean", "third_whole_mean", 
+        "first_whole_std", "second_whole_std", "third_whole_std", "first_whole_median", "second_whole_median", "third_whole_median",
+        "first_whole_n_coeffs_above_zero", "second_whole_n_coeffs_above_zero", "third_whole_n_coeffs_above_zero",
+        "first_half_max", "second_half_max", "first_half_mean", "second_half_mean", 
+        "first_half_std", "second_half_std", "first_half_median", "second_half_median", 
+        "first_half_n_coeffs_above_zero", "second_half_n_coeffs_above_zero"
     ]
     feature_names_len = len(feature_names)
 
@@ -421,6 +429,7 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     # thus effectively resulting in a timestamp list that
     # increments by 0.5s
     timestamp_list = data.index.tolist()[::samples_per_win_size]
+    print(timestamp_list)
     timestamp_list_len = len(timestamp_list)
 
     feature_segments = pd.DataFrame(np.zeros(shape=(timestamp_list_len, feature_names_len)), columns=feature_names, index=timestamp_list)
@@ -494,8 +503,8 @@ def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, 
         if verbose == True:
             print(f'processing hour {hour} - start: {start} | end: {end}')
 
-        whole_wave, half_wave = load_wavelet_data(curr_data, samples_per_win_size)
+        whole_wave, half_wave = load_wavelet_data(curr_data, samples_per_sec, samples_per_win_size)
 
-        features_per_hour.append(get_features(curr_data, whole_wave, half_wave))
+        features_per_hour.append(get_features(curr_data, whole_wave, half_wave, samples_per_win_size))
 
     return features_per_hour
