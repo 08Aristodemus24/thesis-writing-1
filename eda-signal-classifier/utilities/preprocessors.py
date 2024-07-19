@@ -8,6 +8,7 @@ import numpy as np
 import tensorflow as tf
 import pywt
 from scipy.signal import butter, lfilter
+from concurrent.futures import ThreadPoolExecutor
 
 def which_element(object_list):
     """
@@ -98,7 +99,7 @@ def interpolate_signals(data: pd.DataFrame, sample_rate: int=128, start_time: da
         # frequency of  the signal is 8hz then 1000 / 8 would result in 125ms, if
         # we want it to be 16 then 1000 / 16 would result in 62.5ms
         freq = f'{1000 / target_hz}ms'
-        print(freq)
+        # print(freq)
         data.index = pd.date_range(start=start_time, periods=sampled_n_rows, freq=freq)
 
     # since data resampling and then aggregation (i.e. mean, sum, etc.) 
@@ -176,12 +177,12 @@ def load_wavelet_data(data: pd.DataFrame | np.ndarray, hertz: int, samples_per_w
     # 8 / 8 is 1, then we use 1 as a divisor to 1
     whole_freq = int(hertz / 8)
     half_freq = int((hertz / 8) * 2)
-    print(whole_freq)
-    print(half_freq)
+    # print(whole_freq)
+    # print(half_freq)
 
     # create timestamps
     timestamp_list = pd.to_datetime(data['time'].iloc[0::samples_per_win_size], unit='s')
-    print(timestamp_list)
+    # print(timestamp_list)
 
     # 128hz with 0.5s window is to 1/16 of a second yielding timestamps of 
     # 8 hours total and 1/32 of a second yielding timestamps of 4 hours total 
@@ -579,3 +580,36 @@ def rejoin_data(features_per_hour_1, features_per_hour_2):
     eda_feature_df = pd.concat([merged_features_1, merged_features_2], axis=1)
 
     return eda_feature_df, eda_labels
+
+
+
+def concur_extract_features_from_all(dir: str, files: list[str]):
+    def helper(file: str):
+        subject_name = file.strip(".csv")
+        eda_df_128hz = pd.read_csv(f'{dir}{file}', sep=';')
+        eda_df_128hz.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
+
+        # set index first of uninterpolated eda data
+        start_time = eda_df_128hz.iloc[0]['time']
+        eda_df_128hz.set_index(pd.date_range(start=start_time, periods=eda_df_128hz.shape[0], freq=get_time_frequency(128)), inplace=True)
+        
+        # interpolate data to 16hz by downsampling
+        eda_df_16hz = interpolate_signals(eda_df_128hz, sample_rate=128, start_time=start_time, target_hz=16)
+
+        # once downsampled low-pass filter both uninterpolated and
+        # interpolated data
+        eda_df_128hz['filtered_signal'] = butter_lowpass_filter(eda_df_128hz['raw_signal'], cutoff=1.0, samp_freq=128, order=6)
+        eda_df_16hz['filtered_signal'] = butter_lowpass_filter(eda_df_16hz['raw_signal'], cutoff=1.0, samp_freq=16, order=6)
+
+        # process the dfs and extract its features
+        data_128hz = extract_features_per_hour(eda_df_128hz, hertz=128, window_size=0.5, verbose=True)
+        data_16hz = extract_features_per_hour(eda_df_16hz, hertz=16, window_size=0.5, verbose=True)
+
+        eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
+
+        return (subject_name, (eda_feature_df, eda_labels))
+
+    with ThreadPoolExecutor() as exe:
+        eda_data = list(exe.map(helper, files))
+
+    return eda_data
