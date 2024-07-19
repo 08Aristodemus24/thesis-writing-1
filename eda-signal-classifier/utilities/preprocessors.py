@@ -355,69 +355,76 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     filt_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the low-pass filtered 16hz eda signal
     filt_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the low-pass filtered 16hz eda signal
     
-    first_16thoas_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole/16th of a second wavelet dataframe
-    second_16thoas_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
-    third_16thoas_max - the maximum value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
-    first_16thoas_mean - the average/mean value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
-    second_16thoas_mean - the average/mean value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
-    third_16thoas_mean  - the average/mean value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
-    first_16thoas_std - the standard deviation of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
-    second_16thoas_std - the standard deviation of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
-    third_16thoas_std - the standard deviation of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
-    first_16thoas_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
-    second_16thoas_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
-    third_16thoas_median - the median value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
-    first_16thoas_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
-    second_16thoas_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
-    third_16thoas_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_max - the maximum value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_mean - the average/mean value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_mean - the average/mean value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_mean  - the average/mean value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_std - the standard deviation of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_std - the standard deviation of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_std - the standard deviation of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_median - the median value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
 
-    first_32thoas_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
-    second_32thoas_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    first_32thoas_mean - the average/mean value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
-    second_32thoas_mean - the average/mean value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    first_32thoas_std - the standard deviation of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
-    second_32thoas_std - the standard deviation of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    first_32thoas_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
-    second_32thoas_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
-    first_32thoas_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the half/32th of a second wavelet dataframe
-    second_32thoas_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half/32th of a second wavelet dataframe
+    first_half_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_mean - the average/mean value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_mean - the average/mean value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_std - the standard deviation of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_std - the standard deviation of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
 
     args:
         data - data slice/segment/window of 0.5s 
-        whole_wave - 16th of a second wavelet coefficients 
-        half_wave - 32th of a second wavelet coefficients
+        whole_wave - a dataframe containing whole of the wavelet coefficients 
+        half_wave - a dataframe containing half the time of the whole wavelet coefficients
     """
 
     # compute statistical features
     raw_amp, raw_1d_max, raw_1d_min, raw_1d_max_abs, raw_1d_avg_abs, raw_2d_max, raw_2d_min, raw_2d_max_abs, raw_2d_avg_abs, filt_amp, filt_1d_max, filt_1d_min, filt_1d_max_abs, filt_1d_avg_abs, filt_2d_max, filt_2d_min, filt_2d_max_abs, filt_2d_avg_abs = _compute_stat_feats(data)
 
     # compute wavelet features
-    wavelet_feats_16thofas_max, wavelet_feats_16thofas_mean, wavelet_feats_16thofas_std, wavelet_feats_16thofas_median, wavelet_feats_16thofas_n_coeffs_above_zero = _compute_wave_feats(whole_wave)
-    wavelet_feats_32thofas_max, wavelet_feats_32thofas_mean, wavelet_feats_32thofas_std, wavelet_feats_32thofas_median, wavelet_feats_32thofas_n_coeffs_above_zero = _compute_wave_feats(half_wave)
+    wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_n_coeffs_above_zero = _compute_wave_feats(whole_wave)
+    wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_n_coeffs_above_zero = _compute_wave_feats(half_wave)
 
     features = np.hstack([
         raw_amp, raw_1d_max, raw_1d_min, raw_1d_max_abs, raw_1d_avg_abs, raw_2d_max, raw_2d_min, raw_2d_max_abs, raw_2d_avg_abs, filt_amp, filt_1d_max, filt_1d_min, filt_1d_max_abs, filt_1d_avg_abs, filt_2d_max, filt_2d_min, filt_2d_max_abs, filt_2d_avg_abs,
-        wavelet_feats_16thofas_max, wavelet_feats_16thofas_mean, wavelet_feats_16thofas_std, wavelet_feats_16thofas_median, wavelet_feats_16thofas_n_coeffs_above_zero,
-        wavelet_feats_32thofas_max, wavelet_feats_32thofas_mean, wavelet_feats_32thofas_std, wavelet_feats_32thofas_median, wavelet_feats_32thofas_n_coeffs_above_zero,
+
+        # each wavelet is a list of 3 elements since it was calculated from a dataframe of 3 columns
+        wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_n_coeffs_above_zero, 
+
+        # each wavelet is a list of 2 elements since it was calculated from a dataframe of 2 columns
+        wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_n_coeffs_above_zero,
         ])
     
     return features
 
-def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_win_size: int=64):
+def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_sec: int, samples_per_win_size: int):
     """
     creates and returns a dataframe containing all 
     the features for a data slice of at least 1 hour
     """
 
+    whole_freq = int(samples_per_sec / 8)
+    half_freq = int((samples_per_sec / 8) * 2)
+
     feature_names = [
-        "raw_amp", "raw_1d_max", "raw_1d_min", "raw_1d_max_abs", "raw_1d_avg_abs", "raw_2d_max", "raw_2d_min", "raw_2d_max_abs", "raw_2d_avg_abs",
-        "filt_amp", "filt_1d_max", "filt_1d_min", "filt_1d_max_abs", "filt_1d_avg_abs", "filt_2d_max", "filt_2d_min", "filt_2d_max_abs", "filt_2d_avg_abs",
-        "first_whole_max", "second_whole_max", "third_whole_max", "first_whole_mean", "second_whole_mean", "third_whole_mean", 
-        "first_whole_std", "second_whole_std", "third_whole_std", "first_whole_median", "second_whole_median", "third_whole_median",
-        "first_whole_n_coeffs_above_zero", "second_whole_n_coeffs_above_zero", "third_whole_n_coeffs_above_zero",
-        "first_half_max", "second_half_max", "first_half_mean", "second_half_mean", 
-        "first_half_std", "second_half_std", "first_half_median", "second_half_median", 
-        "first_half_n_coeffs_above_zero", "second_half_n_coeffs_above_zero"
+        f"raw_{samples_per_sec}hz_amp", f"raw_{samples_per_sec}hz_1d_max", f"raw_{samples_per_sec}hz_1d_min", f"raw_{samples_per_sec}hz_1d_max_abs", f"raw_{samples_per_sec}hz_1d_avg_abs", f"raw_{samples_per_sec}hz_2d_max", f"raw_{samples_per_sec}hz_2d_min", f"raw_{samples_per_sec}hz_2d_max_abs", f"raw_{samples_per_sec}hz_2d_avg_abs",
+        f"filt_{samples_per_sec}hz_amp", f"filt_{samples_per_sec}hz_1d_max", f"filt_{samples_per_sec}hz_1d_min", f"filt_{samples_per_sec}hz_1d_max_abs", f"filt_{samples_per_sec}hz_1d_avg_abs", f"filt_{samples_per_sec}hz_2d_max", f"filt_{samples_per_sec}hz_2d_min", f"filt_{samples_per_sec}hz_2d_max_abs", f"filt_{samples_per_sec}hz_2d_avg_abs",
+        f"first_{whole_freq}thofa_sec_max", f"second_{whole_freq}thofa_sec_max", f"third_{whole_freq}thofa_sec_max", f"first_{whole_freq}thofa_sec_mean", f"second_{whole_freq}thofa_sec_mean", f"third_{whole_freq}thofa_sec_mean", 
+        f"first_{whole_freq}thofa_sec_std", f"second_{whole_freq}thofa_sec_std", f"third_{whole_freq}thofa_sec_std", f"first_{whole_freq}thofa_sec_median", f"second_{whole_freq}thofa_sec_median", f"third_{whole_freq}thofa_sec_median",
+        f"first_{whole_freq}thofa_sec_n_coeffs_above_zero", f"second_{whole_freq}thofa_sec_n_coeffs_above_zero", f"third_{whole_freq}thofa_sec_n_coeffs_above_zero",
+        f"first_{half_freq}thofa_sec_max", f"second_{half_freq}thofa_sec_max", f"first_{half_freq}thofa_sec_mean", f"second_{half_freq}thofa_sec_mean", 
+        f"first_{half_freq}thofa_sec_std", f"second_{half_freq}thofa_sec_std", f"first_{half_freq}thofa_sec_median", f"second_{half_freq}thofa_sec_median", 
+        f"first_{half_freq}thofa_sec_n_coeffs_above_zero", f"second_{half_freq}thofa_sec_n_coeffs_above_zero"
     ]
     feature_names_len = len(feature_names)
 
@@ -429,7 +436,7 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     # thus effectively resulting in a timestamp list that
     # increments by 0.5s
     timestamp_list = data.index.tolist()[::samples_per_win_size]
-    print(timestamp_list)
+    # print(timestamp_list)
     timestamp_list_len = len(timestamp_list)
 
     feature_segments = pd.DataFrame(np.zeros(shape=(timestamp_list_len, feature_names_len)), columns=feature_names, index=timestamp_list)
@@ -459,11 +466,15 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
 
 
 
-def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1, verbose: bool=False):
+def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1, verbose: bool=False):
     """
+    partitions the given dataframe of eda data into at least 1 hour 
+    and extracts wavelet and statistical features in each of these
+    hours
+
     args:
-        data - 
-        hertz - 
+        data - dataframe consisting of the raw unfiltered signal, labels, and filtered signal
+        hertz - sampling rate of the data
         window_size - amount of seconds for each segmented signal
     """
 
@@ -505,6 +516,66 @@ def partition_signals_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, 
 
         whole_wave, half_wave = load_wavelet_data(curr_data, samples_per_sec, samples_per_win_size)
 
-        features_per_hour.append(get_features(curr_data, whole_wave, half_wave, samples_per_win_size))
+        features_per_hour.append(get_features(curr_data, whole_wave, half_wave, samples_per_sec, samples_per_win_size))
 
     return features_per_hour
+
+
+
+def rejoin_data(features_per_hour_1, features_per_hour_2):
+    """
+    args:
+        features_per_hour_1 - is a list containing tuples containing an hour long 
+        feature dataframe and its respective labels e.g.
+
+        [(                         raw_128hz_amp  raw_128hz_1d_max  raw_128hz_1d_min  \
+            1970-01-01 00:00:00.000       0.000118          0.000111          0.000000   
+            1970-01-01 00:00:00.500       0.000222          0.000111          0.000111   
+            1970-01-01 00:00:01.000       0.000222          0.000111          0.000111   
+            ...                                ...               ...               ...   
+            1970-01-01 00:59:59.500       0.000000          0.000000          0.000000   
+            
+                                    filt_128hz_amp  ...  first_32thofa_sec_max  \
+            1970-01-01 00:00:00.000    2.197134e-07  ...               0.000000   
+            1970-01-01 00:00:00.500    6.022223e-05  ...               0.000000   
+            1970-01-01 00:00:01.000    2.305891e-04  ...               0.000000   
+            ...                                 ...  ...                    ...   
+            1970-01-01 00:59:59.500    0.000000e+00  ...               0.000000   
+            
+                                    second_32thofa_sec_n_coeffs_above_zero  
+            1970-01-01 00:00:00.000                                     1.0  
+            1970-01-01 00:00:00.500                                     0.0  
+            1970-01-01 00:00:01.000                                     0.0  
+            ...                                                         ...  
+            1970-01-01 00:59:59.500                                     0.0  
+            
+            [7200 rows x 43 columns],
+            0       0.0
+            1       0.0
+            2       0.0
+                    ... 
+            7199    0.0
+            Length: 7200, dtype: float64), ...
+        ] of the uninterpolated raw eda data
+
+        features_per_hour_2 - same as features_per_hour_2 but is the interpolated version
+        of the raw eda data i.e. 16hz version of the raw 128hz eda data which always is
+        of the same length as the features_per_hour of the raw 128hz eda data
+    """
+
+    # initially create empty dataframes to populate later
+    # when dataframes are merged using concatenation
+    merged_features_1 = pd.DataFrame()
+    merged_features_2 = pd.DataFrame()
+    eda_labels = pd.Series()
+    for i in range(len(features_per_hour_1)):
+        merged_features_1 = pd.concat([merged_features_1, features_per_hour_1[i][0]], axis=0, ignore_index=True)
+        merged_features_2 = pd.concat([merged_features_2, features_per_hour_2[i][0]], axis=0, ignore_index=True)
+        eda_labels = pd.concat([eda_labels, features_per_hour_1[i][1]], ignore_index=True)
+
+    # concatenate the final two feature dataframes into 1 
+    # feature dataframe including now all features from the 
+    # uninterpolated and interpolated signals i.e. 128hz and 16hz
+    eda_feature_df = pd.concat([merged_features_1, merged_features_2], axis=1)
+
+    return eda_feature_df, eda_labels
