@@ -583,6 +583,11 @@ def rejoin_data(features_per_hour_1, features_per_hour_2):
 
 
 
+def get_time_frequency(sample_rate):
+    return f'{1000 / sample_rate}ms'
+
+
+
 def concur_extract_features_from_all(dir: str, files: list[str]):
     def helper(file: str):
         subject_name = file.strip(".csv")

@@ -28,9 +28,6 @@ def download_dataset(url):
     with zipfile.ZipFile('./data/EDABE dataset.zip', 'r') as zip_ref:
         zip_ref.extractall('./data')
 
-def get_time_frequency(sample_rate):
-    return f'{1000 / sample_rate}ms'
-
 def device_exists():
     """
     returns true if gpu device exists
