@@ -107,6 +107,9 @@
 6. autoregressive modelling
 * https://www.geeksforgeeks.org/autoregressive-ar-model-for-time-series-forecasting/
 
+7. variable frequncy complex demodulation
+* https://github.com/hasanmdabid/DA_Project/tree/c2e027108afba30a86768a9b3ffc7006393c09cd/BioVid
+
 
 # Insights:
 1. WESAD dataset may contain raw eda signals that are labeled with stress or not stressed
