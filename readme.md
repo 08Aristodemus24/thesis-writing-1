@@ -123,11 +123,11 @@ It is expressed as: $Y_t = \beta + \theta_1Y_{t - 1} + \theta_2Y_{t - 2} + \cdot
 # To do:
 
 ## artifact detection and correction:
-* clone and review repo of Taylor et al.
+* <s>clone and review repo of Taylor et al.</s>
 * detect and correct the artifacts using LSTM-SVM and Llanes-Jurado et al. correction pipeline
 * find dataset about stress detection with raw eda signals
 * find out how autoregressive feature extraction from Hossain et al. works
-* how to segment signals into 0.5s and 5s epochs/windows
+* <s>how to segment signals into 0.5s and 5s epochs/windows</s>
 * 
 
 ## SVM mechanism
@@ -183,7 +183,7 @@ Larry
 Polytechnic University of the Philippines
 ```
 
-* message taylor et al.
+* <s>message taylor et al.</s>
 - Sara Taylor:
 email: edaexplorer.reporting@gmail.com
 - Natasha Jaques:
@@ -237,16 +237,43 @@ Larry
 Polytechnic University of the Philippines
 ```
 
-* message hossain et al. about whether we could have their code repository
+* <s>message hossain et al. about whether we could have their code repository</s>
 - Md-Billal Hossain:
 github profile: https://github.com/Md-Billal (confirmed thsi guys github profile and science direct profile both say university of connecticut and both have same names)
 UConn profile: https://biosignal.uconn.edu/person/md-hossain/
 email: 	md.b.hossain@uconn.edu
 - Hugo F. Posada-Quintero
+email: hugo.posada-quintero@uconn.edu
 - Youngsun Kong
+email: youngsun.kong@uconn.edu
 - Riley McNaboe
+email: riley.mcnaboe@uconn.edu
 - Ki H. Chon:
 email: ki.chon@uconn.edu
+
+```
+Student Inquiry on Feature Extraction from EDA Signals in "Automatic Motion Artifact Detection in Electrodermal Activity Data Using Machine Learning" paper
+```
+
+```
+Dear Dr. Hossain,
+
+My name is Larry Miguel R. Cueva, and I am a student researcher at the Polytechnic University of the Philippines working on a project related to training a model for Artifact Detection from EDA signals. I am writing to you today because I was very impressed by your work on this topic in the paper titled Automatic Motion Artifact Detection in Electrodermal Activity Data Using Machine Learning.
+
+I am currently trying to replicate the methodology of your paper in my own thesis particularly with regards to the section where you describe your implementation of variable frequency complex demodulation and autoregressive modelling for feature extraction from EDA signals using python. Unfortunately, however I face some difficult challenges with regards to finding solutions to a particular problem in this task.
+
+Specifically, I am facing difficulties with extracting autoregressive features and also applying VFCDM to 128hz EDA signals. I have been exploring potential solutions, and looking up code how these are implemented but to no avail I am yet to find a resource that would give me the understanding to implement it in code. Given your I'm sure expertise in the topic and my interest in it I would be incredibly grateful if you could at your utmost convenience of course offer some guidance on how you addressed these issues in your implementation.
+
+I understand that you are as I'm sure very likely busy, as an already esteemed researcher such as yourself, but any insights you could share on your approach to feature extraction from EDA signals would be immensely helpful for our thesis given we are merely still but humble students learning what we can from this field. I am eager to learn and would be more than grateful to schedule a brief call or exchange emails at again your utmost convenience to discuss this further.
+
+Thank you for your time and consideration.
+
+Sincerely,
+
+Larry
+
+Polytechnic University of the Philippines
+```
 
 * message armielyn
 * message other GDSC leads
@@ -259,5 +286,6 @@ email: ki.chon@uconn.edu
 * <s>ask taline for paper review or if not I will alone</s>
 * <s>send emails to every single one of those researchers</s>
 * prepare for possible zoom/google meet with them by preparin jupyter notebook, asking about uneven length wavelet features, 
+* send email to hossain et al. 
 
 "Larry, Taline, Deseree, and Wana will graduaate in 2025"
