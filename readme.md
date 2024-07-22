@@ -119,6 +119,18 @@ It is expressed as: $Y_t = \beta + \theta_1Y_{t - 1} + \epsilon_t$
 3. $AR(p)$ Model:
 The general autoregressive model of order `p` includes `p` lagged values.
 It is expressed as: $Y_t = \beta + \theta_1Y_{t - 1} + \theta_2Y_{t - 2} + \cdots + \theta_{p}Y_{t - p} + \epsilon_t$
+4. what is rfe_loso mean in the context of artifact detection in eda signals or just signal processing with biosignal data from individual subjects in general?
+
+- Recursive Feature Elimination (RFE) is a feature selection technique used to identify the most relevant features for a specific task (e.g., artifact detection). It works by iteratively removing the feature that contributes the least to the model's performance and retraining the model with the remaining features. This process continues until a desired number of features is reached or a stopping criterion is met.
+
+- Leave-One-Subject-Out Cross-Validation (LOSO) is a cross-validation technique used to evaluate the generalizability of a model on unseen data. In LOSO, the model is trained on data from all subjects except one, and its performance is evaluated on the left-out subject's data. This process is repeated for all subjects, providing an estimate of how well the model generalizes to new individuals.
+
+- Combining RFE and LOSO (rfe_loso)
+
+- In the context of artifact detection, "rfe_loso" might indicate a two-step process:
+Feature Selection with RFE: First, RFE is applied within LOSO cross-validation. For each fold (where one subject is left out), RFE selects the most relevant features for artifact detection using the training data from the remaining subjects. Artifact Detection with Selected Features: Finally, using the selected features from each LOSO fold, an artifact detection model is trained and applied to the left-out subject's data to identify potential artifacts.
+
+- "rfe_loso" suggests a feature selection and model evaluation strategy that leverages both RFE and LOSO cross-validation for artifact detection or other biosignal processing tasks involving individual subjects. It emphasizes selecting features that are relevant across subjects while ensuring the model generalizes well to unseen data.
 
 # To do:
 
