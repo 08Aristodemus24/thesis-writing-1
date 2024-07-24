@@ -110,6 +110,9 @@
 7. variable frequncy complex demodulation
 * https://github.com/hasanmdabid/DA_Project/tree/c2e027108afba30a86768a9b3ffc7006393c09cd/BioVid
 
+8. BioVid heat pain database from gouverneur et al. (2023) paper
+https://www.nit.ovgu.de/nit/en/BioVid-p-1358.html
+
 
 # Insights:
 1. WESAD dataset may contain raw eda signals that are labeled with stress or not stressed
@@ -136,11 +139,15 @@ Feature Selection with RFE: First, RFE is applied within LOSO cross-validation. 
 
 ## artifact detection and correction:
 * <s>clone and review repo of Taylor et al.</s>
+* <s>how to segment signals into 0.5s and 5s epochs/windows</s>
 * detect and correct the artifacts using LSTM-SVM and Llanes-Jurado et al. correction pipeline
 * find dataset about stress detection with raw eda signals
-* find out how autoregressive feature extraction from Hossain et al. works
-* <s>how to segment signals into 0.5s and 5s epochs/windows</s>
-* 
+* find out what BioVid and PainMoinit dataset from gouverneur et al. (2023) to trace the code they wrote
+* review repo of gouverneur et al. (2023) since it details how autoregressive feature extraction, VFCDM from Hossain et al. (2022) works
+* review repo of gouverneur et al. (2023) to learn how cvxEDA works
+
+
+
 
 ## SVM mechanism
 * I need to learn how SVM can be implemented in tensorflow
@@ -298,6 +305,7 @@ Polytechnic University of the Philippines
 * <s>ask taline for paper review or if not I will alone</s>
 * <s>send emails to every single one of those researchers</s>
 * prepare for possible zoom/google meet with them by preparin jupyter notebook, asking about uneven length wavelet features, 
-* send email to hossain et al. 
+* <s>send email to hossain et al. </s>
+* fill up and sign agreement form to access BioVid database data and send to sascha.gruss@uni-ulm.de
 
 "Larry, Taline, Deseree, and Wana will graduaate in 2025"
