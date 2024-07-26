@@ -618,3 +618,64 @@ def concur_extract_features_from_all(dir: str, files: list[str]):
         eda_data = list(exe.map(helper, files))
 
     return eda_data
+
+
+# ok, but I have here similar code and I was wondering if you could analyze it because however output of components is
+# ```
+# [[array([nan, nan, nan, ..., nan, nan, nan]),
+#   array([nan, nan, nan, ..., nan, nan, nan])],
+#  [array([nan, nan, nan, ..., nan, nan, nan]),
+#   array([nan, nan, nan, ..., nan, nan, nan])]] 
+# ```
+
+# ```
+# def butter_highpass(cutoff, samp_freq, order, btype):
+#     """
+#     implementation of Gouverneur et al. (2023)'s butter_highpass
+#     function
+#     """
+#     normal_cutoff = 2. * cutoff / float(samp_freq)
+#     b, a = butter(order, normal_cutoff, btype=btype)
+#     return b, a
+
+# def butter_highpass_filter(data, cutoff, samp_freq, order, btype):
+#     """
+#     implementation of Gouverneur et al. (2023)'s butter_highpass_filter
+#     function
+#     """
+#     b, a = butter_highpass(cutoff, samp_freq, order=order, btype=btype)
+#     y = filtfilt(b, a, data, padlen=2)
+#     return y
+
+# total_seconds = raw_eda_signal.shape[1] / 128
+
+# # interpolates 128hz signal to 4hz
+# first_resample = resample_axis(raw_eda_signal, input_freq=128, output_freq=4, axis=1)
+# median_filtered = np.array([median_filter(subject_signal, size=4) for subject_signal in first_resample])
+
+# # interpolates 4hz signal to 2hz
+# second_resample = resample_axis(median_filtered, input_freq=4, output_freq=2, axis=1)
+
+# highpass_filtered = np.array([butter_highpass_filter(subject_signal, cutoff=0.01, samp_freq=128, order=8, btype='highpass') for subject_signal in second_resample])
+
+# # data length is 832830
+# data_length = raw_eda_signal[0].shape[0]
+# center_freqs = [0.04, 0.12, 0.2, 0.28, 0.36, 0.44, 0.52, 0.6, 0.68, 0.76, 0.84, 0.92]
+# bandwidth = 0.04
+
+# # length is 416415
+# length = data_length // 2
+
+# components = []
+# for center_freq in center_freqs[1:3]:
+#     # finite-impulse response (FIR)
+#     fir = firwin(numtaps=length, cutoff=center_freq, width=bandwidth)
+
+#     # adaptive lowpass filter (LPF)
+#     component = [lfilter(fir, 1, subject_signal) for subject_signal in highpass_filtered]
+#     components.append(component)
+# ```
+
+# so could it be that the we need to have compatible center frequencies, bandwidth, cutoff frequency, order values etc. for signals recorded at 128hz
+
+

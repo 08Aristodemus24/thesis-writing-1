@@ -113,6 +113,9 @@
 8. BioVid heat pain database from gouverneur et al. (2023) paper
 https://www.nit.ovgu.de/nit/en/BioVid-p-1358.html
 
+9. recursive feature elimination (RFE)
+https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
+https://www.analyticsvidhya.com/blog/2021/04/backward-feature-elimination-and-its-implementation/
 
 # Insights:
 1. WESAD dataset may contain raw eda signals that are labeled with stress or not stressed
@@ -136,6 +139,10 @@ Feature Selection with RFE: First, RFE is applied within LOSO cross-validation. 
 - "rfe_loso" suggests a feature selection and model evaluation strategy that leverages both RFE and LOSO cross-validation for artifact detection or other biosignal processing tasks involving individual subjects. It emphasizes selecting features that are relevant across subjects while ensuring the model generalizes well to unseen data.
 
 - so other than different hyperparams being tried k-times, we also try different features k-times
+
+- class sklearn.feature_selection.RFE(estimator, *, n_features_to_select=None, step=1, verbose=0, importance_getter='auto') Given an external estimator that assigns weights to features (e.g., the coefficients of a linear model), the goal of recursive feature elimination (RFE) is to select features by recursively considering smaller and smaller sets of features. First, the estimator is trained on the initial set of features and the importance of each feature is obtained either through any specific attribute or callable. Then, the least important features are pruned from current set of features. That procedure is recursively repeated on the pruned set until the desired number of features to select is eventually reached.
+
+however in our paper we will be using backward feature selection
 
 # To do:
 
