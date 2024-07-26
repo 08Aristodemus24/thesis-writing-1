@@ -135,16 +135,20 @@ Feature Selection with RFE: First, RFE is applied within LOSO cross-validation. 
 
 - "rfe_loso" suggests a feature selection and model evaluation strategy that leverages both RFE and LOSO cross-validation for artifact detection or other biosignal processing tasks involving individual subjects. It emphasizes selecting features that are relevant across subjects while ensuring the model generalizes well to unseen data.
 
+- so other than different hyperparams being tried k-times, we also try different features k-times
+
 # To do:
 
 ## artifact detection and correction:
 * <s>clone and review repo of Taylor et al.</s>
 * <s>how to segment signals into 0.5s and 5s epochs/windows</s>
+* <s>decompose signal into phasic and tonic components</s>
 * detect and correct the artifacts using LSTM-SVM and Llanes-Jurado et al. correction pipeline
 * find dataset about stress detection with raw eda signals
 * find out what BioVid and PainMoinit dataset from gouverneur et al. (2023) to trace the code they wrote
 * review repo of gouverneur et al. (2023) since it details how autoregressive feature extraction, VFCDM from Hossain et al. (2022) works
 * review repo of gouverneur et al. (2023) to learn how cvxEDA works
+* review repo of gouverneur et al. (2023) to learn how RFE-LOSO 5-fold cross validation works
 
 
 
