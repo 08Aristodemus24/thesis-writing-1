@@ -7,6 +7,8 @@ from concurrent.futures import ThreadPoolExecutor
 import datetime
 import pandas as pd
 from scipy.signal import butter, lfilter
+from scipy.stats import entropy
+from statsmodels.tsa.ar_model import AutoReg
 
 def interpolate_signals(data: pd.DataFrame, sample_rate: int=128, start_time: datetime.datetime | str='01/01/1970', target_hz: int=8):
     """
@@ -178,13 +180,42 @@ def get_time_frequency(sample_rate):
 
 
 
-def compute_ar_feats(data: pd.DataFrame | np.ndarray):
+def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
     """
     computes autoregressive features by training AutoReg
-    from statsmodels.tsa.ar_model then obtaining resid and
+    from statsmodels.tsa.ar_model then obtaining sigma2
+    and param attributes containing the error variance and
+    all the optimized coefficients excluding the intercept
 
+    args:
+        data - is a 0.5s segment/window/epoch of a subjects
+        signals
     """
-    pass
+    
+    # raw_signal = data['raw_signal']
+
+    # train_size = 0.8
+    # partition_index = int(train_size * data.shape[0])
+    # train_data = data.iloc[:partition_index]
+    # test_data = data.iloc[partition_index:]
+
+    ar_model = AutoReg(data['raw_signal'], lags=2)
+    ar_results = ar_model.fit()
+
+    # get all autoregressive model's optimized coefficients
+    # except for the intercept or bias coefficient. here we
+    # would have 2 coefficients since our lag value was 2
+    ar_coeffs = ar_results.params.iloc[1:].tolist()
+
+    # get error variance attribute from trained 
+    # autoregressive model
+    ar_error_var = ar_results.sigma2
+
+    # combine ar coeffs and ar error variance
+    ar_features = ar_coeffs + ar_error_var
+
+    return ar_features
+    
 
 
 def load_wavelet_data(data: pd.DataFrame | np.ndarray, hertz: int, samples_per_win_size: int):
@@ -298,6 +329,28 @@ def _differentiate(data):
     return F1_prime, F2_prime
 
 
+def _shannon_entropy(data):
+    """
+    computes the shannon entropy value of the
+    given segment of an eda signal
+    """
+
+    # compute probability distribution
+    probs = np.power(data, 2) / np.sum(np.power(data, 2))
+
+    # calculate entropy by multiplying probability distribution
+    # to logarithm of probability distribution of base 2
+    entropy = probs * np.log2(probs)
+    shannon_entropy = -1 * np.sum(entropy)
+
+    return shannon_entropy
+
+def _standardize_signals(data):
+    """
+    standardizes the given signal either using min-max 
+    scaling or by z-score
+    """
+
 
 def _compute_stat_feats(data):
     """
@@ -311,34 +364,76 @@ def _compute_stat_feats(data):
     raw_1d_signal, raw_2d_signal = _differentiate(raw_signal)
     filt_1d_signal, filt_2d_signal = _differentiate(filt_signal)
 
-    raw_amp = np.mean(raw_signal)
-    raw_1d_max = np.max(raw_1d_signal)
-    raw_1d_min = np.min(raw_1d_signal)
-    raw_1d_max_abs = np.max(np.absolute(raw_1d_signal))
-    raw_1d_avg_abs = np.mean(np.absolute(raw_1d_signal))
-    raw_2d_max = np.max(raw_2d_signal)
-    raw_2d_min = np.min(raw_2d_signal)
-    raw_2d_max_abs = np.max(np.absolute(raw_2d_signal))
-    raw_2d_avg_abs = np.mean(np.absolute(raw_1d_signal))
+    raw_max = np.max(raw_signal, axis=0)
+    raw_min = np.min(raw_signal, axis=0)
+    raw_amp = np.mean(raw_signal, axis=0)
+    raw_median = np.median(raw_signal, axis=0)
+    raw_std = np.std(raw_signal, axis=0)
+    raw_range = np.max(raw_signal, axis=0) - np.min(raw_signal, axis=0)
+    raw_shannon_entropy = entropy(raw_signal.value_counts())
 
-    filt_amp = np.mean(filt_signal)
-    filt_1d_max = np.max(filt_1d_signal)
-    filt_1d_min = np.min(filt_1d_signal)
-    filt_1d_max_abs = np.max(np.absolute(filt_1d_signal))
-    filt_1d_avg_abs = np.mean(np.absolute(filt_1d_signal))
-    filt_2d_max = np.max(filt_2d_signal)
-    filt_2d_min = np.min(filt_2d_signal)
-    filt_2d_max_abs = np.max(np.absolute(filt_2d_signal))
-    filt_2d_avg_abs = np.mean(np.absolute(filt_1d_signal))
+    raw_1d_max = np.max(raw_1d_signal, axis=0)
+    raw_1d_min = np.min(raw_1d_signal, axis=0)
+    raw_1d_amp = np.mean(raw_1d_signal, axis=0)
+    raw_1d_median = np.median(raw_1d_signal, axis=0)
+    raw_1d_std = np.std(raw_1d_signal, axis=0)
+    raw_1d_range = np.max(raw_1d_signal, axis=0) - np.min(raw_1d_signal, axis=0)
+    raw_1d_shannon_entropy = entropy(raw_1d_signal.value_counts())
+    raw_1d_max_abs = np.max(np.absolute(raw_1d_signal), axis=0)
+    raw_1d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
+    
 
-    return raw_amp, raw_1d_max, raw_1d_min, raw_1d_max_abs, raw_1d_avg_abs, raw_2d_max, raw_2d_min, raw_2d_max_abs, raw_2d_avg_abs, filt_amp, filt_1d_max, filt_1d_min, filt_1d_max_abs, filt_1d_avg_abs, filt_2d_max, filt_2d_min, filt_2d_max_abs, filt_2d_avg_abs
+    raw_2d_max = np.max(raw_2d_signal, axis=0)
+    raw_2d_min = np.min(raw_2d_signal, axis=0)
+    raw_2d_amp = np.mean(raw_2d_signal, axis=0)
+    raw_2d_median = np.median(raw_2d_signal, axis=0)
+    raw_2d_std = np.std(raw_2d_signal, axis=0)
+    raw_2d_range = np.max(raw_2d_signal, axis=0) - np.min(raw_2d_signal, axis=0)
+    raw_2d_shannon_entropy = entropy(raw_2d_signal.value_counts())
+    raw_2d_max_abs = np.max(np.absolute(raw_2d_signal), axis=0)
+    raw_2d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
+
+    filt_max = np.max(filt_signal, axis=0)
+    filt_min = np.min(filt_signal, axis=0)
+    filt_amp = np.mean(filt_signal, axis=0)
+    filt_median = np.median(filt_signal, axis=0)
+    filt_std = np.std(filt_signal, axis=0)
+    filt_range = np.max(filt_signal, axis=0) - np.min(filt_signal, axis=0)
+    filt_shannon_entropy = entropy(filt_signal.value_counts())
+
+    filt_1d_max = np.max(filt_1d_signal, axis=0)
+    filt_1d_min = np.min(filt_1d_signal, axis=0)
+    filt_1d_amp = np.mean(filt_1d_signal, axis=0)
+    filt_1d_median = np.median(filt_1d_signal, axis=0)
+    filt_1d_std = np.std(filt_1d_signal, axis=0)
+    filt_1d_range = np.max(filt_1d_signal, axis=0) - np.min(filt_1d_signal, axis=0)
+    filt_1d_shannon_entropy = entropy(filt_1d_signal.value_counts())
+    filt_1d_max_abs = np.max(np.absolute(filt_1d_signal), axis=0)
+    filt_1d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
+
+    filt_2d_max = np.max(filt_2d_signal, axis=0)
+    filt_2d_min = np.min(filt_2d_signal, axis=0)
+    filt_2d_amp = np.mean(filt_2d_signal, axis=0)
+    filt_2d_median = np.median(filt_2d_signal, axis=0)
+    filt_2d_std = np.std(filt_2d_signal, axis=0)
+    filt_2d_range = np.max(filt_2d_signal, axis=0) - np.min(filt_2d_signal, axis=0)
+    filt_2d_shannon_entropy = entropy(filt_2d_signal.value_counts())
+    filt_2d_max_abs = np.max(np.absolute(filt_2d_signal), axis=0)
+    filt_2d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
+
+    return (raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy,
+    raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, 
+    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, 
+    filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy,
+    filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, 
+    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_1d_shannon_entropy,filt_2d_max_abs, filt_2d_avg_abs)
 
 
 
 def _compute_wave_feats(wave: pd.DataFrame | np.ndarray):
     """
-    computes the maximum, mean, standard deviation, median, and 
-    no. of coefficients above zero values of the given wavelet 
+    computes the maximum, mean, standard deviation, median, range
+    and no. of coefficients above zero values of the given wavelet 
     dataframe
     """
 
@@ -346,9 +441,10 @@ def _compute_wave_feats(wave: pd.DataFrame | np.ndarray):
     wavelet_feats_mean = wave.mean(axis=0).tolist()
     wavelet_feats_std = wave.std(axis=0).tolist()
     wavelet_feats_median = wave.median(axis=0).tolist()
+    wavelet_feats_range = (wave.max(axis=0) - wave.min(axis=0)).tolist()
     wavelet_feats_n_coeffs_above_zero = (wave > 0).astype('int').sum(axis=0)
 
-    return wavelet_feats_max, wavelet_feats_mean, wavelet_feats_std, wavelet_feats_median, wavelet_feats_n_coeffs_above_zero
+    return wavelet_feats_max, wavelet_feats_mean, wavelet_feats_std, wavelet_feats_median, wavelet_feats_range, wavelet_feats_n_coeffs_above_zero
 
 
 
@@ -356,26 +452,65 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     """
     computes the ff. features given the 0.5s segment/window dataframe or numpy matrix 'data'
 
+    raw_max - 
+    raw_min - 
     raw_amp - the amplitude of the raw/unfiltered 128hz eda signal
+    raw_median - 
+    raw_std - 
+    raw_range -
+    raw_shannon_entropy - 
+
     raw_1d_max - the maximum value of the first order derivative of the unfiltered 128hz eda signal
     raw_1d_min - the minimum value of the first order derivative of the unfiltered 128hz eda signal
+    raw_1d_amp - 
+    raw_1d_median - 
+    raw_1d_std - 
+    raw_1d_range -
+    raw_1d_shannon_entropy - 
     raw_1d_max_abs - the maximum value out of the absolute values of the first order derivative of the unfiltered 128hz eda signal
     raw_1d_avg_abs - the average/mean value out of the absolute values of the first order derivative of the unfiltered 128hz eda signal
+
     raw_2d_max - the maximum value of the second order derivative of the unfiltered 128hz eda signal
     raw_2d_min - the minimum value of the second order derivative of the unfiltered 128hz eda signal
+    raw_2d_amp - 
+    raw_2d_median - 
+    raw_2d_std - 
+    raw_2d_range -
+    raw_2d_shannon_entropy - 
     raw_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the unfiltered 128hz eda signal
     raw_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the unfiltered 128hz eda signal
     
+    filt_max - 
+    filt_min - 
     filt_amp - the amplitude of the low-pass filtered 16hz eda signal
+    filt_median - 
+    filt_std - 
+    filt_range -
+    filt_shannon_entropy - 
+
     filt_1d_max - the maximum value of the first order derivative of the low-pass filtered 16hz eda signal
     filt_1d_min - the minimum value of the first order derivative of the low-pass filtered 16hz eda signal
+    filt_1d_amp - 
+    filt_1d_median - 
+    filt_1d_std - 
+    filt_1d_range -
+    filt_1d_shannon_entropy - 
     filt_1d_max_abs - the maximum value out of the absolute values of the first order derivative of the low-pass filtered 16hz eda signal
     filt_1d_avg_abs - the average/mean value out of the absolute values of the first order derivative of the low-pass filtered 16hz eda signal
+
     filt_2d_max - the maximum value of the second order derivative of the low-pass filtered 16hz eda signal
     filt_2d_min - the minimum value of the second order derivative of the low-pass filtered 16hz eda signal
+    filt_2d_amp - 
+    filt_2d_median - 
+    filt_2d_std - 
+    filt_2d_range -
+    filt_2d_shannon_entropy - 
     filt_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the low-pass filtered 16hz eda signal
     filt_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the low-pass filtered 16hz eda signal
     
+    ar_coeffs - coefficients excluding bias/intercept coefficient of the trained autoregressive model
+    ar_err_var - error variance value of the trained autoregressive model
+
     first_whole_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
     second_whole_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
     third_whole_max - the maximum value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
@@ -388,6 +523,9 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     first_whole_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
     second_whole_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
     third_whole_median - the median value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_range - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_range - the range value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_range - the range value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
     first_whole_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
     second_whole_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
     third_whole_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
@@ -400,6 +538,8 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     second_half_std - the standard deviation of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
     first_half_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
     second_half_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_range - the range value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_range - the range value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
     first_half_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
     second_half_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
 
@@ -410,20 +550,41 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     """
 
     # compute statistical features
-    raw_amp, raw_1d_max, raw_1d_min, raw_1d_max_abs, raw_1d_avg_abs, raw_2d_max, raw_2d_min, raw_2d_max_abs, raw_2d_avg_abs, filt_amp, filt_1d_max, filt_1d_min, filt_1d_max_abs, filt_1d_avg_abs, filt_2d_max, filt_2d_min, filt_2d_max_abs, filt_2d_avg_abs = _compute_stat_feats(data)
+    raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy, \
+    raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, \
+    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, \
+    filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy, \
+    filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, \
+    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs = _compute_stat_feats(data)
+
+    # compute autoregressive features
+    *ar_coeffs, ar_err_var = _compute_ar_feats(data)
+    # ar_feats = _compute_ar_feats(data)
+    # ar_coeffs, ar_err_var = ar_feats[:-1], ar_feats[-1]
 
     # compute wavelet features
-    wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_n_coeffs_above_zero = _compute_wave_feats(whole_wave)
-    wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_n_coeffs_above_zero = _compute_wave_feats(half_wave)
+    wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_range, wavelet_feats_whole_n_coeffs_above_zero = _compute_wave_feats(whole_wave)
+    wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_range, wavelet_feats_half_n_coeffs_above_zero = _compute_wave_feats(half_wave)
+
+    
 
     features = np.hstack([
-        raw_amp, raw_1d_max, raw_1d_min, raw_1d_max_abs, raw_1d_avg_abs, raw_2d_max, raw_2d_min, raw_2d_max_abs, raw_2d_avg_abs, filt_amp, filt_1d_max, filt_1d_min, filt_1d_max_abs, filt_1d_avg_abs, filt_2d_max, filt_2d_min, filt_2d_max_abs, filt_2d_avg_abs,
+        # statistical features
+        raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy, 
+        raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, 
+        raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, 
+        filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy, 
+        filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, 
+        filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs,
+
+        # autoregressive coefficients excluding bias/intercept and error variance
+        ar_coeffs, ar_err_var,
 
         # each wavelet is a list of 3 elements since it was calculated from a dataframe of 3 columns
-        wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_n_coeffs_above_zero, 
+        wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_range, wavelet_feats_whole_n_coeffs_above_zero, 
 
         # each wavelet is a list of 2 elements since it was calculated from a dataframe of 2 columns
-        wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_n_coeffs_above_zero,
+        wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_range, wavelet_feats_half_n_coeffs_above_zero,
         ])
     
     return features
@@ -438,13 +599,54 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     half_freq = int((samples_per_sec / 8) * 2)
 
     feature_names = [
-        f"raw_{samples_per_sec}hz_amp", f"raw_{samples_per_sec}hz_1d_max", f"raw_{samples_per_sec}hz_1d_min", f"raw_{samples_per_sec}hz_1d_max_abs", f"raw_{samples_per_sec}hz_1d_avg_abs", f"raw_{samples_per_sec}hz_2d_max", f"raw_{samples_per_sec}hz_2d_min", f"raw_{samples_per_sec}hz_2d_max_abs", f"raw_{samples_per_sec}hz_2d_avg_abs",
-        f"filt_{samples_per_sec}hz_amp", f"filt_{samples_per_sec}hz_1d_max", f"filt_{samples_per_sec}hz_1d_min", f"filt_{samples_per_sec}hz_1d_max_abs", f"filt_{samples_per_sec}hz_1d_avg_abs", f"filt_{samples_per_sec}hz_2d_max", f"filt_{samples_per_sec}hz_2d_min", f"filt_{samples_per_sec}hz_2d_max_abs", f"filt_{samples_per_sec}hz_2d_avg_abs",
-        f"first_{whole_freq}thofa_sec_max", f"second_{whole_freq}thofa_sec_max", f"third_{whole_freq}thofa_sec_max", f"first_{whole_freq}thofa_sec_mean", f"second_{whole_freq}thofa_sec_mean", f"third_{whole_freq}thofa_sec_mean", 
-        f"first_{whole_freq}thofa_sec_std", f"second_{whole_freq}thofa_sec_std", f"third_{whole_freq}thofa_sec_std", f"first_{whole_freq}thofa_sec_median", f"second_{whole_freq}thofa_sec_median", f"third_{whole_freq}thofa_sec_median",
+        # statistical features names
+        f"raw_{samples_per_sec}hz_max", f"raw_{samples_per_sec}hz_min", 
+        f"raw_{samples_per_sec}hz_amp", f"raw_{samples_per_sec}hz_median", 
+        f"raw_{samples_per_sec}hz_std", f"raw_{samples_per_sec}hz_range", 
+        f"raw_{samples_per_sec}hz_shannon_entropy",
+        
+        f"raw_{samples_per_sec}hz_1d_max", f"raw_{samples_per_sec}hz_1d_min", 
+        f"raw_{samples_per_sec}hz_1d_amp", f"raw_{samples_per_sec}hz_1d_median", 
+        f"raw_{samples_per_sec}hz_1d_std", f"raw_{samples_per_sec}hz_1d_range", 
+        f"raw_{samples_per_sec}hz_1d_shannon_entropy",
+        f"raw_{samples_per_sec}hz_1d_max_abs", f"raw_{samples_per_sec}hz_1d_avg_abs", 
+
+        f"raw_{samples_per_sec}hz_2d_max", f"raw_{samples_per_sec}hz_2d_min", 
+        f"raw_{samples_per_sec}hz_2d_amp", f"raw_{samples_per_sec}hz_2d_median", 
+        f"raw_{samples_per_sec}hz_2d_std", f"raw_{samples_per_sec}hz_2d_range", 
+        f"raw_{samples_per_sec}hz_2d_shannon_entropy",
+        f"raw_{samples_per_sec}hz_2d_max_abs", f"raw_{samples_per_sec}hz_2d_avg_abs", 
+
+        f"filt_{samples_per_sec}hz_max", f"filt_{samples_per_sec}hz_min", 
+        f"filt_{samples_per_sec}hz_amp", f"filt_{samples_per_sec}hz_median", 
+        f"filt_{samples_per_sec}hz_std", f"filt_{samples_per_sec}hz_range", 
+        f"filt_{samples_per_sec}hz_shannon_entropy",
+        
+        f"filt_{samples_per_sec}hz_1d_max", f"filt_{samples_per_sec}hz_1d_min", 
+        f"filt_{samples_per_sec}hz_1d_amp", f"filt_{samples_per_sec}hz_1d_median", 
+        f"filt_{samples_per_sec}hz_1d_std", f"filt_{samples_per_sec}hz_1d_range", 
+        f"filt_{samples_per_sec}hz_1d_shannon_entropy",
+        f"filt_{samples_per_sec}hz_1d_max_abs", f"filt_{samples_per_sec}hz_1d_avg_abs", 
+
+        f"filt_{samples_per_sec}hz_2d_max", f"filt_{samples_per_sec}hz_2d_min", 
+        f"filt_{samples_per_sec}hz_2d_amp", f"filt_{samples_per_sec}hz_2d_median", 
+        f"filt_{samples_per_sec}hz_2d_std", f"filt_{samples_per_sec}hz_2d_range", 
+        f"filt_{samples_per_sec}hz_2d_shannon_entropy",
+        f"filt_{samples_per_sec}hz_2d_max_abs", f"filt_{samples_per_sec}hz_2d_avg_abs", 
+
+        # autoregressive features names
+        "ar_coeff_1", "ar_coeff_2", "ar_err_var",
+
+        # wavelet features names
+        f"first_{whole_freq}thofa_sec_max", f"second_{whole_freq}thofa_sec_max", f"third_{whole_freq}thofa_sec_max", 
+        f"first_{whole_freq}thofa_sec_mean", f"second_{whole_freq}thofa_sec_mean", f"third_{whole_freq}thofa_sec_mean", 
+        f"first_{whole_freq}thofa_sec_std", f"second_{whole_freq}thofa_sec_std", f"third_{whole_freq}thofa_sec_std", 
+        f"first_{whole_freq}thofa_sec_median", f"second_{whole_freq}thofa_sec_median", f"third_{whole_freq}thofa_sec_median",
         f"first_{whole_freq}thofa_sec_n_coeffs_above_zero", f"second_{whole_freq}thofa_sec_n_coeffs_above_zero", f"third_{whole_freq}thofa_sec_n_coeffs_above_zero",
-        f"first_{half_freq}thofa_sec_max", f"second_{half_freq}thofa_sec_max", f"first_{half_freq}thofa_sec_mean", f"second_{half_freq}thofa_sec_mean", 
-        f"first_{half_freq}thofa_sec_std", f"second_{half_freq}thofa_sec_std", f"first_{half_freq}thofa_sec_median", f"second_{half_freq}thofa_sec_median", 
+        f"first_{half_freq}thofa_sec_max", f"second_{half_freq}thofa_sec_max", 
+        f"first_{half_freq}thofa_sec_mean", f"second_{half_freq}thofa_sec_mean", 
+        f"first_{half_freq}thofa_sec_std", f"second_{half_freq}thofa_sec_std", 
+        f"first_{half_freq}thofa_sec_median", f"second_{half_freq}thofa_sec_median", 
         f"first_{half_freq}thofa_sec_n_coeffs_above_zero", f"second_{half_freq}thofa_sec_n_coeffs_above_zero"
     ]
     feature_names_len = len(feature_names)
