@@ -155,7 +155,7 @@ however in our paper we will be using backward feature selection
 * find out what BioVid and PainMoinit dataset from gouverneur et al. (2023) to trace the code they wrote
 * review repo of gouverneur et al. (2023) since it details how autoregressive feature extraction, VFCDM from Hossain et al. (2022) works
 * review repo of gouverneur et al. (2023) to learn how cvxEDA works
-* review repo of gouverneur et al. (2023) to learn how RFE-LOSO 5-fold cross validation works
+* <s>review repo of gouverneur et al. (2023) to learn how RFE-LOSO 5-fold cross validation works</s>
 
 
 
