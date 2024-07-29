@@ -1,7 +1,7 @@
 import math
 import pandas as pd
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 import pywt
 from concurrent.futures import ThreadPoolExecutor
 import datetime
@@ -212,7 +212,7 @@ def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
     ar_error_var = ar_results.sigma2
 
     # combine ar coeffs and ar error variance
-    ar_features = ar_coeffs + ar_error_var
+    ar_features = ar_coeffs + [ar_error_var]
 
     return ar_features
     
@@ -381,7 +381,6 @@ def _compute_stat_feats(data):
     raw_1d_shannon_entropy = entropy(raw_1d_signal.value_counts())
     raw_1d_max_abs = np.max(np.absolute(raw_1d_signal), axis=0)
     raw_1d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
-    
 
     raw_2d_max = np.max(raw_2d_signal, axis=0)
     raw_2d_min = np.min(raw_2d_signal, axis=0)
@@ -426,7 +425,7 @@ def _compute_stat_feats(data):
     raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, 
     filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy,
     filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, 
-    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_1d_shannon_entropy,filt_2d_max_abs, filt_2d_avg_abs)
+    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs)
 
 
 
@@ -642,13 +641,17 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
         f"first_{whole_freq}thofa_sec_mean", f"second_{whole_freq}thofa_sec_mean", f"third_{whole_freq}thofa_sec_mean", 
         f"first_{whole_freq}thofa_sec_std", f"second_{whole_freq}thofa_sec_std", f"third_{whole_freq}thofa_sec_std", 
         f"first_{whole_freq}thofa_sec_median", f"second_{whole_freq}thofa_sec_median", f"third_{whole_freq}thofa_sec_median",
+        f"first_{whole_freq}thofa_sec_range", f"second_{whole_freq}thofa_sec_range", f"third_{whole_freq}thofa_sec_range",
         f"first_{whole_freq}thofa_sec_n_coeffs_above_zero", f"second_{whole_freq}thofa_sec_n_coeffs_above_zero", f"third_{whole_freq}thofa_sec_n_coeffs_above_zero",
+
         f"first_{half_freq}thofa_sec_max", f"second_{half_freq}thofa_sec_max", 
         f"first_{half_freq}thofa_sec_mean", f"second_{half_freq}thofa_sec_mean", 
         f"first_{half_freq}thofa_sec_std", f"second_{half_freq}thofa_sec_std", 
         f"first_{half_freq}thofa_sec_median", f"second_{half_freq}thofa_sec_median", 
+        f"first_{half_freq}thofa_sec_range", f"second_{half_freq}thofa_sec_range", 
         f"first_{half_freq}thofa_sec_n_coeffs_above_zero", f"second_{half_freq}thofa_sec_n_coeffs_above_zero"
     ]
+
     feature_names_len = len(feature_names)
 
     # create a list of timestamps from our data that 
@@ -834,5 +837,6 @@ def concur_extract_features_from_all(dir: str, files: list[str]):
 # ```
 
 # so could it be that the we need to have compatible center frequencies, bandwidth, cutoff frequency, order values etc. for signals recorded at 128hz
+
 
 
