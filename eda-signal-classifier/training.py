@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import re
 import itertools
+import json
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
@@ -11,6 +12,8 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVC, LinearSVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 from argparse import ArgumentParser
 
@@ -61,6 +64,29 @@ def concur_load_data(dir: str, feat_set: str="Taylor"):
 
     return subjects_features, subjects_labels, subject_to_id
 
+def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, n_features_to_select: int, sample_ids: list | pd.Series | np.ndarray):
+    # select best features first by means of backward
+    # feature selection based on support vector classifiers
+    svc = SVC(kernel='linear')
+    # selector = SequentialFeatureSelector(svc, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
+    selector = RFE(estimator=svc, n_features_to_select=n_features_to_select, verbose=1)
+    
+    # remove subject_id column then convert to numpy array
+    X = subjects_features.loc[sample_ids:, subjects_features.columns != 'subject_id'].to_numpy()
+    Y = subjects_labels.loc[sample_ids:, subjects_labels.columns != 'subject_id'].to_numpy().ravel()
+
+    # train feature selector on data
+    selector.fit(X, Y)
+
+    # obtain feature mask boolean values, and use it as index
+    # to select only the columns that have been selected by BFS 
+    # append also True element to feature mask since subject id
+    # has been removed in X
+    feats_mask = selector.get_support().tolist() + [True]
+    selected_feats = subjects_features.columns[feats_mask]
+
+    return selected_feats
+
 def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_id: int):
     """
     args:
@@ -81,7 +107,7 @@ def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_
     
     return train_features, train_labels, cross_features, cross_labels 
 
-def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, estimator, **hyper_param_config: dict):
+def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, estimator_name, estimator, **hyper_param_config: dict):
     """
     args:
         subjects_features: pd.DataFrame - 
@@ -93,33 +119,106 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
     # create model with specific hyper param configurations
     model = estimator(**hyper_param_config)
 
-    folds_acc = []
-    folds_prec = []
-    folds_rec = []
-    folds_f1_score = []
-    folds_roc_auc = []
+    # will be populated later during loso cross validation
+    results = {f'{estimator_name}': []}
+
+    # initialize empty lists to collect all metric values per fold
+    folds_train_acc = []
+    folds_train_prec = []
+    folds_train_rec = []
+    folds_train_f1 = []
+    folds_train_roc_auc = []
+    folds_cross_acc = []
+    folds_cross_prec = []
+    folds_cross_rec = []
+    folds_cross_f1 = []
+    folds_cross_roc_auc = []
 
     # split features and labels into train and cross by 
     # leaving 1 subject out for cross validatoin and the
     # rest for training, iterated for all subjects
     for subject_id in subject_to_id.values():
+        # split data by leaving one subject out for testing
+        # and the rest for training
         train_features, train_labels, cross_features, cross_labels = leave_one_subject_out(subjects_features, subjects_labels, subject_id)
-        # print(f'train features: {train_features}\n')
-        # print(f'cross features: {cross_features}\n')
-        # print(f'train_features shape: {train_features.shape}')
-        # print(f'train_labels shape: {train_labels.shape}')
-        # print(f'cross_features shape: {cross_features.shape}')
-        # print(f'cross_labels shape: {cross_labels.shape}')
 
         # train model
         model.fit(train_features.to_numpy(), train_labels.to_numpy().ravel())
 
-        # compare cross labels to predicted labels
-        pred_labels = model.predict(cross_features.to_numpy())
-        print(f'fold: {subject_id} with hyper params: {hyper_param_config}')
+        # compare true cross and train labels to pred cross and train labels
+        pred_train_labels = model.predict(cross_features.to_numpy())
+        pred_cross_labels = model.predict(train_features.to_numpy())
+
+        # compute performance metric values for each fold
+        fold_train_acc = accuracy_score(y_true=train_labels, y_pred=pred_train_labels)
+        fold_cross_acc = accuracy_score(y_true=cross_labels, y_pred=pred_cross_labels)
+        fold_train_prec = precision_score(y_true=train_labels, y_pred=pred_train_labels)
+        fold_cross_prec = precision_score(y_true=cross_labels, y_pred=pred_cross_labels)
+        fold_train_rec = recall_score(y_true=train_labels, y_pred=pred_train_labels)
+        fold_cross_rec = recall_score(y_true=cross_labels, y_pred=pred_cross_labels)
+        fold_train_f1 = f1_score(y_true=train_labels, y_pred=pred_train_labels)
+        fold_cross_f1 = f1_score(y_true=cross_labels, y_pred=pred_cross_labels)
+        fold_train_roc_auc = roc_auc_score(y_true=train_labels, y_score=pred_train_labels)
+        fold_cross_roc_auc = roc_auc_score(y_true=cross_labels, y_score=pred_cross_labels)
+        
+        # save append each metric value to each respective list
+        folds_train_acc.append(fold_train_acc)
+        folds_cross_acc.append(fold_cross_acc)
+        folds_train_prec.append(fold_train_prec)
+        folds_cross_prec.append(fold_cross_prec)
+        folds_train_rec.append(fold_train_rec)
+        folds_cross_rec.append(fold_cross_rec)
+        folds_train_f1.append(fold_train_f1)
+        folds_cross_f1.append(fold_cross_f1)
+        folds_train_roc_auc.append(fold_train_roc_auc)
+        folds_cross_roc_auc.append(fold_cross_roc_auc)
+
+        # maybe save here fold train and cross metric values partially
+        """but how to name file and how to identify what hyper params this dataframe was created on?
+        or maybe I just use a json file??
+        """
+
+        """
+        {
+            "gbt": [
+                "hyper param config 1": {
+                    "folds_train_acc": [fold 1 train acc, fold 2 train acc, ...],
+                    "folds_cross_acc": [fold 1 cross acc, fold 2 cross acc, ...],
+                    ...
+                    "folds_train_roc_auc": [fold 1 train roc auc, fold 2 train roc auc, ...],
+                    "folds_cross_roc_auc": [fold 1 cross roc auc, fold 2 cross roc auc, ...],
+                },
+
+                "hyper param config 2":, {
+                    ...
+                },
+
+                ...
+
+                "hyper param config n": {
+                    ...
+                }
+            ]
+        }
+        """
+
+        results[f'{estimator_name}'][str(hyper_param_config)] = {}
+
+        # if json file exists read and use it
+        #     most likely if first if hyper param config already exists 
+        #         if folds are incomplete overwrite teh incomplete folds metric values with new upcoming ones
+        if os.path.exists(f'./results/{estimator_name}.json'):
+            pass
+
+        # if json file does not exist
+        else:
+            pass
+            
         
 
-def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, n_rows_to_sample: int, n_features_to_select: int, estimator, hyper_params: dict):
+        print(f'fold: {subject_id} with hyper params: {hyper_param_config}')
+
+def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, n_rows_to_sample: int, n_features_to_select: int, estimator_name: str, estimator, hyper_params: dict):
     """
     args:
         hyper_params - is a dictionary containing all the hyperparameters
@@ -136,32 +235,13 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
         >>>
     """
 
-    # select best features first by means of backward
-    # feature selection based on support vector classifiers
-    svc = SVC(kernel='linear')
-    # selector = SequentialFeatureSelector(svc, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
-    selector = RFE(svc, n_features_to_select=n_features_to_select, verbose=1)
-    
-    # remove subject_id column then convert to numpy array
-    X = subjects_features.loc[:, subjects_features.columns != 'subject_id'].to_numpy()
-    Y = subjects_labels.loc[:, subjects_labels.columns != 'subject_id'].to_numpy().ravel()
-
     # sample a small part of the dataset
-    samples = np.random.choice(X.shape[0], size=n_rows_to_sample)
-    X = X[samples]
-    Y = Y[samples]
+    sample_ids = np.random.choice(subjects_features.shape[0], size=n_rows_to_sample)
 
-    # train feature selector on data
-    selector.fit(X, Y)
-
-    # obtain feature mask boolean values, and use it as index
-    # to select only the columns that have been selected by BFS 
-    # append also True element to feature mask since subject id
-    # has been removed in X
-    feats_mask = selector.get_support().tolist() + [True]
-    selected_feats = subjects_features.columns[feats_mask]
-    subjects_features = subjects_features[selected_feats].iloc[samples]
-    subjects_labels = subjects_labels.drop(columns=['0']).iloc[samples]
+    # use returned features from select_features()
+    selected_feats = select_features(subjects_features, subjects_labels, n_features_to_select=n_features_to_select, sample_ids=sample_ids)
+    subjects_features = subjects_features[selected_feats].iloc[sample_ids]
+    subjects_labels = subjects_labels.drop(columns=['0']).iloc[sample_ids]
 
     # unpack the dictionaries items and separate into list of keys and values
     # ('n_estimators', 'max_depth', 'gamma'), ([10, 50, 100], [3], [1, 10, 100, 1000])
@@ -176,10 +256,15 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
         # we use the possible permutations and create a dictionary
         # of the same keys as hyper params
         hyper_param_config = dict(zip(keys, prod))
-        loso_cross_validation(
+        folds_train_acc, folds_cross_acc, \
+        folds_train_prec, folds_cross_prec, \
+        folds_train_rec, folds_cross_rec, \
+        folds_train_f1, folds_cross_f1, \
+        folds_train_roc_auc, folds_cross_roc_auc = loso_cross_validation(
             subjects_features, 
             subjects_labels, 
             subject_to_id, 
+            estimator_name,
             estimator,
             **hyper_param_config)
 
@@ -245,7 +330,8 @@ if __name__ == "__main__":
         },
         'gbt': {
             'model': GradientBoostingClassifier, 
-            'hyper_params': {'n_estimators': [200, 400, 600], 'learning_rate': [0.01, 0.1], 'max_depth': [3, 5, 10], 'verbose': [1]}
+            # 'hyper_params': {'n_estimators': [200, 400, 600], 'learning_rate': [0.01, 0.1], 'max_depth': [3, 5, 10], 'verbose': [1]}
+            'hyper_params': {'n_estimators': [200, 400], 'learning_rate': [0.01], 'max_depth': [3], 'verbose': [1]}
         },
     }
 
@@ -258,6 +344,7 @@ if __name__ == "__main__":
         subject_to_id, 
         n_features_to_select=args.n_features_to_select, 
         n_rows_to_sample=args.n_rows_to_sample,
+        estimator_name=args.m,
         estimator=models[args.m]['model'],
         hyper_params=models[args.m]['hyper_params']
     )

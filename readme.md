@@ -152,10 +152,21 @@ however in our paper we will be using backward feature selection
 * <s>decompose signal into phasic and tonic components</s>
 * detect and correct the artifacts using LSTM-SVM and Llanes-Jurado et al. correction pipeline
 * find dataset about stress detection with raw eda signals
-* find out what BioVid and PainMoinit dataset from gouverneur et al. (2023) to trace the code they wrote
-* review repo of gouverneur et al. (2023) since it details how autoregressive feature extraction, VFCDM from Hossain et al. (2022) works
+* <s>find out what BioVid and PainMoinit dataset from gouverneur et al. (2023) to trace the code they wrote</s>
+* <s>review repo of gouverneur et al. (2023) since it details how autoregressive feature extraction,</s>
+* research how VFCDM from Hossain et al. (2022) works
 * review repo of gouverneur et al. (2023) to learn how cvxEDA works
 * <s>review repo of gouverneur et al. (2023) to learn how RFE-LOSO 5-fold cross validation works</s>
+* visualize results of each model with specific hyper param config at each fold i.e. 
+at fold 1 this is the cross and train accuracy, with hyper param config 1 
+at fold 2 this is the cross and train accuracy, with hyper param config 1
+at fold n this is the cross and train accuracy, with hyper param config 1
+x-axis could be the folds, y-axis could be the cross and train accuracy and other metrics
+* visualize overall mean train and mean cross accuracy and other metrics across all hyper params i.e.
+mean train accuracy and mean cross accuracy with hyper param config 1
+mean train accuracy and mean cross accuracy with hyper param config 2
+mean train accuracy and mean cross accuracy with hyper param config n
+x-axis could be hyper param a in hyper param config 1, hyper param a in hyper param config 2
 
 
 
