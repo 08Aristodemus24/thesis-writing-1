@@ -167,8 +167,10 @@ mean train accuracy and mean cross accuracy with hyper param config 1
 mean train accuracy and mean cross accuracy with hyper param config 2
 mean train accuracy and mean cross accuracy with hyper param config n
 x-axis could be hyper param a in hyper param config 1, hyper param a in hyper param config 2
-
-
+* testing on 500 rows of all subjects features and labels will likely produce imbalance of classes for each subject so it is imperative that I need to train on all subjects
+https://stackoverflow.com/questions/43162506/undefinedmetricwarning-f-score-is-ill-defined-and-being-set-to-0-0-in-labels-wi
+As mentioned in the comments, some labels in y_test don't appear in y_pred. Specifically in this case, label '2' is never predicted:
+y_test = [0, 0, 0, 0, 0] y_pred = [1, 0, 0, 0, 0]
 
 
 ## SVM mechanism

@@ -72,8 +72,8 @@ def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFra
     selector = RFE(estimator=svc, n_features_to_select=n_features_to_select, verbose=1)
     
     # remove subject_id column then convert to numpy array
-    X = subjects_features.loc[sample_ids:, subjects_features.columns != 'subject_id'].to_numpy()
-    Y = subjects_labels.loc[sample_ids:, subjects_labels.columns != 'subject_id'].to_numpy().ravel()
+    X = subjects_features.loc[sample_ids, subjects_features.columns != 'subject_id'].to_numpy()
+    Y = subjects_labels.loc[sample_ids, subjects_labels.columns != 'subject_id'].to_numpy().ravel()
 
     # train feature selector on data
     selector.fit(X, Y)
@@ -97,15 +97,62 @@ def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_
         of subjects features and set of subjects labels
     """
 
+    # create boolean values
     cross_set = features['subject_id'] == subject_id
     
     # split train and cross data based on selected subject
-    cross_features = features[cross_set]
-    cross_labels = labels[cross_set]
-    train_features = features[~cross_set]
-    train_labels = labels[~cross_set]
+    # (14, 1), (14,)
+    cross_features = features.loc[cross_set, :].to_numpy()
+    cross_labels = labels.loc[cross_set, :].to_numpy().ravel()
+    train_features = features.loc[~cross_set, :].to_numpy()
+    train_labels = labels.loc[~cross_set, :].to_numpy().ravel()
     
     return train_features, train_labels, cross_features, cross_labels 
+
+def check_file_key(estimator_name, hyper_param_config_key):
+    # if json file exists read and use it
+    if os.path.exists(f'./results/{estimator_name}.json'):
+        # read json file as dictionary
+        with open(f'./results/{estimator_name}.json') as file:
+            results = json.loads(file)
+        
+        # also if hyper param already exists as a key then 
+        # move on to next hyper param by returning from function
+        if hyper_param_config_key in results[f'{estimator_name}']:
+            return False
+        
+        file.close()
+        return results
+
+    # if json file does not exist create one and read as dictionary
+    else:
+        # will be populated later during loso cross validation
+        results = {
+            f'{estimator_name}': {
+                # 'hyper_param_config_1': {
+                #     'folds_train_acc': [<fold 1 train acc>, <fold 2 train acc>, ...],
+                #     'folds_cross_acc': [<fold 1 cross acc>, <fold 2 cross acc>, ...],
+                #     ...
+                #     'folds_cross_roc_auc': [<fold 1 cross roc auc>, <fold 2 cross roc auc>, ...],
+                # },
+
+                # 'hyper_param_config_2': {
+                #     'folds_train_acc': [<fold 1 train acc>, <fold 2 train acc>, ...],
+                #     'folds_cross_acc': [<fold 1 cross acc>, <fold 2 cross acc>, ...],
+                #     ...
+                #     'folds_cross_roc_auc': [<fold 1 cross roc auc>, <fold 2 cross roc auc>, ...],
+                # },
+
+                # 'hyper_param_config_n': {
+                #     'folds_train_acc': [<fold 1 train acc>, <fold 2 train acc>, ...],
+                #     'folds_cross_acc': [<fold 1 cross acc>, <fold 2 cross acc>, ...],
+                #     ...
+                #     'folds_cross_roc_auc': [<fold 1 cross roc auc>, <fold 2 cross roc auc>, ...],
+                # },
+            }
+        }
+
+        return results
 
 def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, estimator_name, estimator, **hyper_param_config: dict):
     """
@@ -116,11 +163,19 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
         model - 
         hyper_param_config: dict - 
     """
+
+    # create key out of hyper_param_config
+    hyper_param_config_key = "|".join([f"{hyper_param}_{value}" for hyper_param, value in hyper_param_config.items()])
+
+    # if file exists or not return a dictionary but if hyper param 
+    # config key already exists return from function
+    if check_file_key(estimator_name, hyper_param_config_key) != False:
+        results = check_file_key(estimator, hyper_param_config_key)
+    else:
+        return
+    
     # create model with specific hyper param configurations
     model = estimator(**hyper_param_config)
-
-    # will be populated later during loso cross validation
-    results = {f'{estimator_name}': []}
 
     # initialize empty lists to collect all metric values per fold
     folds_train_acc = []
@@ -143,11 +198,11 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
         train_features, train_labels, cross_features, cross_labels = leave_one_subject_out(subjects_features, subjects_labels, subject_id)
 
         # train model
-        model.fit(train_features.to_numpy(), train_labels.to_numpy().ravel())
+        model.fit(train_features, train_labels)
 
         # compare true cross and train labels to pred cross and train labels
-        pred_train_labels = model.predict(cross_features.to_numpy())
-        pred_cross_labels = model.predict(train_features.to_numpy())
+        pred_train_labels = model.predict(train_features)
+        pred_cross_labels = model.predict(cross_features)
 
         # compute performance metric values for each fold
         fold_train_acc = accuracy_score(y_true=train_labels, y_pred=pred_train_labels)
@@ -173,50 +228,26 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
         folds_train_roc_auc.append(fold_train_roc_auc)
         folds_cross_roc_auc.append(fold_cross_roc_auc)
 
-        # maybe save here fold train and cross metric values partially
-        """but how to name file and how to identify what hyper params this dataframe was created on?
-        or maybe I just use a json file??
-        """
-
-        """
-        {
-            "gbt": [
-                "hyper param config 1": {
-                    "folds_train_acc": [fold 1 train acc, fold 2 train acc, ...],
-                    "folds_cross_acc": [fold 1 cross acc, fold 2 cross acc, ...],
-                    ...
-                    "folds_train_roc_auc": [fold 1 train roc auc, fold 2 train roc auc, ...],
-                    "folds_cross_roc_auc": [fold 1 cross roc auc, fold 2 cross roc auc, ...],
-                },
-
-                "hyper param config 2":, {
-                    ...
-                },
-
-                ...
-
-                "hyper param config n": {
-                    ...
-                }
-            ]
-        }
-        """
-
-        results[f'{estimator_name}'][str(hyper_param_config)] = {}
-
-        # if json file exists read and use it
-        #     most likely if first if hyper param config already exists 
-        #         if folds are incomplete overwrite teh incomplete folds metric values with new upcoming ones
-        if os.path.exists(f'./results/{estimator_name}.json'):
-            pass
-
-        # if json file does not exist
-        else:
-            pass
-            
-        
-
         print(f'fold: {subject_id} with hyper params: {hyper_param_config}')
+
+    # once all fold train and cross metric values collected update read
+    # dictionary with specific hyper param config as key and its recorded
+    # metric values as value
+    results[f'{estimator_name}'][hyper_param_config_key] = {
+        'folds_train_acc':  folds_train_acc,
+        'folds_cross_acc': folds_cross_acc,
+        'folds_train_prec': folds_train_prec,
+        'folds_cross_prec': folds_cross_prec,
+        'folds_train_rec': folds_train_rec,
+        'folds_cross_rec': folds_cross_rec,
+        'folds_train_f1': folds_train_f1,
+        'folds_cross_f1': folds_cross_f1,
+        'folds_train_roc_auc': folds_train_roc_auc,
+        'folds_cross_roc_auc': folds_cross_roc_auc
+    }
+
+    with open(f'results/{estimator_name}.json', 'w') as file:
+        json.dump(results, file)
 
 def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, n_rows_to_sample: int, n_features_to_select: int, estimator_name: str, estimator, hyper_params: dict):
     """
@@ -241,7 +272,7 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
     # use returned features from select_features()
     selected_feats = select_features(subjects_features, subjects_labels, n_features_to_select=n_features_to_select, sample_ids=sample_ids)
     subjects_features = subjects_features[selected_feats].iloc[sample_ids]
-    subjects_labels = subjects_labels.drop(columns=['0']).iloc[sample_ids]
+    subjects_labels = subjects_labels.drop(columns=['subject_id']).iloc[sample_ids]
 
     # unpack the dictionaries items and separate into list of keys and values
     # ('n_estimators', 'max_depth', 'gamma'), ([10, 50, 100], [3], [1, 10, 100, 1000])
@@ -256,11 +287,7 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
         # we use the possible permutations and create a dictionary
         # of the same keys as hyper params
         hyper_param_config = dict(zip(keys, prod))
-        folds_train_acc, folds_cross_acc, \
-        folds_train_prec, folds_cross_prec, \
-        folds_train_rec, folds_cross_rec, \
-        folds_train_f1, folds_cross_f1, \
-        folds_train_roc_auc, folds_cross_roc_auc = loso_cross_validation(
+        loso_cross_validation(
             subjects_features, 
             subjects_labels, 
             subject_to_id, 
