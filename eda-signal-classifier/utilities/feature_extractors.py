@@ -330,19 +330,21 @@ def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
 
 
 
-def _get_amp_phase(s_t):
+def _get_amp_phase(z):
     """
     Calculates amplitude and phase from a complex number.
 
     args:
-        s_t (complex): A complex number representing a sample of the Hilbert-transformed signal.
+        z (complex): A complex number representing a sample of the Hilbert-transformed signal.
 
     Returns:
         tuple: A tuple containing the amplitude and phase.
     """
-
-    amp = np.abs(s_t)
-    phase = np.angle(s_t)
+    # recall that a complex number consists of a 
+    # real number and an imaginary number
+    z_imag, z_real = z.imag, z.real
+    amp = np.abs(z_imag ** 2 + z_real ** 2)
+    phase = np.arctan(z_imag / z_real)
     return amp, phase
 
 
@@ -668,8 +670,6 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
         wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_range, wavelet_feats_half_n_coeffs_above_zero,
         ])
     
-    print(features.shape)
-    
     return features
 
 def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_sec: int, samples_per_win_size: int):
@@ -868,65 +868,4 @@ def concur_extract_features_from_all(dir: str, files: list[str]):
         eda_data = list(exe.map(helper, files))
 
     return eda_data
-
-
-# ok, but I have here similar code and I was wondering if you could analyze it because however output of components is
-# ```
-# [[array([nan, nan, nan, ..., nan, nan, nan]),
-#   array([nan, nan, nan, ..., nan, nan, nan])],
-#  [array([nan, nan, nan, ..., nan, nan, nan]),
-#   array([nan, nan, nan, ..., nan, nan, nan])]] 
-# ```
-
-# ```
-# def butter_highpass(cutoff, samp_freq, order, btype):
-#     """
-#     implementation of Gouverneur et al. (2023)'s butter_highpass
-#     function
-#     """
-#     normal_cutoff = 2. * cutoff / float(samp_freq)
-#     b, a = butter(order, normal_cutoff, btype=btype)
-#     return b, a
-
-# def butter_highpass_filter(data, cutoff, samp_freq, order, btype):
-#     """
-#     implementation of Gouverneur et al. (2023)'s butter_highpass_filter
-#     function
-#     """
-#     b, a = butter_highpass(cutoff, samp_freq, order=order, btype=btype)
-#     y = filtfilt(b, a, data, padlen=2)
-#     return y
-
-# total_seconds = raw_eda_signal.shape[1] / 128
-
-# # interpolates 128hz signal to 4hz
-# first_resample = resample_axis(raw_eda_signal, input_freq=128, output_freq=4, axis=1)
-# median_filtered = np.array([median_filter(subject_signal, size=4) for subject_signal in first_resample])
-
-# # interpolates 4hz signal to 2hz
-# second_resample = resample_axis(median_filtered, input_freq=4, output_freq=2, axis=1)
-
-# highpass_filtered = np.array([butter_highpass_filter(subject_signal, cutoff=0.01, samp_freq=128, order=8, btype='highpass') for subject_signal in second_resample])
-
-# # data length is 832830
-# data_length = raw_eda_signal[0].shape[0]
-# center_freqs = [0.04, 0.12, 0.2, 0.28, 0.36, 0.44, 0.52, 0.6, 0.68, 0.76, 0.84, 0.92]
-# bandwidth = 0.04
-
-# # length is 416415
-# length = data_length // 2
-
-# components = []
-# for center_freq in center_freqs[1:3]:
-#     # finite-impulse response (FIR)
-#     fir = firwin(numtaps=length, cutoff=center_freq, width=bandwidth)
-
-#     # adaptive lowpass filter (LPF)
-#     component = [lfilter(fir, 1, subject_signal) for subject_signal in highpass_filtered]
-#     components.append(component)
-# ```
-
-# so could it be that the we need to have compatible center frequencies, bandwidth, cutoff frequency, order values etc. for signals recorded at 128hz
-
-
 
