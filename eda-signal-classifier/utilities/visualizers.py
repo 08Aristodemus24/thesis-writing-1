@@ -1,747 +1,930 @@
-import numpy as np
+import math
 import pandas as pd
+import numpy as np
+# import tensorflow as tf
+import pywt
+from concurrent.futures import ThreadPoolExecutor
+import datetime
+import pandas as pd
+from scipy.signal import butter, lfilter, hilbert
+from scipy.stats import entropy
+from statsmodels.tsa.ar_model import AutoReg
 
-import matplotlib as mplt
-import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'sans-serif'
-font = {'fontname': 'Helvetica'}
-
-import matplotlib.cm as cm
-import matplotlib as mpl
-import seaborn as sb
-import networkx as nx
-
-from sklearn.metrics import (
-  accuracy_score, 
-  precision_score, 
-  recall_score, 
-  f1_score, 
-  roc_auc_score, 
-  mean_squared_error, 
-  mean_absolute_error)
-from sklearn.manifold import TSNE
-
-import itertools
-
-def view_time_frame(raw_eda_df, samp_freq=128, begin_time_s=1750, end_time_s=1765, cols_to_use=['rawdata', 'cleandata', 'signal_automatic'], save_img=True, img_title='untitled'):
+def interpolate_signals(data: pd.DataFrame, sample_rate: int=128, start_time: datetime.datetime | str='01/01/1970', target_hz: int=8):
     """
-    ntoe cols to use must be equal to 5 or more
+    interpolates signals to a certain frequency i.e. if an
+    eda signal has been recorded at 128hz it can be interpolated
+    to 8hz, 16hz, etc. via downsampling or to 256hz via upsampling
     """
-    fig = plt.figure(figsize=(17, 5))
+    
+    # get number of rows of dataframe
+    n_rows = data.shape[0]
+    if sample_rate < 8:
+        if sample_rate == 2:
+            # we modify the index of the dataframe to be time values
+            data.index = pd.date_range(start=start_time, periods=n_rows, freq='500ms')
+        elif sample_rate == 4:
+            data.index = pd.date_range(start=start_time, periods=n_rows, freq='250ms')
 
-    axis = fig.add_subplot()
+        # if our sample rate is 1, 3, 5, 6, or 7 which are all below 8 then
+        # we convert our timestamps to that that increments to 125 milliseconds 
+        # now
+        data = data.resample(f'{1000 / target_hz}ms').mean()
+    
+    # this is if sample rate is 8 or greater than 8
+    else:
+        if sample_rate > 8:
+            # we create a list of indeces to use as index to access parts 
+            # of the dataframe which are at this point still integers
+            indices = list(range(0, n_rows))
+            indices_sampled = indices[0::int(sample_rate / target_hz)]
+            data = data.iloc[indices_sampled]
+        
+        # get number of rows of dataframe which were newly sampled
+        sampled_n_rows = data.shape[0]
+
+        # set the index to be our target frequency (in hz) i.e. if our new target 
+        # frequency of  the signal is 8hz then 1000 / 8 would result in 125ms, if
+        # we want it to be 16 then 1000 / 16 would result in 62.5ms
+        freq = f'{1000 / target_hz}ms'
+        # print(freq)
+        data.index = pd.date_range(start=start_time, periods=sampled_n_rows, freq=freq)
+
+    # since data resampling and then aggregation (i.e. mean, sum, etc.) 
+    # from 500ms to 125ms for instance will likely generate empty or 
+    # nan values we need to also interpolate these empty values
+    data = _interpolate_empty_values(data)
+
+    return data
 
 
-    # why is it multiplied by 128?
-    # results it 224000 and 225920 and is used as indeces to access a slice of the dataframes rows
-    begin_sample, end_sample = begin_time_s * samp_freq, end_time_s * samp_freq
 
-    # 
-    time_to_plot = raw_eda_df["time"].iloc[begin_sample:end_sample]
+def _interpolate_empty_values(data: pd.DataFrame):
+    """
+    # since data resampling and then aggregation (i.e. mean, sum, etc.) 
+    # from 500ms to 125ms for instance will likely generate empty or 
+    # nan values we need to also interpolate these empty values
+    """
 
-    # colors and linestyles to use
-    colors = ['#df03fc', '#5203fc', '#fc034e', '#fc8003', '#3dfc03']
-    lines = ['solid', 'dotted', 'dashed', 'dashdot', (5, (10, 3))]
+    # instead of DataframeIndex object extract 
+    # its original values
+    cols = data.columns.values
 
-    for i, col in enumerate(cols_to_use):
-        col_to_plot = raw_eda_df[col].iloc[begin_sample:end_sample]
-        axis.plot(time_to_plot, col_to_plot, label=col, alpha=0.75, linestyle=lines[i], c=colors[i])
-    # axis.plot(time_to_plot, rawdata_to_plot, label="Raw data")
-    # axis.plot(time_to_plot, cleandata_to_plot, label="Manual", c="orange")
-    # axis.plot(time_to_plot, autodata_to_plot, label="Automatic", alpha=0.7, linestyle="--", c="red")
-    # axis.plot(time_to_plot, autodata_to_plot, label="Automatic", alpha=0.7, linestyle="--", c="red")
+    for col in cols:
+        # loop through each column/feature to use to access
+        # series of values in each column to interpolate thems
+        data.loc[:, col] = data[col].interpolate()
+
+    return data
+
+
+
+def _butter_lowpass(cutoff, samp_freq, order):
+    """
+    defines filter characteristics of the signal to be filtered
+    which will be used by butter_lowpass_filter, by utilizing
+    this functions return values which are the filter coefficients
+    a and b
+    """
+
+    # calculate nyquist frequency which is half the given
+    # sampling frequency 
+    nyq = samp_freq / 2
+    normed_cutoff = cutoff / nyq
+
+    # calculate filter coefficients
+    b, a = butter(order, normed_cutoff, btype='low', analog=False)
+
+    return b, a
+
+
+
+def butter_lowpass_filter(data, cutoff, samp_freq, order=5):
+    """
+    applies a low-pass filter to the eda signals using filter
+    coefficients calculated by butter_lowpass, which removes high 
+    frequency noise components from signals
+    """
+    # call butter_lowpass to obtain filter coefficients
+    b, a = _butter_lowpass(cutoff, samp_freq, order)
+
+    # apply coefficients to signal
+    filt_signal = lfilter(b, a, data)
+
+    return filt_signal
+
+
+
+def rejoin_data(features_per_hour_1, features_per_hour_2):
+    """
+    args:
+        features_per_hour_1 - is a list containing tuples containing an hour long 
+        feature dataframe and its respective labels e.g.
+
+        [(                         raw_128hz_amp  raw_128hz_1d_max  raw_128hz_1d_min  \
+            1970-01-01 00:00:00.000       0.000118          0.000111          0.000000   
+            1970-01-01 00:00:00.500       0.000222          0.000111          0.000111   
+            1970-01-01 00:00:01.000       0.000222          0.000111          0.000111   
+            ...                                ...               ...               ...   
+            1970-01-01 00:59:59.500       0.000000          0.000000          0.000000   
             
-    axis.legend(fontsize=14)
-    axis.grid()
-    
-    axis.set_title(f"{img_title}")
-    axis.set_ylabel(r'$\mu S$', fontsize=16)
-    axis.set_xlabel("Time (s)", fontsize=16)
+                                    filt_128hz_amp  ...  first_32thofa_sec_max  \
+            1970-01-01 00:00:00.000    2.197134e-07  ...               0.000000   
+            1970-01-01 00:00:00.500    6.022223e-05  ...               0.000000   
+            1970-01-01 00:00:01.000    2.305891e-04  ...               0.000000   
+            ...                                 ...  ...                    ...   
+            1970-01-01 00:59:59.500    0.000000e+00  ...               0.000000   
+            
+                                    second_32thofa_sec_n_coeffs_above_zero  
+            1970-01-01 00:00:00.000                                     1.0  
+            1970-01-01 00:00:00.500                                     0.0  
+            1970-01-01 00:00:01.000                                     0.0  
+            ...                                                         ...  
+            1970-01-01 00:59:59.500                                     0.0  
+            
+            [7200 rows x 43 columns],
+            0       0.0
+            1       0.0
+            2       0.0
+                    ... 
+            7199    0.0
+            Length: 7200, dtype: float64), ...
+        ] of the uninterpolated raw eda data
 
-    if save_img:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
-
-def view_wavelet_coeffs(coeffs):
-    fig, axes = plt.subplots(nrows=4, ncols=1, figsize=(6, 6))
-    for i, axis in enumerate(axes):
-        axis.plot(coeffs[i], color='r')
-
-        if i == 0:
-            axis.set_title("Approximation coefficients", fontsize=14)
-        else:
-            axis.set_title("Detail coefficients", fontsize=14)
-            axis.set_ylabel("Level {}".format(i), fontsize=14, rotation=90)
-
-    plt.tight_layout()
-    plt.show()
-
-def analyze(X_trains, feature_names: list, fig_dims: tuple=(4, 2), color: str="#036bfc", img_title: str="untitled", save_img: bool=True, style: str='dark'):
+        features_per_hour_2 - same as features_per_hour_2 but is the interpolated version
+        of the raw eda data i.e. 16hz version of the raw 128hz eda data which always is
+        of the same length as the features_per_hour of the raw 128hz eda data
     """
-    suitable for all continuous input
 
-    to write:
-    dynamic division of features insteawd of 4, 2 what if there are 12 features 
-    of the data? 20? 32? 15? What then?
+    # initially create empty dataframes to populate later
+    # when dataframes are merged using concatenation
+    merged_features_1 = pd.DataFrame()
+    merged_features_2 = pd.DataFrame()
+    eda_labels = pd.Series()
+    for i in range(len(features_per_hour_1)):
+        merged_features_1 = pd.concat([merged_features_1, features_per_hour_1[i][0]], axis=0, ignore_index=True)
+        merged_features_2 = pd.concat([merged_features_2, features_per_hour_2[i][0]], axis=0, ignore_index=True)
+        eda_labels = pd.concat([eda_labels, features_per_hour_1[i][1]], ignore_index=True)
 
-    I can't just write indeces as the title of each subplot, I need to use a list 
-    feature names instead since more likely than not a numpy type dataset will be
-    used to process visualize these features and the range of their values
+    # concatenate the final two feature dataframes into 1 
+    # feature dataframe including now all features from the 
+    # uninterpolated and interpolated signals i.e. 128hz and 16hz
+    eda_feature_df = pd.concat([merged_features_1, merged_features_2], axis=1)
+
+    return eda_feature_df, eda_labels
+
+
+
+def get_time_frequency(sample_rate):
+    return f'{1000 / sample_rate}ms'
+
+
+
+def _differentiate(data):
+    """
+    computes the 1st and 2nd order derivative values 
+    of the eda signal
+    """
+    
+    F1_prime = (data[1:-1] + data[2:]) / 2 - data[1:-1] + data[:-2] / 2
+    F2_prime = data[2:] - (2 * data[1:-1]) + data[:-2]
+
+    return F1_prime, F2_prime
+
+
+
+def _shannon_entropy(data):
+    """
+    computes the shannon entropy value of the
+    given segment of an eda signal
+    """
+
+    # compute probability distribution
+    probs = np.power(data, 2) / np.sum(np.power(data, 2))
+
+    # calculate entropy by multiplying probability distribution
+    # to logarithm of probability distribution of base 2
+    entropy = probs * np.log2(probs)
+    shannon_entropy = -1 * np.sum(entropy)
+
+    return shannon_entropy
+
+def _standardize_signals(data):
+    """
+    standardizes the given signal either using min-max 
+    scaling or by z-score
+    """
+
+def _compute_stat_feats(data):
+    """
+    computes the statistical features of both the 
+    raw/unfiltered signal and the filtered signal
+    """
+
+    raw_signal = data['raw_signal']
+    filt_signal = data['filtered_signal']
+
+    raw_1d_signal, raw_2d_signal = _differentiate(raw_signal)
+    filt_1d_signal, filt_2d_signal = _differentiate(filt_signal)
+
+    raw_max = np.max(raw_signal, axis=0)
+    raw_min = np.min(raw_signal, axis=0)
+    raw_amp = np.mean(raw_signal, axis=0)
+    raw_median = np.median(raw_signal, axis=0)
+    raw_std = np.std(raw_signal, axis=0)
+    raw_range = np.max(raw_signal, axis=0) - np.min(raw_signal, axis=0)
+    raw_shannon_entropy = entropy(raw_signal.value_counts())
+
+    raw_1d_max = np.max(raw_1d_signal, axis=0)
+    raw_1d_min = np.min(raw_1d_signal, axis=0)
+    raw_1d_amp = np.mean(raw_1d_signal, axis=0)
+    raw_1d_median = np.median(raw_1d_signal, axis=0)
+    raw_1d_std = np.std(raw_1d_signal, axis=0)
+    raw_1d_range = np.max(raw_1d_signal, axis=0) - np.min(raw_1d_signal, axis=0)
+    raw_1d_shannon_entropy = entropy(raw_1d_signal.value_counts())
+    raw_1d_max_abs = np.max(np.absolute(raw_1d_signal), axis=0)
+    raw_1d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
+
+    raw_2d_max = np.max(raw_2d_signal, axis=0)
+    raw_2d_min = np.min(raw_2d_signal, axis=0)
+    raw_2d_amp = np.mean(raw_2d_signal, axis=0)
+    raw_2d_median = np.median(raw_2d_signal, axis=0)
+    raw_2d_std = np.std(raw_2d_signal, axis=0)
+    raw_2d_range = np.max(raw_2d_signal, axis=0) - np.min(raw_2d_signal, axis=0)
+    raw_2d_shannon_entropy = entropy(raw_2d_signal.value_counts())
+    raw_2d_max_abs = np.max(np.absolute(raw_2d_signal), axis=0)
+    raw_2d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
+
+    filt_max = np.max(filt_signal, axis=0)
+    filt_min = np.min(filt_signal, axis=0)
+    filt_amp = np.mean(filt_signal, axis=0)
+    filt_median = np.median(filt_signal, axis=0)
+    filt_std = np.std(filt_signal, axis=0)
+    filt_range = np.max(filt_signal, axis=0) - np.min(filt_signal, axis=0)
+    filt_shannon_entropy = entropy(filt_signal.value_counts())
+
+    filt_1d_max = np.max(filt_1d_signal, axis=0)
+    filt_1d_min = np.min(filt_1d_signal, axis=0)
+    filt_1d_amp = np.mean(filt_1d_signal, axis=0)
+    filt_1d_median = np.median(filt_1d_signal, axis=0)
+    filt_1d_std = np.std(filt_1d_signal, axis=0)
+    filt_1d_range = np.max(filt_1d_signal, axis=0) - np.min(filt_1d_signal, axis=0)
+    filt_1d_shannon_entropy = entropy(filt_1d_signal.value_counts())
+    filt_1d_max_abs = np.max(np.absolute(filt_1d_signal), axis=0)
+    filt_1d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
+
+    filt_2d_max = np.max(filt_2d_signal, axis=0)
+    filt_2d_min = np.min(filt_2d_signal, axis=0)
+    filt_2d_amp = np.mean(filt_2d_signal, axis=0)
+    filt_2d_median = np.median(filt_2d_signal, axis=0)
+    filt_2d_std = np.std(filt_2d_signal, axis=0)
+    filt_2d_range = np.max(filt_2d_signal, axis=0) - np.min(filt_2d_signal, axis=0)
+    filt_2d_shannon_entropy = entropy(filt_2d_signal.value_counts())
+    filt_2d_max_abs = np.max(np.absolute(filt_2d_signal), axis=0)
+    filt_2d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
+
+    return (raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy,
+    raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, 
+    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, 
+    filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy,
+    filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, 
+    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs)
+
+
+
+def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
+    """
+    computes autoregressive features by training AutoReg
+    from statsmodels.tsa.ar_model then obtaining sigma2
+    and param attributes containing the error variance and
+    all the optimized coefficients excluding the intercept
 
     args:
-        X_trains - a numpy matrix that will be used to visualize each of its
-        individual features and see where each features values range from and to
-
-        feature_names - a list of strings representing the names of each feature
-        column, or variable of the dataset/matrix since it is a numpy array in
-        which case it would not contain any meta data such as the name of each
-        feature, column, or variable
+        data - is a 0.5s segment/window/epoch of a subjects
+        128hz signals
     """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    # see where each feature lies
-    # sees the range where each feature lies
-    first_dim, zeroeth_dim = fig_dims
-    fig, axes = plt.subplots(first_dim, zeroeth_dim, figsize=(15, 10))
-    fig.tight_layout(pad=1)
-
-    # no. of instances and features
-    num_instances = X_trains.shape[0]
-    num_features = X_trains.shape[1]
     
-    zeros = np.zeros((num_instances,))
-    for feature_col_i, axis in enumerate(axes.flat):
-        # extracts the current feature column which will be of 
-        # m x 1 dimensionality which we will need to reshape to 
-        # just m now
-        curr_feature = X_trains[:, feature_col_i].reshape(-1)
+    # raw_signal = data['raw_signal']
 
-        # here we plot the current features array of values
-        # to an array of zeroes of m length in order to
-        # see the features values only on the x-axis and on the 
-        # 0 value only in its y-axis
-        axis.scatter(curr_feature, zeros, alpha=0.25, marker='p', c=color)
-        axis.set_title(feature_names[feature_col_i], )
-        
-    if save_img:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
+    # train_size = 0.8
+    # partition_index = int(train_size * data.shape[0])
+    # train_data = data.iloc[:partition_index]
+    # test_data = data.iloc[partition_index:]
 
-def data_split_metric_values(Y_true, Y_pred, metrics_to_use: list=['accuracy', 'precision', 'recall', 'f1', 'roc-auc'], style: str='dark'):
+    ar_model = AutoReg(data['raw_signal'], lags=2)
+    ar_results = ar_model.fit()
+
+    # get all autoregressive model's optimized coefficients
+    # except for the intercept or bias coefficient. here we
+    # would have 2 coefficients since our lag value was 2
+    ar_coeffs = ar_results.params.iloc[1:].tolist()
+
+    # get error variance attribute from trained 
+    # autoregressive model
+    ar_error_var = ar_results.sigma2
+
+    # combine ar coeffs and ar error variance
+    ar_features = ar_coeffs + [ar_error_var]
+
+    return ar_features
+
+
+
+def _get_amp_phase(z):
     """
+    Calculates amplitude and phase from a complex number.
+
     args:
-        Y_true - a vector of the real Y values of a data split e.g. the 
-        training set, validation set, test
+        z (complex): A complex number representing a sample of the Hilbert-transformed signal.
 
-        Y_pred - a vector of the predicted Y values of an ML model given 
-        a data split e.g. a training set, validation set, test set
-
-        unique_labels - the unique values of the target/real Y output
-        values. Note that it is not a good idea to pass the unique labels
-        of one data split since it may not contain all unique labels
-
-        given these arguments it creates a bar graph of all the relevant
-        metrics in evaluating an ML model e.g. accuracy, precision,
-        recall, and f1-score.
+    Returns:
+        tuple: A tuple containing the amplitude and phase.
     """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
+    # recall that a complex number consists of a 
+    # real number and an imaginary number
+    z_imag, z_real = z.imag, z.real
+    amp = np.abs(z_imag ** 2 + z_real ** 2)
+    phase = np.arctan(z_imag / z_real)
+    return amp, phase
 
-    plt.style.use(styles.get(style, 'default'))
 
-    unique_labels = np.unique(Y_true)
 
-    metrics = {
-        'accuracy': accuracy_score(Y_true, Y_pred),
-        'rmse': np.sqrt(mean_squared_error(Y_true, Y_pred)),
-        'mse': mean_squared_error(Y_true, Y_pred),
-        'precision': precision_score(Y_true, Y_pred, labels=unique_labels, average='weighted'),
-        'recall': recall_score(Y_true, Y_pred, labels=unique_labels, average='weighted'),
-        'f1': f1_score(Y_true, Y_pred, labels=unique_labels, average='weighted'),
-        'roc-auc': roc_auc_score(Y_true, Y_pred, labels=unique_labels, average='weighted')
-    }
-
-    # create metric_values dictionary
-    metric_values = {}
-    for index, metric in enumerate(metrics_to_use):
-      metric_values[metric] = metrics[metric]
-
-    return metric_values
-
-def view_value_frequency(word_counts, colormap: str="plasma", title: str="untitled", save_img: bool=True, kind: str='barh', limit: int=6, asc: bool=False, style: str='dark'):
+def _compute_vfcdm_feats(data: pd.DataFrame | np.ndarray, hertz: int):
     """
-    suitable for all discrete input
+    computes time-frequency based features based on variable
+    frequency complex demodulation (VFCDM), using cutoff
+    frequencies of 64, 48, 32, and 16 hertz on the 128hz
+    signal
 
-    plots either a horizontal bar graph to display frequency of words top 'limit' 
-    words e.g. top 20 or a pie chart to display the percentages of the top 'limit' 
-    words e.g. top 20, specified by the argument kind which can be either
-    strings barh or pie
-
-    main args:
-        words_counts - is actually a the returned value of the method
-        of a pandas series, e.g.
-            hom_vocab = pd.Series(flat_hom)
-            hom_counts = hom_vocab.value_counts()
-
-        limit - is the number of values to only consider showing in
-        the horizontal bar graph and the pie chart
-
-        colormap - can be "viridis" | "crest" also
+    args:
+        data - is a 0.5s segment/window/epoch of a subjects
+        128hz signals
     """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
 
-    plt.style.use(styles.get(style, 'default'))
+    # these cutoffs namely 0.5, 0.375, 0.25, and 0.125 when
+    # multiplied to 128 results in 64, 48, 32, and 16. 
+    # This will basically just cutoff the signal by 50%, 37.5%,
+    # 25%, and 12.5%
+    cutoffs = [4 / 8, 3 / 8, 2 / 8, 1 / 8]
+    decomp_signals = []
 
-    # get either last few words or first feww words
-    data = word_counts[:limit].sort_values(ascending=asc)
+    for cutoff in cutoffs:
+        filtered_signal = butter_lowpass_filter(data['raw_signal'], cutoff=cutoff, samp_freq=hertz)
 
-    cmap = cm.get_cmap(colormap)
-    fig = plt.figure(figsize=(15, 10))
-    axis = fig.add_subplot()
-    
-    if kind == 'barh':        
-        axis.barh(data.index, data.values, color=cmap(np.linspace(0, 1, len(data))))
-        axis.set_xlabel('frequency', )
-        axis.set_ylabel('value', )
-        axis.set_title(title, )
-        
-    elif kind == 'pie':
-        axis.pie(data, labels=data.index, autopct='%.2f%%', colors=cmap(np.linspace(0, 1, len(data))))
-        axis.axis('equal')
-        axis.set_title(title, )
-    
-    if save_img:
-        plt.savefig(f'./figures & images/{title}.png')
-        plt.show()
+        # hilbert signal would have same shape as filtered signal 
+        # i.e. (64,) or (8,) if signal is 16hz 
+        hilbert_signal = hilbert(filtered_signal)
 
-def multi_class_heatmap(conf_matrix, img_title: str="untitled", cmap: str='YlGnBu', save_img: bool=True, style: str='dark'):
+        decomp_signal = []
+        for s_t in hilbert_signal:
+            amp, phase = _get_amp_phase(s_t)
+
+            # 2 * 3.14... * 0.5 * 128 + phase
+            point = amp * np.cos(2 * np.pi * cutoff * 128 + phase)
+            decomp_signal.append(point)
+
+        decomp_signals.append(decomp_signal)
+
+    # shape of decomposed signals will be (len(cutoffs), samples_per_win_size)
+    # which in this case is (4, 64)
+    decomp_signals = np.array(decomp_signals)
+
+    # compute statistical features from resulting
+    # decomposed signal
+    vfcdm_signals_mean = np.mean(decomp_signals, axis=1).tolist()
+    vfcdm_signals_std = np.std(decomp_signals, axis=1).tolist()
+
+    return vfcdm_signals_mean, vfcdm_signals_std
+
+
+
+def load_wavelet_data(data: pd.DataFrame | np.ndarray, hertz: int, samples_per_win_size: int):
     """
-    takes in the confusion matrix returned by the confusion_matrix()
-    function from sklearn e.g. conf_matrix_train = confusion_matrix(
-        Y_true_train, Y_pred_train, labels=np.unique(Y_true_train)
-    )
-
-    other args:
-        cmap - the color map you want the confusion matrix chart to have.
-        Other values can be 'flare'
-
-        style - the background of the plot e.g. dark or light
+    function to create whole and half wavelet dataframes
     """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
+    # determine frequency
+    # 128 / 8 is 16, then we use 16 as a divisor to 1
+    # 16 / 8 is 2, then we use 2 as a divisor to 1
+    # 8 / 8 is 1, then we use 1 as a divisor to 1
+    whole_freq = int(hertz / 8)
+    half_freq = int((hertz / 8) * 2)
+    # print(whole_freq)
+    # print(half_freq)
 
-    plt.style.use(styles.get(style, 'default'))
-    axis = sb.heatmap(conf_matrix, cmap=cmap, annot=True, fmt='g')
-    axis.set_title(img_title, )
+    # create timestamps
+    timestamp_list = pd.to_datetime(data['time'].iloc[0::samples_per_win_size], unit='s')
+    # print(timestamp_list)
 
-    if save_img:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
+    # 128hz with 0.5s window is to 1/16 of a second yielding timestamps of 
+    # 8 hours total and 1/32 of a second yielding timestamps of 4 hours total 
+    # 16hz with 0.5s window is to 1/2 of a second yielding timestamps of 
+    # 8 hours total and 1/4 of a second yielding timestamps of 4 hours total 
+    # and 8hz with 5s window is to 1/1 and 1/2
+    whole_inc_ts = pd.date_range(start=timestamp_list[0], periods=data.shape[0], freq=f'{((1 / whole_freq) * 1000)}ms')
+    half_inc_ts = pd.date_range(start=timestamp_list[0], periods=data.shape[0], freq=f'{((1 / half_freq) * 1000)}ms')
 
-def view_metric_values(metrics_df, img_title: str="untitled", save_img: bool=True, colormap: str='mako', style: str='dark'):
-    """
-    given a each list of the training, validation, and testing set
-    groups accuracy, precision, recall, and f1-score, plot a bar
-    graph that separates these three groups metric values
+    # obtain wavelet coefficients
+    coeffs = restructure_wavelets(pywt.wavedec(data['raw_signal'], wavelet='haar', level=3))
+    cA_1, cD_3, cD_2, cD_1 = coeffs
+    n_rows_wavelet = cD_3.shape[0]
 
-    calculate accuracy, precision, recall, and f1-score for every 
-    data split using the defined data_split_metric_values() function 
-    above:
+    # reshape, calculate absolute and max value of wavelet coefficients
+    # such that all shapes of wavelet coefficients adhere to that of the
+    # third level coefficients shape
+    whole_coeff_1 = np.max(np.absolute(np.reshape(cD_1[:n_rows_wavelet * 4], newshape=(n_rows_wavelet, 4))), axis=1)
+    whole_coeff_2 = np.max(np.absolute(np.reshape(cD_2[:n_rows_wavelet * 2], newshape=(n_rows_wavelet, 2))), axis=1)
+    whole_coeff_3 = np.absolute(cD_3[:n_rows_wavelet])
 
-    train_acc, train_prec, train_rec, train_f1 = data_split_metric_values(Y_true_train, Y_pred_train)
-    val_acc, val_prec, val_rec, val_f1 = data_split_metric_values(Y_true_val, Y_pred_val)
-    test_acc, test_prec, test_rec, test_f1 = data_split_metric_values(Y_true_test, Y_pred_test)
-
-    metrics_df = pd.DataFrame({
-        'data_split': ['training', 'validation', 'testing'],
-        'accuracy': [train_acc, val_acc, test_acc], 
-        'precision': [train_prec, val_prec, test_prec], 
-        'recall': [train_rec, val_rec, test_rec], 
-        'f1-score': [train_f1, val_f1, test_f1]
+    # create whole wave features dataframe
+    whole_wave_features = pd.DataFrame({
+        f'first_{whole_freq}thofa_sec_feat': whole_coeff_1,
+        f'second_{whole_freq}thofa_sec_feat': whole_coeff_2,
+        f'third_{whole_freq}thofa_sec_feat': whole_coeff_3,
     })
-    """
 
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
+    # use whole increment timestamps as indices for the whole wave features dataframe
+    whole_wave_features.set_index(whole_inc_ts[:whole_wave_features.shape[0]], inplace=True)
 
-    plt.style.use(styles.get(style, 'default'))
+    # recall that cD_1 has shape of 9688 which is second_data_n_segments_half * 2
+    half_coeff_1 = np.max(np.absolute(np.reshape(cD_1[:n_rows_wavelet * 4], newshape=(n_rows_wavelet * 2, 2))), axis=1)
+    half_coeff_2 = np.absolute(cD_2[:n_rows_wavelet * 2])
 
-    # initialize empty array to be later converted to numpy
-    colors = []
+    half_wave_features = pd.DataFrame({
+        f'first_{half_freq}thofa_sec_feat': half_coeff_1,
+        f'second_{half_freq}thofa_sec_feat': half_coeff_2,
+    })
+
+    half_wave_features.set_index(half_inc_ts[:half_wave_features.shape[0]], inplace=True)
+
+    return whole_wave_features, half_wave_features
     
-    # excludes the data split column
-    n_metrics = metrics_df.shape[1] - 1
-    rgb_colors = cm.get_cmap(colormap, n_metrics)
-    for i in range(rgb_colors.N):
-        rgb_color = rgb_colors(i)
-        colors.append(str(mplt.colors.rgb2hex(rgb_color)))
-    colors = np.array(colors)
 
-    # sample n ids based on number of metrics of metrics df
-    sampled_ids = np.random.choice(list(range(colors.shape[0])), size=n_metrics, replace=False)
-    sampled_colors = colors[sampled_ids]
 
-    fig = plt.figure(figsize=(15, 10))
-    axis = fig.add_subplot()
+def restructure_wavelets(wavelet_coeffs):
+    """
+    takes in the calculated wavelet coefficients and
+    appends zeroes if needed to match the 3rd level
+    wavelet coefficients shape so it can later be reshaped
+    e.g. signal data of 310004 rows yields wavelet coefficients
+    from a level 3 discrete haar wavelet transform of shapes
+    155007, 77504, and 38752, as we can see 155007 is odd so we
+    append a zero at the end so that it has now 155008 elements
+    and so it can be reshaped to 
+    """
 
-    # uses the given array of the colors you want to use
-    sb.set_palette(sb.color_palette(sampled_colors))
+    cA_1, cD_3, cD_2, cD_1 = wavelet_coeffs
 
-    # create accuracy, precision, recall, f1-score of training group
-    # create accuracy, precision, recall, f1-score of validation group
-    # create accuracy, precision, recall, f1-score of testing group
-    df_exp = metrics_df.melt(id_vars='data_split', var_name='metric', value_name='score')
+    third_lvl_shape = cD_3.shape[0]
+    second_lvl_shape = cD_2.shape[0]
+    first_lvl_shape = cD_1.shape[0]
+    # print(third_lvl_shape)
+    # print(second_lvl_shape)
+    # print(first_lvl_shape)
+
+    if (((third_lvl_shape * 2) - second_lvl_shape) > 0) or (((third_lvl_shape * 4) - first_lvl_shape) > 0) or (third_lvl_shape % 2 != 0):
+        # calculate amount of zeros to append to 1st and 2nd level coefficients
+        n_zeros_second_lvl = (third_lvl_shape * 2) - second_lvl_shape
+        n_zeros_first_lvl = (third_lvl_shape * 4) - first_lvl_shape
+        # print(n_zeros_first_lvl, n_zeros_second_lvl)
+
+        # append the amount of calculated zeros to the 1st and 2nd level coefficients
+        second_lvl_zeros = np.zeros(shape=(n_zeros_second_lvl, ))
+        first_lvl_zeros = np.zeros(shape=(n_zeros_first_lvl, ))
+        cD_2 = np.hstack((cD_2, second_lvl_zeros))
+        cD_1 = np.hstack((cD_1, first_lvl_zeros))
+
+    return cA_1, cD_3, cD_2, cD_1
+
+
+
+def _compute_wave_feats(wave: pd.DataFrame | np.ndarray):
+    """
+    computes the maximum, mean, standard deviation, median, range
+    and no. of coefficients above zero values of the given wavelet 
+    dataframe
+    """
+
+    wavelet_feats_max = wave.max(axis=0).tolist()
+    wavelet_feats_mean = wave.mean(axis=0).tolist()
+    wavelet_feats_std = wave.std(axis=0).tolist()
+    wavelet_feats_median = wave.median(axis=0).tolist()
+    wavelet_feats_range = (wave.max(axis=0) - wave.min(axis=0)).tolist()
+    wavelet_feats_n_coeffs_above_zero = (wave > 0).astype('int').sum(axis=0)
+
+    return wavelet_feats_max, wavelet_feats_mean, wavelet_feats_std, wavelet_feats_median, wavelet_feats_range, wavelet_feats_n_coeffs_above_zero
+
+
+
+def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_sec: int):
+    """
+    computes the ff. features given the 0.5s segment/window dataframe or numpy matrix 'data'
+
+    raw_max - the maximum value of the raw/unfiltered eda signal
+    raw_min - the maximum value of the raw/unfiltered eda signal
+    raw_amp - the average/mean value of the raw/unfiltered eda signal
+    raw_median - the median value of the raw/unfiltered eda signal
+    raw_std - the standard deviation value of the raw/unfiltered eda signal
+    raw_range - the range value of the raw/unfiltered eda signal
+    raw_shannon_entropy - the shannon entropy value of the raw/unfiltered eda signal
+
+    raw_1d_max - the maximum value of the first order derivative of the unfiltered eda signal
+    raw_1d_min - the minimum value of the first order derivative of the unfiltered eda signal
+    raw_1d_amp - the average/mean value of the first order derivative of the unfiltered eda signal
+    raw_1d_median - the median value of the first order derivative of the unfiltered eda signal
+    raw_1d_std - the standard deviation value of the first order derivative of the unfiltered eda signal
+    raw_1d_range - the range value of the first order derivative of the unfiltered eda signal
+    raw_1d_shannon_entropy - the shannon entropy value of the first order derivative of the unfiltered eda signal
+    raw_1d_max_abs - the maximum value out of the absolute values of the first order derivative of the unfiltered eda signal
+    raw_1d_avg_abs - the average/mean value out of the absolute values of the first order derivative of the unfiltered eda signal
+
+    raw_2d_max - the maximum value of the second order derivative of the unfiltered eda signal
+    raw_2d_min - the minimum value of the second order derivative of the unfiltered eda signal
+    raw_2d_amp - the average/mean value of the second order derivative of the unfiltered eda signal
+    raw_2d_median - the median value of the second order derivative of the unfiltered eda signal
+    raw_2d_std - the standard deviation value of the second order derivative of the unfiltered eda signal
+    raw_2d_range - the range value of the second order derivative of the unfiltered eda signal
+    raw_2d_shannon_entropy - the shannon entropy value of the second order derivative of the unfiltered eda signal
+    raw_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the unfiltered eda signal
+    raw_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the unfiltered eda signal
     
-    axis = sb.barplot(data=df_exp, x='data_split', y='score', hue='metric', ax=axis)
-    axis.set_title(img_title, )
-    axis.set_yscale('log')
-    axis.legend()
+    filt_max - the maximum value of the low-pass filtered eda signal
+    filt_min - the maximum value of the low-pass filtered eda signal
+    filt_amp - the average/mean value of the low-pass filtered eda signal
+    filt_median - the median value of the low-pass filtered eda signal
+    filt_std - the standard deviation value of the low-pass filtered eda signal
+    filt_range - the range value of the low-pass filtered eda signal
+    filt_shannon_entropy - the shannon entropy value of the low-pass filtered eda signal
 
-    if save_img:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
+    filt_1d_max - the maximum value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_min - the minimum value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_amp - the average/mean value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_median - the median value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_std - the standard deviation value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_range - the range value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_shannon_entropy - the shannon entropy value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_max_abs - the maximum value out of the absolute values of the first order derivative of the low-pass filtered eda signal
+    filt_1d_avg_abs - the average/mean value out of the absolute values of the first order derivative of the low-pass filtered eda signal
 
-def view_classified_labels(df, img_title: str="untitled", save_img: bool=True, colors: list=['#db7f8e', '#b27392'], style: str='dark'):
-    """
-    given a each list of the training, validation, and testing set
-    groups accuracy, precision, recall, and f1-score, plot a bar
-    graph that separates these three groups metric values
-
-    calculates all misclassified vs classified labels for training,
-    validation, and testing sets by taking in a dataframe called
-    classified_df created with the following code:
-
-    num_right_cm_train = conf_matrix_train.trace()
-    num_right_cm_val = conf_matrix_val.trace()
-    num_right_cm_test = conf_matrix_test.trace()
-
-    num_wrong_cm_train = train_labels.shape[0] - num_right_cm_train
-    num_wrong_cm_val = val_labels.shape[0] - num_right_cm_val
-    num_wrong_cm_test = test_labels.shape[0] - num_right_cm_test
-
-    classified_df = pd.DataFrame({
-        'data_split': ['training', 'validation', 'testing'],
-        'classified': [num_right_cm_train, num_right_cm_val, num_right_cm_test], 
-        'misclassified': [num_wrong_cm_train, num_wrong_cm_val, num_wrong_cm_test]}, 
-        index=["training set", "validation set", "testing set"])
-    """
-
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    fig = plt.figure(figsize=(15, 10))
-    axis = fig.add_subplot()
-
-    # uses the given array of the colors you want to use
-    sb.set_palette(sb.color_palette(colors))
-
-    # create classified and misclassified of training group
-    # create classified and misclassified of validation group
-    # create classified and misclassified of testing group
-    df_exp = df.melt(id_vars='data_split', var_name='status', value_name='score')
+    filt_2d_max - the maximum value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_min - the minimum value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_amp - the average/mean value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_median - the median value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_std - the standard deviation value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_range - the range value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_shannon_entropy - the shannon entropy value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the low-pass filtered eda signal
+    filt_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the low-pass filtered eda signal
     
-    axis = sb.barplot(data=df_exp, x='data_split', y='score', hue='status', ax=axis)
-    axis.set_title(img_title, )
-    axis.legend()
+    ar_coeffs - coefficients excluding bias/intercept coefficient of the trained autoregressive model
+    ar_err_var - error variance value of the trained autoregressive model
 
-    if save_img:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
+    vfcdm_4/8_cut_mean - 
+    vfcdm_3/8_cut_mean - 
+    vfcdm_2/8_cut_mean - 
+    vfcdm_1/8_cut_mean - 
+    vfcdm_4/8_cut_std - 
+    vfcdm_3/8_cut_std - 
+    vfcdm_2/8_cut_std - 
+    vfcdm_1/8_cut_std - 
 
-def view_label_freq(label_freq, img_title: str="untitled", save_img: bool=True, labels: list | pd.Series | np.ndarray=["DER", "NDG", "OFF", "HOM"], horizontal: bool=True, style: str='dark'):
-    """
-    suitable for all discrete input
+    first_whole_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_max - the maximum value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_mean - the average/mean value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_mean - the average/mean value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_mean  - the average/mean value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_std - the standard deviation of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_std - the standard deviation of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_std - the standard deviation of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_median - the median value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_range - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_range - the range value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_range - the range value of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
+    first_whole_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
+    second_whole_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
+    third_whole_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 3rd wavelet feature of the whole wavelet dataframe
 
-    main args:
-        label_freq - is actually a the returned value of the method
-        of a pandas series, e.g.
-            label_freq = df['label'].value_counts()
-            label_freq
-
-        labels - a list of all the labels we want to use in the 
-        vertical bar graph
-    """
-
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    # plots the unique labels against the count of these unique labels
-
-    axis = sb.barplot(x=label_freq.values, y=labels, palette="flare") \
-        if horizontal == True else sb.barplot(x=labels, y=label_freq.values, palette="flare")
-    x_label = "frequency" if horizontal == True else "value"
-    y_label = "value" if horizontal == True else "frequency"
-    axis.set_xlabel(x_label, )
-    axis.set_ylabel(y_label, )
-    axis.set_title(img_title, )
-
-    if save_img:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
-
-def disp_cat_feat(df, cat_cols: list, fig_dims: tuple=(3, 2), img_title: str="untitled", save_img: bool=True, style: str='dark'):
-    """
-    suitable for all discrete input
-
-    displays frequency of categorical features of a dataframe
-    """
-
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-
-    plt.style.use(styles.get(style, 'default'))
-
-    # unpack dimensions of figure
-    rows, cols = fig_dims
-    
-    # setup figure
-    # fig, axes = plt.subplots(rows, cols, figsize=(15, 15), gridspec_kw={'width_ratios': [3, 3], 'height_ratios': [5, 5, 5]})
-    fig, axes = plt.subplots(rows, cols, figsize=(15, 15), gridspec_kw={'width_ratios': [3, 3]})
-    axes = axes.flat
-    fig.tight_layout(pad=7)
-
-    # helper function
-    def hex_color_gen():
-        rgb_gen = lambda: np.random.randint(0, 255)
-        color = "#%02X%02X%02X" % (rgb_gen(), rgb_gen(), rgb_gen())
-        return color
-
-    # loop through all categorical features and see their frequencies
-    for index, col in enumerate(cat_cols):
-        # get value and respective counts of current categorical column
-        val_counts = df[col].value_counts()
-
-        # count the number of unique values
-        n_unqiue = val_counts.shape[0]
-
-        # get all unqiue categories of the feature/column
-        keys = list(val_counts.keys())
-
-        colors = [hex_color_gen() for _ in range(n_unqiue)]
-        print(colors, n_unqiue)
-        chosen_colors = np.random.choice(colors, n_unqiue, replace=False)
-        # list all categorical columns no of occurences of each of their unique values
-        ax = val_counts.plot(kind='barh', ax=axes[index], color=chosen_colors)
-
-        # annotate bars using axis.containers[0] since it contains
-        # all 
-        print(ax.containers[0])
-        ax.bar_label(ax.containers[0], )
-        ax.set_ylabel('no. of occurences', )
-        ax.set_xlabel(col, )
-        ax.set_title(img_title, )
-        ax.legend()
-
-        # current column
-        print(col)
-
-    if save_img:
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
-
-def plot_all_features(X, hue=None, colormap: str='mako', style: str='dark'):
-    """
-    suitable for: all discrete inputs, both discrete and continuous inputs,
-    and all continuous inputs
+    first_half_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_mean - the average/mean value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_mean - the average/mean value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_std - the standard deviation of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_std - the standard deviation of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_median - the median value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_median - the median value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_range - the range value of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_range - the range value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
+    first_half_n_coeffs_above_zero - the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 1st wavelet feature of the half wavelet dataframe
+    second_half_n_coeffs_above_zero - the the number/count of wavelet coefficients above zero of the 0.5s segment/window/epoch from the 2nd wavelet feature of the half wavelet dataframe
 
     args:
-        X - the dataset we want all features to be visualized whether
-        discrete or continuous
-
-        hue - a string that if provided will make the diagonals
-        of the pairplot to be bell curves of the provided string feature
+        data - data slice/segment/window of 0.5s 
+        whole_wave - a dataframe containing whole of the wavelet coefficients 
+        half_wave - a dataframe containing half the time of the whole wavelet coefficients
     """
 
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
+    # compute statistical features
+    raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy, \
+    raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, \
+    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, \
+    filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy, \
+    filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, \
+    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs = _compute_stat_feats(data)
 
-    plt.style.use(styles.get(style, 'default'))
+    # compute autoregressive features
+    *ar_coeffs, ar_err_var = _compute_ar_feats(data)
+    # ar_feats = _compute_ar_feats(data)
+    # ar_coeffs, ar_err_var = ar_feats[:-1], ar_feats[-1]
 
-    sb.set_palette(colormap)
-    sb.pairplot(X, hue=hue, plot_kws={'marker': 'p', 'linewidth': 1})
+    # compute VFCDM features
+    vfcdm_signals_mean, vfcdm_signals_std = _compute_vfcdm_feats(data, hertz=samples_per_sec)
 
-# for recommendation
-def describe_col(df: pd.DataFrame, column: str, style: str='dark'):
-    """
-    args:
-        df - pandas data frame
-        column - column of data frame to observe unique values and frequency of each unique value
-    """
+    # compute wavelet features
+    wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_range, wavelet_feats_whole_n_coeffs_above_zero = _compute_wave_feats(whole_wave)
+    wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_range, wavelet_feats_half_n_coeffs_above_zero = _compute_wave_feats(half_wave)
 
-    print(f'count/no. of occurences of each unique {column} out of {df.shape[0]}: \n')
-
-    unique_ids = df[column].unique()
-    print(f'total unique values: {len(unique_ids)}')
-
-class ModelResults:
-    def __init__(self, history, epochs, style: str='dark'):
-        """
-        args:
-            history - the history dictionary attribute extracted 
-            from the history object returned by the self.fit() 
-            method of the tensorflow Model object 
-
-            epochs - the epoch list attribute extracted from the history
-            object returned by the self.fit() method of the tensorflow
-            Model object
-        """
-        self.history = history
-        self.epochs = epochs
-        self.style = style
-
-    def _build_results(self, metrics_to_use: list):
-        """
-        builds the dictionary of results based on history object of 
-        a tensorflow model
-
-        returns the results dictionary with the format {'loss': 
-        [24.1234, 12.1234, ..., 0.2134], 'val_loss': 
-        [41.123, 21.4324, ..., 0.912]} and the number of epochs 
-        extracted from the attribute epoch of the history object from
-        tensorflow model.fit() method
-
-        args:
-            metrics_to_use - a list of strings of all the metrics to extract 
-            and place in the dictionary
-        """
-
-        # extract the epoch attribute from the history object
-        epochs = self.epochs
-        results = {}
-        for metric in metrics_to_use:
-            if metric not in results:
-                # extract the history attribute from the history object
-                # which is a dictionary containing the metrics as keys, and
-                # the the metric values over time at each epoch as the values
-                results[metric] = self.history[metric]
-
-        return results, epochs
     
-    def export_results(self, dataset_id: str="untitled", metrics_to_use: list=['loss', 
-                                            'val_loss', 
-                                            'binary_crossentropy', 
-                                            'val_binary_crossentropy', 
-                                            'binary_accuracy', 
-                                            'val_binary_accuracy', 
-                                            'precision', 
-                                            'val_precision', 
-                                            'recall', 
-                                            'val_recall', 
-                                            'f1_m', 
-                                            'val_f1_m', 
-                                            'auc', 
-                                            'val_auc',
-                                            'categorical_crossentropy',
-                                            'val_categorical_crossentropy'], save_img: bool=True):
-        """
-        args:
-            metrics_to_use - a list of strings of all the metrics to extract 
-            and place in the dictionary, must always be of even length
-        """
 
-        # extracts the dictionary of results and the number of epochs
-        results, epochs = self._build_results(metrics_to_use)
-        results_items = list(results.items())
+    features = np.hstack([
+        # statistical features
+        raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy, 
+        raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, 
+        raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, 
+        filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy, 
+        filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, 
+        filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs,
 
-        # we want to leave the user with the option to 
-        for index in range(0, len(metrics_to_use) - 1, 2):
-            # say 6 was the length of metrics to use
-            # >>> list(range(0, 6 - 1, 2))
-            # [0, 2, 4]
-            metrics_indeces = (index, index + 1)
-            curr_metric, curr_metric_perf = results_items[metrics_indeces[0]]
-            curr_val_metric, curr_val_metric_perf = results_items[metrics_indeces[1]]
-            print(curr_metric)
-            print(curr_val_metric)
-            curr_result = {
-                curr_metric: curr_metric_perf,
-                curr_val_metric: curr_val_metric_perf
-            }
-            print(curr_result)
+        # autoregressive coefficients excluding bias/intercept and error variance
+        ar_coeffs, ar_err_var,
 
-            self.view_train_cross_results(
-                results=curr_result,
-                epochs=epochs, 
-                curr_metrics_indeces=metrics_indeces,
-                save_img=save_img,
-                img_title="model performance using {} dataset for {} metric".format(dataset_id, curr_metric)
-            )
+        # vfcdm signals means and standard deviations at cutoffs of 50%, 37.5%, 25%, 12.5%
+        vfcdm_signals_mean, vfcdm_signals_std,
 
-    def view_train_cross_results(self, results: dict, epochs: list, curr_metrics_indeces: tuple, save_img: bool, img_title: str="untitled"):
-        """
-        plots the number of epochs against the cost given cost values 
-        across these epochs.
+        # each wavelet is a list of 3 elements since it was calculated from a dataframe of 3 columns
+        wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_range, wavelet_feats_whole_n_coeffs_above_zero, 
+
+        # each wavelet is a list of 2 elements since it was calculated from a dataframe of 2 columns
+        wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_range, wavelet_feats_half_n_coeffs_above_zero,
+        ])
+    
+    return features
+
+def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_sec: int, samples_per_win_size: int):
+    """
+    creates and returns a dataframe containing all 
+    the features for a data slice of at least 1 hour
+    """
+
+    whole_freq = int(samples_per_sec / 8)
+    half_freq = int((samples_per_sec / 8) * 2)
+
+    feature_names = [
+        # statistical features names
+        f"raw_{samples_per_sec}hz_max", f"raw_{samples_per_sec}hz_min", 
+        f"raw_{samples_per_sec}hz_amp", f"raw_{samples_per_sec}hz_median", 
+        f"raw_{samples_per_sec}hz_std", f"raw_{samples_per_sec}hz_range", 
+        f"raw_{samples_per_sec}hz_shannon_entropy",
         
-        main args:
-            results - is a dictionary created by the utility preprocessor
-            function build_results()
-        """
-        styles = {
-            'dark': 'dark_background',
-            'solarized': 'Solarized_Light2',
-            '538': 'fivethirtyeight',
-            'ggplot': 'ggplot',
-        }
+        f"raw_{samples_per_sec}hz_1d_max", f"raw_{samples_per_sec}hz_1d_min", 
+        f"raw_{samples_per_sec}hz_1d_amp", f"raw_{samples_per_sec}hz_1d_median", 
+        f"raw_{samples_per_sec}hz_1d_std", f"raw_{samples_per_sec}hz_1d_range", 
+        f"raw_{samples_per_sec}hz_1d_shannon_entropy",
+        f"raw_{samples_per_sec}hz_1d_max_abs", f"raw_{samples_per_sec}hz_1d_avg_abs", 
 
-        plt.style.use(styles.get(self.style, 'default'))
+        f"raw_{samples_per_sec}hz_2d_max", f"raw_{samples_per_sec}hz_2d_min", 
+        f"raw_{samples_per_sec}hz_2d_amp", f"raw_{samples_per_sec}hz_2d_median", 
+        f"raw_{samples_per_sec}hz_2d_std", f"raw_{samples_per_sec}hz_2d_range", 
+        f"raw_{samples_per_sec}hz_2d_shannon_entropy",
+        f"raw_{samples_per_sec}hz_2d_max_abs", f"raw_{samples_per_sec}hz_2d_avg_abs", 
 
-        figure = plt.figure(figsize=(15, 10))
-        axis = figure.add_subplot()
+        f"filt_{samples_per_sec}hz_max", f"filt_{samples_per_sec}hz_min", 
+        f"filt_{samples_per_sec}hz_amp", f"filt_{samples_per_sec}hz_median", 
+        f"filt_{samples_per_sec}hz_std", f"filt_{samples_per_sec}hz_range", 
+        f"filt_{samples_per_sec}hz_shannon_entropy",
+        
+        f"filt_{samples_per_sec}hz_1d_max", f"filt_{samples_per_sec}hz_1d_min", 
+        f"filt_{samples_per_sec}hz_1d_amp", f"filt_{samples_per_sec}hz_1d_median", 
+        f"filt_{samples_per_sec}hz_1d_std", f"filt_{samples_per_sec}hz_1d_range", 
+        f"filt_{samples_per_sec}hz_1d_shannon_entropy",
+        f"filt_{samples_per_sec}hz_1d_max_abs", f"filt_{samples_per_sec}hz_1d_avg_abs", 
 
-        styles = [
-            ('p:', '#f54949'), 
-            ('h-', '#f59a45'), 
-            ('o--', '#afb809'), 
-            ('x:','#51ad00'), 
-            ('+:', '#03a65d'), 
-            ('8-', '#035aa6'), 
-            ('.--', '#03078a'), 
-            ('>:', '#6902e6'),
-            ('p-', '#c005e6'),
-            ('h--', '#fa69a3'),
-            ('o:', '#240511'),
-            ('x-', '#052224'),
-            ('+--', '#402708'),
-            ('8:', '#000000')]
+        f"filt_{samples_per_sec}hz_2d_max", f"filt_{samples_per_sec}hz_2d_min", 
+        f"filt_{samples_per_sec}hz_2d_amp", f"filt_{samples_per_sec}hz_2d_median", 
+        f"filt_{samples_per_sec}hz_2d_std", f"filt_{samples_per_sec}hz_2d_range", 
+        f"filt_{samples_per_sec}hz_2d_shannon_entropy",
+        f"filt_{samples_per_sec}hz_2d_max_abs", f"filt_{samples_per_sec}hz_2d_avg_abs", 
 
-        for index, (key, value) in enumerate(results.items()):
-            # value contains the array of metric values over epochs
-            # e.g. [213.1234, 123.43, 43.431, ..., 0.1234]
+        # autoregressive features names
+        "ar_coeff_1", "ar_coeff_2", "ar_err_var",
 
-            if key == "loss" or key == "val_loss":
-                # e.g. loss, val_loss has indeces 0 and 1
-                # binary_cross_entropy, val_binary_cross_entropy 
-                # has indeces 2 and 3
-                axis.plot(
-                    np.arange(len(epochs)), 
-                    value, 
-                    styles[curr_metrics_indeces[index]][0], 
-                    color=styles[curr_metrics_indeces[index]][1], 
-                    alpha=0.5, 
-                    label=key, 
-                    markersize=10, 
-                    linewidth=3)
-            else:
-                # here if the metric value is not hte loss or 
-                # validation loss each element is rounded by 2 
-                # digits and converted to a percentage value 
-                # which is why it is multiplied by 100 in order
-                # to get much accurate depiction of metric value
-                # that is not in decimal format
-                metric_perc = [round(val * 100, 2) for val in value]
-                axis.plot(
-                    np.arange(len(epochs)), 
-                    metric_perc, 
-                    styles[curr_metrics_indeces[index]][0], 
-                    color=styles[curr_metrics_indeces[index]][1], 
-                    alpha=0.5, 
-                    label=key, 
-                    markersize=10, 
-                    linewidth=3)
+        # vfcdm features names
+        f"vfcdm_4/8_{samples_per_sec}hz_mean", f"vfcdm_3/8_cut_{samples_per_sec}hz_mean", f"vfcdm_2/8_cut_{samples_per_sec}hz_mean", f"vfcdm_1/8_cut_{samples_per_sec}hz_mean", 
+        f"vfcdm_4/8_{samples_per_sec}hz_std", f"vfcdm_3/8_cut_{samples_per_sec}hz_std", f"vfcdm_2/8_cut_{samples_per_sec}hz_std", f"vfcdm_1/8_cut_{samples_per_sec}hz_std",
 
-        # annotate end of lines
-        for index, (key, value) in enumerate(results.items()):        
-            if key == "loss" or key == "val_loss":
-                last_loss_rounded = round(value[-1], 2)
-                axis.annotate(last_loss_rounded, xy=(epochs[-1], value[-1]), color='black', alpha=1)
-            else: 
-                last_metric_perc = round(value[-1] * 100, 2)
-                axis.annotate(last_metric_perc, xy=(epochs[-1], value[-1] * 100), color='black', alpha=1)
+        # wavelet features names
+        f"first_{whole_freq}thofa_sec_max", f"second_{whole_freq}thofa_sec_max", f"third_{whole_freq}thofa_sec_max", 
+        f"first_{whole_freq}thofa_sec_mean", f"second_{whole_freq}thofa_sec_mean", f"third_{whole_freq}thofa_sec_mean", 
+        f"first_{whole_freq}thofa_sec_std", f"second_{whole_freq}thofa_sec_std", f"third_{whole_freq}thofa_sec_std", 
+        f"first_{whole_freq}thofa_sec_median", f"second_{whole_freq}thofa_sec_median", f"third_{whole_freq}thofa_sec_median",
+        f"first_{whole_freq}thofa_sec_range", f"second_{whole_freq}thofa_sec_range", f"third_{whole_freq}thofa_sec_range",
+        f"first_{whole_freq}thofa_sec_n_coeffs_above_zero", f"second_{whole_freq}thofa_sec_n_coeffs_above_zero", f"third_{whole_freq}thofa_sec_n_coeffs_above_zero",
 
-        axis.set_ylabel('metric value', )
-        axis.set_xlabel('epochs', )
-        axis.set_title(img_title, )
-        axis.legend()
+        f"first_{half_freq}thofa_sec_max", f"second_{half_freq}thofa_sec_max", 
+        f"first_{half_freq}thofa_sec_mean", f"second_{half_freq}thofa_sec_mean", 
+        f"first_{half_freq}thofa_sec_std", f"second_{half_freq}thofa_sec_std", 
+        f"first_{half_freq}thofa_sec_median", f"second_{half_freq}thofa_sec_median", 
+        f"first_{half_freq}thofa_sec_range", f"second_{half_freq}thofa_sec_range", 
+        f"first_{half_freq}thofa_sec_n_coeffs_above_zero", f"second_{half_freq}thofa_sec_n_coeffs_above_zero"
+    ]
 
-        if save_img == True:
-            plt.savefig(f'./figures & images/{img_title}.png')
-            plt.show()
+    feature_names_len = len(feature_names)
 
-        # delete figure
-        del figure
+    # create a list of timestamps from our data that 
+    # has step size samples_per_win_size i.e. if our 
+    # 128hz data increments by 7.8125s and takes 128 
+    # samples to get to 1 full second, then a 64 step
+    # size will get only a row of data every 64 rows
+    # thus effectively resulting in a timestamp list that
+    # increments by 0.5s
+    timestamp_list = data.index.tolist()[::samples_per_win_size]
+    # print(timestamp_list)
+    timestamp_list_len = len(timestamp_list)
 
-def view_all_splits_results(history_dict: dict, save_img: bool=True, img_title: str="untitled", style: str='dark'):
+    feature_segments = pd.DataFrame(np.zeros(shape=(timestamp_list_len, feature_names_len)), columns=feature_names, index=timestamp_list)
+    labels = pd.Series(np.zeros(shape=(timestamp_list_len)))
+    for i in range(len(timestamp_list) - 1):
+        start_time = timestamp_list[i]
+        end_time = timestamp_list[i + 1]
+
+        data_segment = data[start_time:end_time].iloc[:-1]
+        whole_wave_segment = whole_wave[start_time:end_time].iloc[:-1]
+        half_wave_segment = half_wave[start_time:end_time].iloc[:-1]
+
+        # compute the features for each 0.5s segment and assign to
+        # its respective index in the empty dataframe
+        feature_segment = compute_features(data_segment, whole_wave_segment, half_wave_segment, samples_per_sec)
+        feature_segments.iloc[i] = feature_segment
+
+        # returns the mean of a list or matrix of values given an axis ignoring 
+        # any nan values. Here according to Llanes-Jurado et al. (2023)'s paper 
+        # if more than 50% of the segment was labeled as an artifact, such a
+        # segment of 0.5 s was labeled indeed as an artifact
+        labels[i] = 1 if np.nanmean(data_segment['label']) > 0.5 else 0
+
+    """problem `timestamp_list` of 7200 elements does not match length of `features` list of 7199 elements"""
+
+    return feature_segments, labels
+
+
+
+def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1, verbose: bool=False):
     """
-    
+    partitions the given dataframe of eda data into at least 1 hour 
+    and extracts wavelet and statistical features in each of these
+    hours
+
+    args:
+        data - dataframe consisting of the raw unfiltered signal, labels, and filtered signal
+        hertz - sampling rate of the data
+        window_size - amount of seconds for each segmented signal
     """
-    styles = {
-        'dark': 'dark_background',
-        'solarized': 'Solarized_Light2',
-        '538': 'fivethirtyeight',
-        'ggplot': 'ggplot',
-    }
-    plt.style.use(styles.get(style, 'default'))
 
-    # create the history dataframe using tensorflow history attribute
-    history_df = pd.DataFrame(history_dict)
-    print(history_df)
+    # note this samples per sec is not arbitrary and a 
+    # user defined value but derived from our frequency 
+    # value entirely i.e. because we've recorded our
+    # raw data at 128hz then that means that the 
+    # samples of data we have per second would be 128
+    samples_per_sec = hertz
+    secs_per_min = 60
+    min_per_hour = 60
 
-    palettes = np.array(['#f54949', '#f59a45', '#afb809', '#51ad00', '#03a65d', '#035aa6', '#03078a', '#6902e6', '#c005e6', '#fa69a3', '#240511', '#052224', '#402708', '#000000'])
-    markers = np.array(['o', 'v', '^', '8', '*', 'p', 'h', ])#'x', '+', '>', 'd', 'H', '3', '4'])
+    # here we would be calculating how many samples we would have 
+    # per hour given we have 128 samples per second
+    samples_per_hour = samples_per_sec * secs_per_min * min_per_hour
 
-    sampled_indeces = np.random.choice(list(range(len(markers))), size=history_df.shape[1], replace=False)
+    # we also need to specify how large our windows/epochs/segments
+    # would be in order to create the rows for our dataset and subsequently
+    # each feature of that window or row
+    samples_per_win_size = int(samples_per_sec * window_size)
 
-    print(palettes[sampled_indeces])
-    print(markers[sampled_indeces])
+    # get number of rows of 128hz timestamps and signals
+    n_rows = data.shape[0]
 
-    figure = plt.figure(figsize=(15, 10))
-    axis = sb.lineplot(data=history_df, 
-        palette=palettes[sampled_indeces].tolist(),
-        markers=markers[sampled_indeces].tolist(), 
-        linewidth=3.0,
-        markersize=9,
-        alpha=0.75)
-    
-    axis.set_ylabel('metric value', )
-    axis.set_xlabel('epochs', )
-    axis.set_title(img_title, )
-    axis.legend()
+    # dividing the number of rows by the number of samples per 0.5 seconds 
+    # will allow us to get a sense how many segments or rows of 0.5 seconds
+    # can we get from this time series dataframe of our signals
+    num_labels = math.ceil(n_rows / samples_per_win_size)
+    hours = math.ceil(n_rows / samples_per_hour)
 
-    if save_img == True:
-        print(save_img)
-        plt.savefig(f'./figures & images/{img_title}.png')
-        plt.show()
+    features_per_hour = []
+    for hour in range(hours):
+        start = hour * samples_per_hour
+        end = min((hour + 1) * samples_per_hour, n_rows)
+        curr_data = data.iloc[start:end]
+
+        if verbose == True:
+            print(f'processing hour {hour} - start: {start} | end: {end}')
+
+        whole_wave, half_wave = load_wavelet_data(curr_data, samples_per_sec, samples_per_win_size)
+
+        features_per_hour.append(get_features(curr_data, whole_wave, half_wave, samples_per_sec, samples_per_win_size))
+
+    return features_per_hour
+
+
+
+def concur_extract_features_from_all(dir: str, files: list[str]):
+    def helper(file: str):
+        subject_name = file.strip(".csv")
+        eda_df_128hz = pd.read_csv(f'{dir}{file}', sep=';')
+        eda_df_128hz.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
+
+        # set index first of uninterpolated eda data
+        start_time = eda_df_128hz.iloc[0]['time']
+        eda_df_128hz.set_index(pd.date_range(start=start_time, periods=eda_df_128hz.shape[0], freq=get_time_frequency(128)), inplace=True)
+        
+        # interpolate data to 16hz by downsampling
+        eda_df_16hz = interpolate_signals(eda_df_128hz, sample_rate=128, start_time=start_time, target_hz=16)
+
+        # once downsampled low-pass filter both uninterpolated and
+        # interpolated data. Cutoff of 1 means we retain the 128hz signal
+        # at 128hz, because if we put in 0.5 for instance then we "cut off"
+        # the 128hz signal by 0.5 or 50% which results in 64hz
+        eda_df_128hz['filtered_signal'] = butter_lowpass_filter(eda_df_128hz['raw_signal'], cutoff=1.0, samp_freq=128, order=6)
+        eda_df_16hz['filtered_signal'] = butter_lowpass_filter(eda_df_16hz['raw_signal'], cutoff=1.0, samp_freq=16, order=6)
+
+        # process the dfs and extract its features
+        data_128hz = extract_features_per_hour(eda_df_128hz, hertz=128, window_size=0.5, verbose=True)
+        data_16hz = extract_features_per_hour(eda_df_16hz, hertz=16, window_size=0.5, verbose=True)
+
+        eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
+
+        return (subject_name, (eda_feature_df, eda_labels))
+
+    with ThreadPoolExecutor() as exe:
+        eda_data = list(exe.map(helper, files))
+
+    return eda_data
+
+
+# ok, but I have here similar code and I was wondering if you could analyze it because however output of components is
+# ```
+# [[array([nan, nan, nan, ..., nan, nan, nan]),
+#   array([nan, nan, nan, ..., nan, nan, nan])],
+#  [array([nan, nan, nan, ..., nan, nan, nan]),
+#   array([nan, nan, nan, ..., nan, nan, nan])]] 
+# ```
+
+# ```
+# def butter_highpass(cutoff, samp_freq, order, btype):
+#     """
+#     implementation of Gouverneur et al. (2023)'s butter_highpass
+#     function
+#     """
+#     normal_cutoff = 2. * cutoff / float(samp_freq)
+#     b, a = butter(order, normal_cutoff, btype=btype)
+#     return b, a
+
+# def butter_highpass_filter(data, cutoff, samp_freq, order, btype):
+#     """
+#     implementation of Gouverneur et al. (2023)'s butter_highpass_filter
+#     function
+#     """
+#     b, a = butter_highpass(cutoff, samp_freq, order=order, btype=btype)
+#     y = filtfilt(b, a, data, padlen=2)
+#     return y
+
+# total_seconds = raw_eda_signal.shape[1] / 128
+
+# # interpolates 128hz signal to 4hz
+# first_resample = resample_axis(raw_eda_signal, input_freq=128, output_freq=4, axis=1)
+# median_filtered = np.array([median_filter(subject_signal, size=4) for subject_signal in first_resample])
+
+# # interpolates 4hz signal to 2hz
+# second_resample = resample_axis(median_filtered, input_freq=4, output_freq=2, axis=1)
+
+# highpass_filtered = np.array([butter_highpass_filter(subject_signal, cutoff=0.01, samp_freq=128, order=8, btype='highpass') for subject_signal in second_resample])
+
+# # data length is 832830
+# data_length = raw_eda_signal[0].shape[0]
+# center_freqs = [0.04, 0.12, 0.2, 0.28, 0.36, 0.44, 0.52, 0.6, 0.68, 0.76, 0.84, 0.92]
+# bandwidth = 0.04
+
+# # length is 416415
+# length = data_length // 2
+
+# components = []
+# for center_freq in center_freqs[1:3]:
+#     # finite-impulse response (FIR)
+#     fir = firwin(numtaps=length, cutoff=center_freq, width=bandwidth)
+
+#     # adaptive lowpass filter (LPF)
+#     component = [lfilter(fir, 1, subject_signal) for subject_signal in highpass_filtered]
+#     components.append(component)
+# ```
+
+# so could it be that the we need to have compatible center frequencies, bandwidth, cutoff frequency, order values etc. for signals recorded at 128hz
+
+

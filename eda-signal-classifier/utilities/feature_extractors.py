@@ -6,7 +6,7 @@ import pywt
 from concurrent.futures import ThreadPoolExecutor
 import datetime
 import pandas as pd
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter, hilbert
 from scipy.stats import entropy
 from statsmodels.tsa.ar_model import AutoReg
 
@@ -180,6 +180,118 @@ def get_time_frequency(sample_rate):
 
 
 
+def _differentiate(data):
+    """
+    computes the 1st and 2nd order derivative values 
+    of the eda signal
+    """
+    
+    F1_prime = (data[1:-1] + data[2:]) / 2 - data[1:-1] + data[:-2] / 2
+    F2_prime = data[2:] - (2 * data[1:-1]) + data[:-2]
+
+    return F1_prime, F2_prime
+
+
+
+def _shannon_entropy(data):
+    """
+    computes the shannon entropy value of the
+    given segment of an eda signal
+    """
+
+    # compute probability distribution
+    probs = np.power(data, 2) / np.sum(np.power(data, 2))
+
+    # calculate entropy by multiplying probability distribution
+    # to logarithm of probability distribution of base 2
+    entropy = probs * np.log2(probs)
+    shannon_entropy = -1 * np.sum(entropy)
+
+    return shannon_entropy
+
+def _standardize_signals(data):
+    """
+    standardizes the given signal either using min-max 
+    scaling or by z-score
+    """
+
+def _compute_stat_feats(data):
+    """
+    computes the statistical features of both the 
+    raw/unfiltered signal and the filtered signal
+    """
+
+    raw_signal = data['raw_signal']
+    filt_signal = data['filtered_signal']
+
+    raw_1d_signal, raw_2d_signal = _differentiate(raw_signal)
+    filt_1d_signal, filt_2d_signal = _differentiate(filt_signal)
+
+    raw_max = np.max(raw_signal, axis=0)
+    raw_min = np.min(raw_signal, axis=0)
+    raw_amp = np.mean(raw_signal, axis=0)
+    raw_median = np.median(raw_signal, axis=0)
+    raw_std = np.std(raw_signal, axis=0)
+    raw_range = np.max(raw_signal, axis=0) - np.min(raw_signal, axis=0)
+    raw_shannon_entropy = entropy(raw_signal.value_counts())
+
+    raw_1d_max = np.max(raw_1d_signal, axis=0)
+    raw_1d_min = np.min(raw_1d_signal, axis=0)
+    raw_1d_amp = np.mean(raw_1d_signal, axis=0)
+    raw_1d_median = np.median(raw_1d_signal, axis=0)
+    raw_1d_std = np.std(raw_1d_signal, axis=0)
+    raw_1d_range = np.max(raw_1d_signal, axis=0) - np.min(raw_1d_signal, axis=0)
+    raw_1d_shannon_entropy = entropy(raw_1d_signal.value_counts())
+    raw_1d_max_abs = np.max(np.absolute(raw_1d_signal), axis=0)
+    raw_1d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
+
+    raw_2d_max = np.max(raw_2d_signal, axis=0)
+    raw_2d_min = np.min(raw_2d_signal, axis=0)
+    raw_2d_amp = np.mean(raw_2d_signal, axis=0)
+    raw_2d_median = np.median(raw_2d_signal, axis=0)
+    raw_2d_std = np.std(raw_2d_signal, axis=0)
+    raw_2d_range = np.max(raw_2d_signal, axis=0) - np.min(raw_2d_signal, axis=0)
+    raw_2d_shannon_entropy = entropy(raw_2d_signal.value_counts())
+    raw_2d_max_abs = np.max(np.absolute(raw_2d_signal), axis=0)
+    raw_2d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
+
+    filt_max = np.max(filt_signal, axis=0)
+    filt_min = np.min(filt_signal, axis=0)
+    filt_amp = np.mean(filt_signal, axis=0)
+    filt_median = np.median(filt_signal, axis=0)
+    filt_std = np.std(filt_signal, axis=0)
+    filt_range = np.max(filt_signal, axis=0) - np.min(filt_signal, axis=0)
+    filt_shannon_entropy = entropy(filt_signal.value_counts())
+
+    filt_1d_max = np.max(filt_1d_signal, axis=0)
+    filt_1d_min = np.min(filt_1d_signal, axis=0)
+    filt_1d_amp = np.mean(filt_1d_signal, axis=0)
+    filt_1d_median = np.median(filt_1d_signal, axis=0)
+    filt_1d_std = np.std(filt_1d_signal, axis=0)
+    filt_1d_range = np.max(filt_1d_signal, axis=0) - np.min(filt_1d_signal, axis=0)
+    filt_1d_shannon_entropy = entropy(filt_1d_signal.value_counts())
+    filt_1d_max_abs = np.max(np.absolute(filt_1d_signal), axis=0)
+    filt_1d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
+
+    filt_2d_max = np.max(filt_2d_signal, axis=0)
+    filt_2d_min = np.min(filt_2d_signal, axis=0)
+    filt_2d_amp = np.mean(filt_2d_signal, axis=0)
+    filt_2d_median = np.median(filt_2d_signal, axis=0)
+    filt_2d_std = np.std(filt_2d_signal, axis=0)
+    filt_2d_range = np.max(filt_2d_signal, axis=0) - np.min(filt_2d_signal, axis=0)
+    filt_2d_shannon_entropy = entropy(filt_2d_signal.value_counts())
+    filt_2d_max_abs = np.max(np.absolute(filt_2d_signal), axis=0)
+    filt_2d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
+
+    return (raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy,
+    raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, 
+    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, 
+    filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy,
+    filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, 
+    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs)
+
+
+
 def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
     """
     computes autoregressive features by training AutoReg
@@ -189,7 +301,7 @@ def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
 
     args:
         data - is a 0.5s segment/window/epoch of a subjects
-        signals
+        128hz signals
     """
     
     # raw_signal = data['raw_signal']
@@ -215,7 +327,74 @@ def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
     ar_features = ar_coeffs + [ar_error_var]
 
     return ar_features
-    
+
+
+
+def _get_amp_phase(s_t):
+    """
+    Calculates amplitude and phase from a complex number.
+
+    args:
+        s_t (complex): A complex number representing a sample of the Hilbert-transformed signal.
+
+    Returns:
+        tuple: A tuple containing the amplitude and phase.
+    """
+
+    amp = np.abs(s_t)
+    phase = np.angle(s_t)
+    return amp, phase
+
+
+
+def _compute_vfcdm_feats(data: pd.DataFrame | np.ndarray, hertz: int):
+    """
+    computes time-frequency based features based on variable
+    frequency complex demodulation (VFCDM), using cutoff
+    frequencies of 64, 48, 32, and 16 hertz on the 128hz
+    signal
+
+    args:
+        data - is a 0.5s segment/window/epoch of a subjects
+        128hz signals
+    """
+
+    # these cutoffs namely 0.5, 0.375, 0.25, and 0.125 when
+    # multiplied to 128 results in 64, 48, 32, and 16. 
+    # This will basically just cutoff the signal by 50%, 37.5%,
+    # 25%, and 12.5%
+    cutoffs = [4 / 8, 3 / 8, 2 / 8, 1 / 8]
+    decomp_signals = []
+
+    for cutoff in cutoffs:
+        filtered_signal = butter_lowpass_filter(data['raw_signal'], cutoff=cutoff, samp_freq=hertz)
+
+        # hilbert signal would have same shape as filtered signal 
+        # i.e. (64,) or (8,) if signal is 16hz 
+        hilbert_signal = hilbert(filtered_signal)
+
+        decomp_signal = []
+        for s_t in hilbert_signal:
+            amp, phase = _get_amp_phase(s_t)
+
+            # 2 * 3.14... * 0.5 * 128 + phase
+            point = amp * np.cos(2 * np.pi * cutoff * 128 + phase)
+            decomp_signal.append(point)
+
+        decomp_signals.append(decomp_signal)
+
+    # shape of decomposed signals will be (len(cutoffs), samples_per_win_size)
+    # which in this case is (4, 64)
+    decomp_signals = np.array(decomp_signals)
+    # print(decomp_signals.shape)
+
+    # compute statistical features from resulting
+    # decomposed signal
+    vfcdm_signals_mean = np.mean(decomp_signals, axis=1).tolist()
+    vfcdm_signals_std = np.std(decomp_signals, axis=1).tolist()
+
+    return vfcdm_signals_mean, vfcdm_signals_std
+
 
 
 def load_wavelet_data(data: pd.DataFrame | np.ndarray, hertz: int, samples_per_win_size: int):
@@ -317,118 +496,6 @@ def restructure_wavelets(wavelet_coeffs):
 
 
 
-def _differentiate(data):
-    """
-    computes the 1st and 2nd order derivative values 
-    of the eda signal
-    """
-    
-    F1_prime = (data[1:-1] + data[2:]) / 2 - data[1:-1] + data[:-2] / 2
-    F2_prime = data[2:] - (2 * data[1:-1]) + data[:-2]
-
-    return F1_prime, F2_prime
-
-
-def _shannon_entropy(data):
-    """
-    computes the shannon entropy value of the
-    given segment of an eda signal
-    """
-
-    # compute probability distribution
-    probs = np.power(data, 2) / np.sum(np.power(data, 2))
-
-    # calculate entropy by multiplying probability distribution
-    # to logarithm of probability distribution of base 2
-    entropy = probs * np.log2(probs)
-    shannon_entropy = -1 * np.sum(entropy)
-
-    return shannon_entropy
-
-def _standardize_signals(data):
-    """
-    standardizes the given signal either using min-max 
-    scaling or by z-score
-    """
-
-
-def _compute_stat_feats(data):
-    """
-    computes the statistical features of both the 
-    raw/unfiltered signal and the filtered signal
-    """
-
-    raw_signal = data['raw_signal']
-    filt_signal = data['filtered_signal']
-
-    raw_1d_signal, raw_2d_signal = _differentiate(raw_signal)
-    filt_1d_signal, filt_2d_signal = _differentiate(filt_signal)
-
-    raw_max = np.max(raw_signal, axis=0)
-    raw_min = np.min(raw_signal, axis=0)
-    raw_amp = np.mean(raw_signal, axis=0)
-    raw_median = np.median(raw_signal, axis=0)
-    raw_std = np.std(raw_signal, axis=0)
-    raw_range = np.max(raw_signal, axis=0) - np.min(raw_signal, axis=0)
-    raw_shannon_entropy = entropy(raw_signal.value_counts())
-
-    raw_1d_max = np.max(raw_1d_signal, axis=0)
-    raw_1d_min = np.min(raw_1d_signal, axis=0)
-    raw_1d_amp = np.mean(raw_1d_signal, axis=0)
-    raw_1d_median = np.median(raw_1d_signal, axis=0)
-    raw_1d_std = np.std(raw_1d_signal, axis=0)
-    raw_1d_range = np.max(raw_1d_signal, axis=0) - np.min(raw_1d_signal, axis=0)
-    raw_1d_shannon_entropy = entropy(raw_1d_signal.value_counts())
-    raw_1d_max_abs = np.max(np.absolute(raw_1d_signal), axis=0)
-    raw_1d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
-
-    raw_2d_max = np.max(raw_2d_signal, axis=0)
-    raw_2d_min = np.min(raw_2d_signal, axis=0)
-    raw_2d_amp = np.mean(raw_2d_signal, axis=0)
-    raw_2d_median = np.median(raw_2d_signal, axis=0)
-    raw_2d_std = np.std(raw_2d_signal, axis=0)
-    raw_2d_range = np.max(raw_2d_signal, axis=0) - np.min(raw_2d_signal, axis=0)
-    raw_2d_shannon_entropy = entropy(raw_2d_signal.value_counts())
-    raw_2d_max_abs = np.max(np.absolute(raw_2d_signal), axis=0)
-    raw_2d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
-
-    filt_max = np.max(filt_signal, axis=0)
-    filt_min = np.min(filt_signal, axis=0)
-    filt_amp = np.mean(filt_signal, axis=0)
-    filt_median = np.median(filt_signal, axis=0)
-    filt_std = np.std(filt_signal, axis=0)
-    filt_range = np.max(filt_signal, axis=0) - np.min(filt_signal, axis=0)
-    filt_shannon_entropy = entropy(filt_signal.value_counts())
-
-    filt_1d_max = np.max(filt_1d_signal, axis=0)
-    filt_1d_min = np.min(filt_1d_signal, axis=0)
-    filt_1d_amp = np.mean(filt_1d_signal, axis=0)
-    filt_1d_median = np.median(filt_1d_signal, axis=0)
-    filt_1d_std = np.std(filt_1d_signal, axis=0)
-    filt_1d_range = np.max(filt_1d_signal, axis=0) - np.min(filt_1d_signal, axis=0)
-    filt_1d_shannon_entropy = entropy(filt_1d_signal.value_counts())
-    filt_1d_max_abs = np.max(np.absolute(filt_1d_signal), axis=0)
-    filt_1d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
-
-    filt_2d_max = np.max(filt_2d_signal, axis=0)
-    filt_2d_min = np.min(filt_2d_signal, axis=0)
-    filt_2d_amp = np.mean(filt_2d_signal, axis=0)
-    filt_2d_median = np.median(filt_2d_signal, axis=0)
-    filt_2d_std = np.std(filt_2d_signal, axis=0)
-    filt_2d_range = np.max(filt_2d_signal, axis=0) - np.min(filt_2d_signal, axis=0)
-    filt_2d_shannon_entropy = entropy(filt_2d_signal.value_counts())
-    filt_2d_max_abs = np.max(np.absolute(filt_2d_signal), axis=0)
-    filt_2d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
-
-    return (raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy,
-    raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, 
-    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, 
-    filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy,
-    filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, 
-    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs)
-
-
-
 def _compute_wave_feats(wave: pd.DataFrame | np.ndarray):
     """
     computes the maximum, mean, standard deviation, median, range
@@ -447,68 +514,77 @@ def _compute_wave_feats(wave: pd.DataFrame | np.ndarray):
 
 
 
-def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray):
+def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_sec: int):
     """
     computes the ff. features given the 0.5s segment/window dataframe or numpy matrix 'data'
 
-    raw_max - 
-    raw_min - 
-    raw_amp - the amplitude of the raw/unfiltered 128hz eda signal
-    raw_median - 
-    raw_std - 
-    raw_range -
-    raw_shannon_entropy - 
+    raw_max - the maximum value of the raw/unfiltered eda signal
+    raw_min - the maximum value of the raw/unfiltered eda signal
+    raw_amp - the average/mean value of the raw/unfiltered eda signal
+    raw_median - the median value of the raw/unfiltered eda signal
+    raw_std - the standard deviation value of the raw/unfiltered eda signal
+    raw_range - the range value of the raw/unfiltered eda signal
+    raw_shannon_entropy - the shannon entropy value of the raw/unfiltered eda signal
 
-    raw_1d_max - the maximum value of the first order derivative of the unfiltered 128hz eda signal
-    raw_1d_min - the minimum value of the first order derivative of the unfiltered 128hz eda signal
-    raw_1d_amp - 
-    raw_1d_median - 
-    raw_1d_std - 
-    raw_1d_range -
-    raw_1d_shannon_entropy - 
-    raw_1d_max_abs - the maximum value out of the absolute values of the first order derivative of the unfiltered 128hz eda signal
-    raw_1d_avg_abs - the average/mean value out of the absolute values of the first order derivative of the unfiltered 128hz eda signal
+    raw_1d_max - the maximum value of the first order derivative of the unfiltered eda signal
+    raw_1d_min - the minimum value of the first order derivative of the unfiltered eda signal
+    raw_1d_amp - the average/mean value of the first order derivative of the unfiltered eda signal
+    raw_1d_median - the median value of the first order derivative of the unfiltered eda signal
+    raw_1d_std - the standard deviation value of the first order derivative of the unfiltered eda signal
+    raw_1d_range - the range value of the first order derivative of the unfiltered eda signal
+    raw_1d_shannon_entropy - the shannon entropy value of the first order derivative of the unfiltered eda signal
+    raw_1d_max_abs - the maximum value out of the absolute values of the first order derivative of the unfiltered eda signal
+    raw_1d_avg_abs - the average/mean value out of the absolute values of the first order derivative of the unfiltered eda signal
 
-    raw_2d_max - the maximum value of the second order derivative of the unfiltered 128hz eda signal
-    raw_2d_min - the minimum value of the second order derivative of the unfiltered 128hz eda signal
-    raw_2d_amp - 
-    raw_2d_median - 
-    raw_2d_std - 
-    raw_2d_range -
-    raw_2d_shannon_entropy - 
-    raw_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the unfiltered 128hz eda signal
-    raw_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the unfiltered 128hz eda signal
+    raw_2d_max - the maximum value of the second order derivative of the unfiltered eda signal
+    raw_2d_min - the minimum value of the second order derivative of the unfiltered eda signal
+    raw_2d_amp - the average/mean value of the second order derivative of the unfiltered eda signal
+    raw_2d_median - the median value of the second order derivative of the unfiltered eda signal
+    raw_2d_std - the standard deviation value of the second order derivative of the unfiltered eda signal
+    raw_2d_range - the range value of the second order derivative of the unfiltered eda signal
+    raw_2d_shannon_entropy - the shannon entropy value of the second order derivative of the unfiltered eda signal
+    raw_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the unfiltered eda signal
+    raw_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the unfiltered eda signal
     
-    filt_max - 
-    filt_min - 
-    filt_amp - the amplitude of the low-pass filtered 16hz eda signal
-    filt_median - 
-    filt_std - 
-    filt_range -
-    filt_shannon_entropy - 
+    filt_max - the maximum value of the low-pass filtered eda signal
+    filt_min - the maximum value of the low-pass filtered eda signal
+    filt_amp - the average/mean value of the low-pass filtered eda signal
+    filt_median - the median value of the low-pass filtered eda signal
+    filt_std - the standard deviation value of the low-pass filtered eda signal
+    filt_range - the range value of the low-pass filtered eda signal
+    filt_shannon_entropy - the shannon entropy value of the low-pass filtered eda signal
 
-    filt_1d_max - the maximum value of the first order derivative of the low-pass filtered 16hz eda signal
-    filt_1d_min - the minimum value of the first order derivative of the low-pass filtered 16hz eda signal
-    filt_1d_amp - 
-    filt_1d_median - 
-    filt_1d_std - 
-    filt_1d_range -
-    filt_1d_shannon_entropy - 
-    filt_1d_max_abs - the maximum value out of the absolute values of the first order derivative of the low-pass filtered 16hz eda signal
-    filt_1d_avg_abs - the average/mean value out of the absolute values of the first order derivative of the low-pass filtered 16hz eda signal
+    filt_1d_max - the maximum value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_min - the minimum value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_amp - the average/mean value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_median - the median value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_std - the standard deviation value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_range - the range value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_shannon_entropy - the shannon entropy value of the first order derivative of the low-pass filtered eda signal
+    filt_1d_max_abs - the maximum value out of the absolute values of the first order derivative of the low-pass filtered eda signal
+    filt_1d_avg_abs - the average/mean value out of the absolute values of the first order derivative of the low-pass filtered eda signal
 
-    filt_2d_max - the maximum value of the second order derivative of the low-pass filtered 16hz eda signal
-    filt_2d_min - the minimum value of the second order derivative of the low-pass filtered 16hz eda signal
-    filt_2d_amp - 
-    filt_2d_median - 
-    filt_2d_std - 
-    filt_2d_range -
-    filt_2d_shannon_entropy - 
-    filt_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the low-pass filtered 16hz eda signal
-    filt_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the low-pass filtered 16hz eda signal
+    filt_2d_max - the maximum value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_min - the minimum value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_amp - the average/mean value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_median - the median value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_std - the standard deviation value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_range - the range value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_shannon_entropy - the shannon entropy value of the second order derivative of the low-pass filtered eda signal
+    filt_2d_max_abs - the maximum value out of the absolute values of the second order derivative of the low-pass filtered eda signal
+    filt_2d_avg_abs - the average/mean value out of the absolute values of the second order derivative of the low-pass filtered eda signal
     
     ar_coeffs - coefficients excluding bias/intercept coefficient of the trained autoregressive model
     ar_err_var - error variance value of the trained autoregressive model
+
+    vfcdm_4/8_cut_mean - 
+    vfcdm_3/8_cut_mean - 
+    vfcdm_2/8_cut_mean - 
+    vfcdm_1/8_cut_mean - 
+    vfcdm_4/8_cut_std - 
+    vfcdm_3/8_cut_std - 
+    vfcdm_2/8_cut_std - 
+    vfcdm_1/8_cut_std - 
 
     first_whole_max - the maximum value of the 0.5s segment/window/epoch from the 1st wavelet feature of the whole wavelet dataframe
     second_whole_max - the maximum value of the 0.5s segment/window/epoch from the 2nd wavelet feature of the whole wavelet dataframe
@@ -561,6 +637,9 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     # ar_feats = _compute_ar_feats(data)
     # ar_coeffs, ar_err_var = ar_feats[:-1], ar_feats[-1]
 
+    # compute VFCDM features
+    vfcdm_signals_mean, vfcdm_signals_std = _compute_vfcdm_feats(data, hertz=samples_per_sec)
+
     # compute wavelet features
     wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_range, wavelet_feats_whole_n_coeffs_above_zero = _compute_wave_feats(whole_wave)
     wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_range, wavelet_feats_half_n_coeffs_above_zero = _compute_wave_feats(half_wave)
@@ -579,12 +658,17 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
         # autoregressive coefficients excluding bias/intercept and error variance
         ar_coeffs, ar_err_var,
 
+        # vfcdm signals means and standard deviations at cutoffs of 50%, 37.5%, 25%, 12.5%
+        vfcdm_signals_mean, vfcdm_signals_std,
+
         # each wavelet is a list of 3 elements since it was calculated from a dataframe of 3 columns
         wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_range, wavelet_feats_whole_n_coeffs_above_zero, 
 
         # each wavelet is a list of 2 elements since it was calculated from a dataframe of 2 columns
         wavelet_feats_half_max, wavelet_feats_half_mean, wavelet_feats_half_std, wavelet_feats_half_median, wavelet_feats_half_range, wavelet_feats_half_n_coeffs_above_zero,
         ])
+    
+    print(features.shape)
     
     return features
 
@@ -636,6 +720,10 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
         # autoregressive features names
         "ar_coeff_1", "ar_coeff_2", "ar_err_var",
 
+        # vfcdm features names
+        f"vfcdm_4/8_{samples_per_sec}hz_mean", f"vfcdm_3/8_cut_{samples_per_sec}hz_mean", f"vfcdm_2/8_cut_{samples_per_sec}hz_mean", f"vfcdm_1/8_cut_{samples_per_sec}hz_mean", 
+        f"vfcdm_4/8_{samples_per_sec}hz_std", f"vfcdm_3/8_cut_{samples_per_sec}hz_std", f"vfcdm_2/8_cut_{samples_per_sec}hz_std", f"vfcdm_1/8_cut_{samples_per_sec}hz_std",
+
         # wavelet features names
         f"first_{whole_freq}thofa_sec_max", f"second_{whole_freq}thofa_sec_max", f"third_{whole_freq}thofa_sec_max", 
         f"first_{whole_freq}thofa_sec_mean", f"second_{whole_freq}thofa_sec_mean", f"third_{whole_freq}thofa_sec_mean", 
@@ -677,7 +765,7 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
 
         # compute the features for each 0.5s segment and assign to
         # its respective index in the empty dataframe
-        feature_segment = compute_features(data_segment, whole_wave_segment, half_wave_segment)
+        feature_segment = compute_features(data_segment, whole_wave_segment, half_wave_segment, samples_per_sec)
         feature_segments.iloc[i] = feature_segment
 
         # returns the mean of a list or matrix of values given an axis ignoring 
@@ -762,7 +850,9 @@ def concur_extract_features_from_all(dir: str, files: list[str]):
         eda_df_16hz = interpolate_signals(eda_df_128hz, sample_rate=128, start_time=start_time, target_hz=16)
 
         # once downsampled low-pass filter both uninterpolated and
-        # interpolated data
+        # interpolated data. Cutoff of 1 means we retain the 128hz signal
+        # at 128hz, because if we put in 0.5 for instance then we "cut off"
+        # the 128hz signal by 0.5 or 50% which results in 64hz
         eda_df_128hz['filtered_signal'] = butter_lowpass_filter(eda_df_128hz['raw_signal'], cutoff=1.0, samp_freq=128, order=6)
         eda_df_16hz['filtered_signal'] = butter_lowpass_filter(eda_df_16hz['raw_signal'], cutoff=1.0, samp_freq=16, order=6)
 
