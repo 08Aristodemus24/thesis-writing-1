@@ -25,7 +25,7 @@ def _combine_data(subjects_data):
 
     return subjects_features, subjects_labels
 
-def concur_load_data(dir: str, feat_set: str="Taylor"):
+def concur_load_data(dir: str, feat_config: str="Taylor"):
     """
     returns the features, labels, and subject ids
 
@@ -38,6 +38,11 @@ def concur_load_data(dir: str, feat_set: str="Taylor"):
         (2022) study
     """
 
+    # feature configuration can either be hossain or taylor which will return
+    # feature set as a result of reading .txt file containing all features
+    # associated to a researcher
+    feat_set = np.genfromtxt(f'./data/Artifact Detection Data/{feat_config.lower()}_feature_set.txt').tolist()
+
     # list all .csv features and .csv labels in directory
     subject_names = list(set([re.sub(r"_features.csv|_labels.csv", "", file) for file in os.listdir(dir)]))
     subject_to_id = {subject: id for id, subject in enumerate(subject_names)}
@@ -49,6 +54,7 @@ def concur_load_data(dir: str, feat_set: str="Taylor"):
 
         """ this can't be since I cant coerce a column that are float values to strictly int zeros"""
         subject_features['subject_id'] = subject_to_id[subject_name]
+        
 
         subject_labels = pd.read_csv(f'{dir}{subject_name}_labels.csv', index_col=0)
         subject_labels['subject_id'] = subject_to_id[subject_name]
@@ -61,6 +67,7 @@ def concur_load_data(dir: str, feat_set: str="Taylor"):
         # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
         subjects_data = list(exe.map(helper, subject_names))
         subjects_features, subjects_labels = _combine_data(subjects_data)
+        subjects_features = subjects_features[feat_set]
 
     return subjects_features, subjects_labels, subject_to_id
 
@@ -72,7 +79,7 @@ def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFra
     selector = RFE(estimator=svc, n_features_to_select=n_features_to_select, verbose=1)
     
     # remove subject_id column then convert to numpy array
-    X = subjects_features.loc[sample_ids, subjects_features.columns != 'subject_id'].to_numpy()
+    X = subjects_features.loc[sample_ids, subjects_features.columns != 'subject_id'].fillna(0).to_numpy()
     Y = subjects_labels.loc[sample_ids, subjects_labels.columns != 'subject_id'].to_numpy().ravel()
 
     # train feature selector on data

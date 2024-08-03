@@ -718,7 +718,7 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
         f"filt_{samples_per_sec}hz_2d_max_abs", f"filt_{samples_per_sec}hz_2d_avg_abs", 
 
         # autoregressive features names
-        "ar_coeff_1", "ar_coeff_2", "ar_err_var",
+        f"ar_coeff_1_{samples_per_sec}", f"ar_coeff_2_{samples_per_sec}", f"ar_err_var_{samples_per_sec}",
 
         # vfcdm features names
         f"vfcdm_4/8_{samples_per_sec}hz_mean", f"vfcdm_3/8_cut_{samples_per_sec}hz_mean", f"vfcdm_2/8_cut_{samples_per_sec}hz_mean", f"vfcdm_1/8_cut_{samples_per_sec}hz_mean", 
@@ -753,6 +753,7 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     # print(timestamp_list)
     timestamp_list_len = len(timestamp_list)
 
+    # initially create empty feature_segments dataframe of zeros
     feature_segments = pd.DataFrame(np.zeros(shape=(timestamp_list_len, feature_names_len)), columns=feature_names, index=timestamp_list)
     labels = pd.Series(np.zeros(shape=(timestamp_list_len)))
     for i in range(len(timestamp_list) - 1):
@@ -774,7 +775,8 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
         # segment of 0.5 s was labeled indeed as an artifact
         labels[i] = 1 if np.nanmean(data_segment['label']) > 0.5 else 0
 
-    """problem `timestamp_list` of 7200 elements does not match length of `features` list of 7199 elements"""
+    # fill any potential null or nan value with zeros
+    feature_segments.fillna(0, inplace=True)
 
     return feature_segments, labels
 
@@ -860,6 +862,7 @@ def concur_extract_features_from_all(dir: str, files: list[str]):
         data_128hz = extract_features_per_hour(eda_df_128hz, hertz=128, window_size=0.5, verbose=True)
         data_16hz = extract_features_per_hour(eda_df_16hz, hertz=16, window_size=0.5, verbose=True)
 
+        # rejoin 128hz and 16hz features and labels
         eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
 
         return (subject_name, (eda_feature_df, eda_labels))
