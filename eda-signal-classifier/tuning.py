@@ -41,7 +41,7 @@ def concur_load_data(dir: str, feat_config: str="Taylor"):
     # feature configuration can either be hossain or taylor which will return
     # feature set as a result of reading .txt file containing all features
     # associated to a researcher
-    feat_set = np.genfromtxt(f'./data/Artifact Detection Data/{feat_config.lower()}_feature_set.txt').tolist()
+    feat_set = np.genfromtxt(f'./data/Artifact Detection Data/{feat_config.lower()}_feature_set.txt', dtype=str).tolist()
 
     # list all .csv features and .csv labels in directory
     subject_names = list(set([re.sub(r"_features.csv|_labels.csv", "", file) for file in os.listdir(dir)]))
@@ -79,7 +79,7 @@ def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFra
     selector = RFE(estimator=svc, n_features_to_select=n_features_to_select, verbose=1)
     
     # remove subject_id column then convert to numpy array
-    X = subjects_features.loc[sample_ids, subjects_features.columns != 'subject_id'].fillna(0).to_numpy()
+    X = subjects_features.loc[sample_ids, subjects_features.columns != 'subject_id'].to_numpy()
     Y = subjects_labels.loc[sample_ids, subjects_labels.columns != 'subject_id'].to_numpy().ravel()
 
     # train feature selector on data
@@ -118,17 +118,17 @@ def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_
 
 def check_file_key(estimator_name, hyper_param_config_key):
     # if json file exists read and use it
-    if os.path.exists(f'./results/{estimator_name}.json'):
+    if os.path.exists(f'./results/{estimator_name}_results.json'):
         # read json file as dictionary
-        with open(f'./results/{estimator_name}.json') as file:
+        with open(f'./results/{estimator_name}_results.json') as file:
             results = json.loads(file)
         
-        # also if hyper param already exists as a key then 
-        # move on to next hyper param by returning from function
-        if hyper_param_config_key in results[f'{estimator_name}']:
-            return False
-        
-        file.close()
+            # also if hyper param already exists as a key then 
+            # move on to next hyper param by returning from function
+            if hyper_param_config_key in results[f'{estimator_name}']:
+                return False
+            
+            file.close()
         return results
 
     # if json file does not exist create one and read as dictionary
@@ -253,10 +253,10 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
         'folds_cross_roc_auc': folds_cross_roc_auc
     }
 
-    with open(f'results/{estimator_name}.json', 'w') as file:
+    with open(f'results/{estimator_name}_results.json', 'w') as file:
         json.dump(results, file)
 
-def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, n_rows_to_sample: int, n_features_to_select: int, estimator_name: str, estimator, hyper_params: dict):
+def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, n_features_to_select: int, estimator_name: str, estimator, hyper_params: dict, n_rows_to_sample: int | None=None):
     """
     args:
         hyper_params - is a dictionary containing all the hyperparameters
@@ -271,9 +271,17 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
         >>> perm_dicts
         [{'n_estimators': 10, 'max_depth': 3, 'gamma': 1}, {'n_estimators': 10, 'max_depth': 3, 'gamma': 10}, {'n_estimators': 10, 'max_depth': 3, 'gamma': 100}, {'n_estimators': 10, 'max_depth': 3, 'gamma': 1000}, {'n_estimators': 50, 'max_depth': 3, 'gamma': 1}, {'n_estimators': 50, 'max_depth': 3, 'gamma': 10}, {'n_estimators': 50, 'max_depth': 3, 'gamma': 100}, {'n_estimators': 50, 'max_depth': 3, 'gamma': 1000}, {'n_estimators': 100, 'max_depth': 3, 'gamma': 1}, {'n_estimators': 100, 'max_depth': 3, 'gamma': 10}, {'n_estimators': 100, 'max_depth': 3, 'gamma': 100}, {'n_estimators': 100, 'max_depth': 3, 'gamma': 1000}]
         >>>
+
+        note in the passing of hyper param config dictionary to a function we can always unpack it by:
+        >>> dict = {'a': 1, 'b': 2}
+        >>> def myFunc(a=0, b=0, c=0):
+        >>>     print(a, b, c)
+        >>>
+        >>> myFunc(**dict)
     """
 
-    # sample a small part of the dataset
+    # sample a small part if not all of the dataset
+    n_rows_to_sample = n_rows_to_sample if n_rows_to_sample != None else subjects_features.shape[0]
     sample_ids = np.random.choice(subjects_features.shape[0], size=n_rows_to_sample)
 
     # use returned features from select_features()
@@ -306,47 +314,48 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
 
 if __name__ == "__main__":
     """
-    1. so I have 43 subjects, 33 of which I use for training & validation and 10 of which will be used for testing 
-    2. All 43 subjects signals will undergo extensive feature extraction by running feature_engineering.ipynb
-    3. the extracted features from each corresponding subjects recorded signals will be now really split into 33 and 10, the other for trianing and the other for testing
-    4. these 33 & 10 subject features will be placed inside a training folder & a testing folder
-    5. the first and foremost step is loading only the newly engineered train data
-    6. data is then used for feature selection by use backward feature selection first and select best features
-    6. setting up a grid search loop such that all possible hyper param configurationsare used
+    1. There are 43 subjects, 33 of which will be used for training & validation and 10 of which will be used for testing 
+    2. All 43 subjects signals will undergo extensive feature extraction prior by running feature_engineering.ipynb
+    3. The extracted features from each corresponding subjects recorded signals will now be really split into 33 and 10, the other for trianing and the other for testing
+    4. These 33 & 10 subject features will be placed inside a training folder & a testing folder
+    5. We then load the newly engineered train data
+    6. Data is then used for feature selection by using recursive feature elimination to select best features
+    6. A grid search loop is then setup using these best features such that all possible hyper param configurations are used
     7. in each iteration LOSO cross validation will be carried out
         ```
         for hyper param 1 in hyperparams 1
             for hyper param 2 in hyperparams 2
                 ...
                 for hyper param n in hyperparams n
-                    LOSO_CV(features/X, y/labels, subjects, model)
+                    loso_cross_validation(features/X, y/labels, subjects, model)
         ```
 
-    8. LOSO_CV will
+    8. loso_cross_validation() will
         - use best features for all 33 subjects
-        - run a loop tthat will leave one subject out for all subjects these will
+        - run a loop tthat will leave one subject out where for all subjects...
             - these will be our folds
-            - for each iteration of this loop will we train our classifier
-            - record this classifiers score at this fold & move on to next iteration
+            - for each iteration of this loop will a classifier is trained
+            - the classifiers score is then recorded at this fold & move on to next iteration
         - average out all scores collected at each "fold", associate it with the best selected features and the hyper param configuration it used
-
-    note in the passing of hyper param config dictionary to a function we can always unpack it by:
-    >>> dict = {'a': 1, 'b': 2}
-    >>> def myFunc(a=0, b=0, c=0):
-    >>>     print(a, b, c)
-    >>>
-    >>> myFunc(**dict)
+    9. save the best features found by the RFE algorithm
     """
 
-    # read and load data
-    subjects_features, subjects_labels, subject_to_id = concur_load_data('./data/Artifact Detection Data/train/')
+    
 
     # read and parse user arguments
     parser = ArgumentParser()
     parser.add_argument("--n_features_to_select", type=int, default=40, help="number of features to select by RFE")
-    parser.add_argument("--n_rows_to_sample", type=int, default=subjects_features.shape[0], help="number of rows to sample during feature selection by RFE")
+    parser.add_argument("--n_rows_to_sample", type=int, help="number of rows to sample during feature selection by RFE")
     parser.add_argument("-m", type=str, default='lr', help="model e.g. lr for logistic regression, rf for random forest, svm for support vector machine, gbt for gradient boosted tree, to train and validate ")
+    parser.add_argument("--feature_config", type=str, default="taylor", 
+        help="represents what feature set must be kept when data is loaded. \
+        Taylor et al. (2015) for instance has used most statistical features \
+        but variable frequency complex demodulation based features are not \
+        used unlike in Hossain et al. (2022) study")
     args = parser.parse_args()
+
+    # read and load data
+    subjects_features, subjects_labels, subject_to_id = concur_load_data('./data/Artifact Detection Data/train/', feat_config=args.feature_config)
 
     # model hyper params
     models = {
@@ -377,8 +386,8 @@ if __name__ == "__main__":
         subjects_labels, 
         subject_to_id, 
         n_features_to_select=args.n_features_to_select, 
-        n_rows_to_sample=args.n_rows_to_sample,
         estimator_name=args.m,
         estimator=models[args.m]['model'],
-        hyper_params=models[args.m]['hyper_params']
+        hyper_params=models[args.m]['hyper_params'],
+        n_rows_to_sample=args.n_rows_to_sample
     )
