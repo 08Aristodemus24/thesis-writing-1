@@ -71,12 +71,12 @@ def concur_load_data(dir: str, feat_config: str="Taylor"):
 
     return subjects_features, subjects_labels, subject_to_id
 
-def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, n_features_to_select: int, sample_ids: list | pd.Series | np.ndarray):
+def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, selector_config: str, n_features_to_select: int, sample_ids: list | pd.Series | np.ndarray):
     # select best features first by means of backward
     # feature selection based on support vector classifiers
-    svc = SVC(kernel='linear')
+    model = SVC(kernel='linear') if selector_config == "taylor" else RandomForestClassifier()
     # selector = SequentialFeatureSelector(svc, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
-    selector = RFE(estimator=svc, n_features_to_select=n_features_to_select, verbose=1)
+    selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
     
     # remove subject_id column then convert to numpy array
     X = subjects_features.loc[sample_ids, subjects_features.columns != 'subject_id'].to_numpy()
@@ -256,7 +256,7 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
     with open(f'results/{estimator_name}_results.json', 'w') as file:
         json.dump(results, file)
 
-def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, n_features_to_select: int, estimator_name: str, estimator, hyper_params: dict, n_rows_to_sample: int | None=None):
+def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, selector_config: str, n_features_to_select: int, n_rows_to_sample: int | None, estimator_name: str, estimator, hyper_params: dict, ):
     """
     args:
         hyper_params - is a dictionary containing all the hyperparameters
@@ -285,7 +285,7 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
     sample_ids = np.random.choice(subjects_features.shape[0], size=n_rows_to_sample)
 
     # use returned features from select_features()
-    selected_feats = select_features(subjects_features, subjects_labels, n_features_to_select=n_features_to_select, sample_ids=sample_ids)
+    selected_feats = select_features(subjects_features, subjects_labels, selector_config=selector_config, n_features_to_select=n_features_to_select, sample_ids=sample_ids)
     subjects_features = subjects_features[selected_feats].iloc[sample_ids]
     subjects_labels = subjects_labels.drop(columns=['subject_id']).iloc[sample_ids]
 
@@ -340,22 +340,21 @@ if __name__ == "__main__":
     9. save the best features found by the RFE algorithm
     """
 
-    
-
     # read and parse user arguments
     parser = ArgumentParser()
     parser.add_argument("--n_features_to_select", type=int, default=40, help="number of features to select by RFE")
-    parser.add_argument("--n_rows_to_sample", type=int, help="number of rows to sample during feature selection by RFE")
+    parser.add_argument("--n_rows_to_sample", type=int, default=None, help="number of rows to sample during feature selection by RFE")
     parser.add_argument("-m", type=str, default='lr', help="model e.g. lr for logistic regression, rf for random forest, svm for support vector machine, gbt for gradient boosted tree, to train and validate ")
-    parser.add_argument("--feature_config", type=str, default="taylor", 
-        help="represents what feature set must be kept when data is loaded. \
-        Taylor et al. (2015) for instance has used most statistical features \
-        but variable frequency complex demodulation based features are not \
-        used unlike in Hossain et al. (2022) study")
+    parser.add_argument("-pl", type=str, default="taylor", 
+        help="represents what pipeline which involves what feature set must \
+        be kept when data is loaded and what model must the feature selector \
+        be based on i.e. SVM or RFC Taylor et al, must be used. (2015) for instance \
+        has used most statistical features but variable frequency complex demodulation \
+        based features are not used unlike in Hossain et al. (2022) study")
     args = parser.parse_args()
 
     # read and load data
-    subjects_features, subjects_labels, subject_to_id = concur_load_data('./data/Artifact Detection Data/train/', feat_config=args.feature_config)
+    subjects_features, subjects_labels, subject_to_id = concur_load_data('./data/Artifact Detection Data/train/', feat_config=args.pl)
 
     # model hyper params
     models = {
@@ -385,9 +384,10 @@ if __name__ == "__main__":
         subjects_features, 
         subjects_labels, 
         subject_to_id, 
+        selector_config=args.pl,
         n_features_to_select=args.n_features_to_select, 
+        n_rows_to_sample=args.n_rows_to_sample,
         estimator_name=args.m,
         estimator=models[args.m]['model'],
         hyper_params=models[args.m]['hyper_params'],
-        n_rows_to_sample=args.n_rows_to_sample
     )
