@@ -718,7 +718,7 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
         f"filt_{samples_per_sec}hz_2d_max_abs", f"filt_{samples_per_sec}hz_2d_avg_abs", 
 
         # autoregressive features names
-        f"ar_coeff_1_{samples_per_sec}", f"ar_coeff_2_{samples_per_sec}", f"ar_err_var_{samples_per_sec}",
+        f"ar_coeff_1_{samples_per_sec}hz", f"ar_coeff_2_{samples_per_sec}hz", f"ar_err_var_{samples_per_sec}hz",
 
         # vfcdm features names
         f"vfcdm_4/8_{samples_per_sec}hz_mean", f"vfcdm_3/8_cut_{samples_per_sec}hz_mean", f"vfcdm_2/8_cut_{samples_per_sec}hz_mean", f"vfcdm_1/8_cut_{samples_per_sec}hz_mean", 

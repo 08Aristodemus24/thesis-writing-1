@@ -56,9 +56,7 @@ def concur_load_data(dir: str, feat_config: str="Taylor"):
     def helper(subject_name: str):
         # read and assign id to the subject 
         subject_features = pd.read_csv(f'{dir}{subject_name}_features.csv', index_col=0)
-        """ this can't be since I cant coerce a column that are float values to strictly int zeros"""
         subject_features['subject_id'] = subject_to_id[subject_name]
-        
 
         subject_labels = pd.read_csv(f'{dir}{subject_name}_labels.csv', index_col=0)
         subject_labels['subject_id'] = subject_to_id[subject_name]
@@ -140,15 +138,16 @@ if __name__ == "__main__":
     # read and parse user arguments
     parser = ArgumentParser()
     parser.add_argument("-m", type=str, default='lr', help="model e.g. lr for logistic regression, rf for random forest, svm for support vector machine, gbt for gradient boosted tree, to train and validate ")
-    parser.add_argument("--feature_config", type=str, default="taylor", 
-        help="represents what feature set must be kept when data is loaded. \
-        Taylor et al. (2015) for instance has used most statistical features \
-        but variable frequency complex demodulation based features are not \
-        used unlike in Hossain et al. (2022) study")
+    parser.add_argument("-pl", type=str, default="taylor", 
+        help="represents what pipeline which involves what feature set must \
+        be kept when data is loaded and what model must the feature selector \
+        be based on i.e. SVM or RFC Taylor et al, must be used. (2015) for instance \
+        has used most statistical features but variable frequency complex demodulation \
+        based features are not used unlike in Hossain et al. (2022) study")
     args = parser.parse_args()
 
     # read and load data
-    subjects_features, subjects_labels, subject_to_id = concur_load_data('./data/Artifact Detection Data/train/', feat_config=args.feature_config)
+    subjects_features, subjects_labels, subject_to_id = concur_load_data('./data/Artifact Detection Data/train/', feat_config=args.pl)
 
 
 

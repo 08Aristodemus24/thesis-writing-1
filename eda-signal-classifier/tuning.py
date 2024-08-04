@@ -51,10 +51,7 @@ def concur_load_data(dir: str, feat_config: str="Taylor"):
     def helper(subject_name: str):
         # read and assign id to the subject 
         subject_features = pd.read_csv(f'{dir}{subject_name}_features.csv', index_col=0)
-
-        """ this can't be since I cant coerce a column that are float values to strictly int zeros"""
         subject_features['subject_id'] = subject_to_id[subject_name]
-        
 
         subject_labels = pd.read_csv(f'{dir}{subject_name}_labels.csv', index_col=0)
         subject_labels['subject_id'] = subject_to_id[subject_name]
