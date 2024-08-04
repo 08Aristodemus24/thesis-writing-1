@@ -7,12 +7,14 @@ import os
 import pandas as pd
 import requests
 import zipfile
+import re
+
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
-
-import tensorflow as tf
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.preprocessing.text import tokenizer_from_json
+# import tensorflow as tf
+# from tensorflow.keras.preprocessing.image import ImageDataGenerator
+# from tensorflow.keras.preprocessing.text import tokenizer_from_json
 
 
 def download_dataset(url):
@@ -28,15 +30,81 @@ def download_dataset(url):
     with zipfile.ZipFile('./data/EDABE dataset.zip', 'r') as zip_ref:
         zip_ref.extractall('./data')
 
-def device_exists():
+def _combine_data(subjects_data):
+    subjects_features, subjects_labels = zip(*subjects_data)
+
+    subjects_features = pd.concat(subjects_features, axis=0, ignore_index=True)
+    subjects_labels = pd.concat(subjects_labels, axis=0, ignore_index=True)
+
+    return subjects_features, subjects_labels
+
+def concur_load_data(dir: str, feat_config: str="Taylor"):
     """
-    returns true if gpu device exists
+    returns the features, labels, and subject ids
+
+    args:
+        feat_set - represents what feature set must be
+        kept when data is loaded. Taylor et al. (2015)
+        for instance has used most statistical features
+        but variable frequency complex demodulation based
+        features are not used unlike in Hossain et al.
+        (2022) study
     """
 
-    device_name = tf.test.gpu_device_name()
-    if device_name != '/device:GPU:0':
-        return False
-    return True
+    # feature configuration can either be hossain or taylor which will return
+    # feature set as a result of reading .txt file containing all features
+    # associated to a researcher
+    feat_set = np.genfromtxt(f'./data/Artifact Detection Data/{feat_config.lower()}_feature_set.txt', dtype=str).tolist()
+
+    # list all .csv features and .csv labels in directory
+    subject_names = list(set([re.sub(r"_features.csv|_labels.csv", "", file) for file in os.listdir(dir)]))
+    subject_to_id = {subject: id for id, subject in enumerate(subject_names)}
+
+    # read all .csv features and .csv labels
+    def helper(subject_name: str):
+        # read and assign id to the subject 
+        subject_features = pd.read_csv(f'{dir}{subject_name}_features.csv', index_col=0)
+        subject_features['subject_id'] = subject_to_id[subject_name]
+
+        subject_labels = pd.read_csv(f'{dir}{subject_name}_labels.csv', index_col=0)
+        subject_labels['subject_id'] = subject_to_id[subject_name]
+
+
+        return (subject_features, subject_labels)
+
+    with ThreadPoolExecutor() as exe:
+        # return from this will be a list of all subjects
+        # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
+        subjects_data = list(exe.map(helper, subject_names))
+        subjects_features, subjects_labels = _combine_data(subjects_data)
+        subjects_features = subjects_features[feat_set]
+
+    return subjects_features, subjects_labels, subject_to_id
+
+def load_results(estimator_name):
+    # read .json file and maybe convert it to a readable dataframe
+    # that you can decide which hyper params give the highest mean cross metric value
+    # if json file exists read and use it
+    if os.path.exists(f'./results/sample_{estimator_name}_results.json'):
+        # read json file as dictionary
+        with open(f'./results/sample_{estimator_name}_results.json') as file:
+            results = json.load(file)
+            file.close()
+
+        return results
+
+    else:
+        raise FileNotFoundError("File not found please run `tuning.py` first to obtain `.json` file of results!")
+
+# def device_exists():
+#     """
+#     returns true if gpu device exists
+#     """
+
+#     device_name = tf.test.gpu_device_name()
+#     if device_name != '/device:GPU:0':
+#         return False
+#     return True
 
 def load_lookup_array(path: str):
     """
@@ -113,16 +181,16 @@ def save_tokenizer(path: str, tokenizer):
         json.dump(tokenizer_json, file, ensure_ascii=False)
         file.close()
 
-def load_tokenizer(path: str):
-    """
-    The data can be loaded using tokenizer_from_json function 
-    from keras_preprocessing.text
-    """
-    with open(path, 'r') as f:
-        data = json.load(f)
-        tokenizer = tokenizer_from_json(data)
+# def load_tokenizer(path: str):
+#     """
+#     The data can be loaded using tokenizer_from_json function 
+#     from keras_preprocessing.text
+#     """
+#     with open(path, 'r') as f:
+#         data = json.load(f)
+#         tokenizer = tokenizer_from_json(data)
 
-    return tokenizer
+#     return tokenizer
 
 def create_metrics_df(train_metric_values, 
                       val_metric_values, 

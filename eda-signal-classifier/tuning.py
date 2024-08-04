@@ -1,10 +1,8 @@
 import os
 import pandas as pd
-import re
 import itertools
 import json
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor
 
 # import tensorflow as tf
 from sklearn.feature_selection import SequentialFeatureSelector, RFE
@@ -17,56 +15,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 from argparse import ArgumentParser
 
-def _combine_data(subjects_data):
-    subjects_features, subjects_labels = zip(*subjects_data)
-
-    subjects_features = pd.concat(subjects_features, axis=0, ignore_index=True)
-    subjects_labels = pd.concat(subjects_labels, axis=0, ignore_index=True)
-
-    return subjects_features, subjects_labels
-
-def concur_load_data(dir: str, feat_config: str="Taylor"):
-    """
-    returns the features, labels, and subject ids
-
-    args:
-        feat_set - represents what feature set must be
-        kept when data is loaded. Taylor et al. (2015)
-        for instance has used most statistical features
-        but variable frequency complex demodulation based
-        features are not used unlike in Hossain et al.
-        (2022) study
-    """
-
-    # feature configuration can either be hossain or taylor which will return
-    # feature set as a result of reading .txt file containing all features
-    # associated to a researcher
-    feat_set = np.genfromtxt(f'./data/Artifact Detection Data/{feat_config.lower()}_feature_set.txt', dtype=str).tolist()
-
-    # list all .csv features and .csv labels in directory
-    subject_names = list(set([re.sub(r"_features.csv|_labels.csv", "", file) for file in os.listdir(dir)]))
-    subject_to_id = {subject: id for id, subject in enumerate(subject_names)}
-
-    # read all .csv features and .csv labels
-    def helper(subject_name: str):
-        # read and assign id to the subject 
-        subject_features = pd.read_csv(f'{dir}{subject_name}_features.csv', index_col=0)
-        subject_features['subject_id'] = subject_to_id[subject_name]
-
-        subject_labels = pd.read_csv(f'{dir}{subject_name}_labels.csv', index_col=0)
-        subject_labels['subject_id'] = subject_to_id[subject_name]
-
-
-        return (subject_features, subject_labels)
-
-    with ThreadPoolExecutor() as exe:
-        # return from this will be a list of all subjects
-        # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
-        subjects_data = list(exe.map(helper, subject_names))
-        subjects_features, subjects_labels = _combine_data(subjects_data)
-        subjects_features = subjects_features[feat_set]
-
-    return subjects_features, subjects_labels, subject_to_id
+from utilities.loaders import concur_load_data
 
 def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, selector_config: str, n_features_to_select: int, sample_ids: list | pd.Series | np.ndarray):
     # select best features first by means of backward

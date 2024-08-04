@@ -14,84 +14,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-from tuning import concur_load_data
-from argparse import ArgumentParser
+from utilities.loaders import concur_load_data, load_results
+from argparse import ArgumentParser    
 
-def _combine_data(subjects_data):
-    """
-    args:
-        subjects_data - is a list of dataframes representing each
-        subjects calculated features
-    """
-    subjects_features, subjects_labels = zip(*subjects_data)
-
-    subjects_features = pd.concat(subjects_features, axis=0, ignore_index=True)
-    subjects_labels = pd.concat(subjects_labels, axis=0, ignore_index=True)
-
-    return subjects_features, subjects_labels
-
-def concur_load_data(dir: str, feat_config: str="Taylor"):
-    """
-    returns the features, labels, and subject ids
-
-    args:
-        feat_set - represents what feature set must be
-        kept when data is loaded. Taylor et al. (2015)
-        for instance has used most statistical features
-        but variable frequency complex demodulation based
-        features are not used unlike in Hossain et al.
-        (2022) study
-    """
-
-    # feature configuration can either be hossain or taylor which will return
-    # feature set as a result of reading .txt file containing all features
-    # associated to a researcher
-    feat_set = np.genfromtxt(f'./data/Artifact Detection Data/{feat_config.lower()}_feature_set.txt', dtype=str).tolist()
-
-    # list all .csv features and .csv labels in directory
-    subject_names = list(set([re.sub(r"_features.csv|_labels.csv", "", file) for file in os.listdir(dir)]))
-    subject_to_id = {subject: id for id, subject in enumerate(subject_names)}
-
-    # read all .csv features and .csv labels
-    def helper(subject_name: str):
-        # read and assign id to the subject 
-        subject_features = pd.read_csv(f'{dir}{subject_name}_features.csv', index_col=0)
-        subject_features['subject_id'] = subject_to_id[subject_name]
-
-        subject_labels = pd.read_csv(f'{dir}{subject_name}_labels.csv', index_col=0)
-        subject_labels['subject_id'] = subject_to_id[subject_name]
-
-
-        return (subject_features, subject_labels)
-
-    with ThreadPoolExecutor() as exe:
-        # return from this will be a list of all subjects
-        # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
-        subjects_data = list(exe.map(helper, subject_names))
-        subjects_features, subjects_labels = _combine_data(subjects_data)
-        subjects_features = subjects_features[feat_set]
-
-    return subjects_features, subjects_labels, subject_to_id
-
-
-
-def load_results(estimator_name):
-    # read .json file and maybe convert it to a readable dataframe
-    # that you can decide which hyper params give the highest mean cross metric value
-    # if json file exists read and use it
-    if os.path.exists(f'./results/{estimator_name}_results.json'):
-        # read json file as dictionary
-        with open(f'./results/{estimator_name}_results.json') as file:
-            results = json.loads(file)
-            file.close()
-
-        return results
-
-    else:
-        raise FileNotFoundError("File not found please run `training.py` first to obtain `.json` file of results!")
-    
-
-def summarize_results(results: dict):
+def summarize_results(estimator_name: str, results: dict):
     """
     this function will average out each and all folds 
     of each metric value of each hyper param configuration
@@ -101,8 +27,21 @@ def summarize_results(results: dict):
         the results of `tuning.py`
     """
 
+    for hyper_param_config_key, folds_metric_values in results[estimator_name].items():
+        # create key out of hyper_param_config
+        print(hyper_param_config_key)
+        folds_train_acc = np.array(folds_metric_values["folds_train_acc"])
+        folds_cross_acc = np.array(folds_metric_values["folds_cross_acc"])
+        folds_train_prec = np.array(folds_metric_values["folds_train_prec"])
+        folds_cross_prec = np.array(folds_metric_values["folds_cross_prec"])
+        folds_train_rec = np.array(folds_metric_values["folds_train_rec"])
+        folds_cross_rec = np.array(folds_metric_values["folds_cross_rec"])
+        folds_train_f1 = np.array(folds_metric_values["folds_train_f1"])
+        folds_cross_f1 = np.array(folds_metric_values["folds_cross_f1"])
+        folds_train_roc_auc = np.array(folds_metric_values["folds_train_roc_auc"])
+        folds_cross_roc_auc = np.array(folds_metric_values["folds_cross_roc_auc"])
 
-
+    # train acc cross acc train prec cross prec train rec cross rec
 
 def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, subject_to_id: dict, estimator_name, estimator, **hyper_param_config: dict):
     """
@@ -116,8 +55,6 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
 
     # create key out of hyper_param_config
     hyper_param_config_key = "|".join([f"{hyper_param}_{value}" for hyper_param, value in hyper_param_config.items()])
-
-
 
 if __name__ == "__main__":
     """
@@ -137,7 +74,7 @@ if __name__ == "__main__":
 
     # read and parse user arguments
     parser = ArgumentParser()
-    parser.add_argument("-m", type=str, default='lr', help="model e.g. lr for logistic regression, rf for random forest, svm for support vector machine, gbt for gradient boosted tree, to train and validate ")
+    parser.add_argument("-m", type=str, default='lr', help="model e.g. lr for logistic regression, rf for random forest, svm for support vector machine, gbt for gradient boosted tree, that represents what results.json file should be loaded ")
     parser.add_argument("-pl", type=str, default="taylor", 
         help="represents what pipeline which involves what feature set must \
         be kept when data is loaded and what model must the feature selector \
@@ -149,6 +86,8 @@ if __name__ == "__main__":
     # read and load data
     subjects_features, subjects_labels, subject_to_id = concur_load_data('./data/Artifact Detection Data/train/', feat_config=args.pl)
 
-
+    # load results.json 
+    results = load_results(estimator_name=args.m)
+    summarize_results(estimator_name=args.m, results=results)
 
     
