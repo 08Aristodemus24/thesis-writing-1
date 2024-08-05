@@ -54,7 +54,7 @@ def concur_load_data(dir: str, feat_config: str="Taylor"):
     # feature configuration can either be hossain or taylor which will return
     # feature set as a result of reading .txt file containing all features
     # associated to a researcher
-    feat_set = np.genfromtxt(f'./data/Artifact Detection Data/{feat_config.lower()}_feature_set.txt', dtype=str).tolist()
+    feat_set = np.genfromtxt(f'./data/Artifact Detection Data/{feat_config.lower()}_feature_set.txt', dtype=str).tolist() 
 
     # list all .csv features and .csv labels in directory
     subject_names = list(set([re.sub(r"_features.csv|_labels.csv", "", file) for file in os.listdir(dir)]))
@@ -77,17 +77,19 @@ def concur_load_data(dir: str, feat_config: str="Taylor"):
         # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
         subjects_data = list(exe.map(helper, subject_names))
         subjects_features, subjects_labels = _combine_data(subjects_data)
-        subjects_features = subjects_features[feat_set]
+
+        # select all features associated with feat_config, include also subject_id
+        subjects_features = subjects_features[feat_set + ['subject_id']]
 
     return subjects_features, subjects_labels, subject_to_id
 
-def load_results(estimator_name):
+def load_results(filename: str):
     # read .json file and maybe convert it to a readable dataframe
     # that you can decide which hyper params give the highest mean cross metric value
     # if json file exists read and use it
-    if os.path.exists(f'./results/sample_{estimator_name}_results.json'):
+    if os.path.exists(f'./results/{filename}'):
         # read json file as dictionary
-        with open(f'./results/sample_{estimator_name}_results.json') as file:
+        with open(f'./results/{filename}') as file:
             results = json.load(file)
             file.close()
 
@@ -95,6 +97,95 @@ def load_results(estimator_name):
 
     else:
         raise FileNotFoundError("File not found please run `tuning.py` first to obtain `.json` file of results!")
+
+def summarize_results(estimator_name: str, results: dict):
+    """
+    this function will average out each and all folds 
+    of each metric value of each hyper param configuration
+
+    args:
+        results - a dictionary loaded from the .json file containing
+        the results of `tuning.py`
+
+        e.g. 
+        {
+            "gbt": {
+                "C_1": {
+                    "folds_train_acc": [0.56, 0.75, 0.80, 0.66],
+                    "folds_cross_acc": [0.66, 0.85, 0.79, 0.76],
+                    "folds_train_roc_auc": [0.76, 0.78, 0.80, 0.74],
+                    "folds_cross_roc_auc": [0.70, 0.77, 0.82, 0.66]
+                },
+                "C_10": {
+                    "folds_train_acc": [0.86, 0.75, 0.81, 0.79],
+                    "folds_cross_acc": [0.78, 0.81, 0.80, 0.80],
+                    "folds_train_roc_auc": [0.79, 0.85, 0.90, 0.86],
+                    "folds_cross_roc_auc": [0.89, 0.79, 0.80, 0.76]
+                },
+                "C_100": {
+                    "folds_train_acc": [0.89, 0.86, 0.84, 0.91],
+                    "folds_cross_acc": [0.79, 0.75, 0.90, 0.86],
+                    "folds_train_roc_auc": [0.89, 0.79, 0.80, 0.76],
+                    "folds_cross_roc_auc": [0.90, 0.74, 0.83, 0.86]
+                },
+                "C_1000": {
+                    "folds_train_acc": [0.78, 0.81, 0.80, 0.80],
+                    "folds_cross_acc": [0.86, 0.90, 0.84, 0.76],
+                    "folds_train_roc_auc": [0.89, 0.86, 0.84, 0.91],
+                    "folds_cross_roc_auc": [0.90, 0.75, 0.81, 0.85]
+                }
+            }
+        }
+
+    returns a dataframe which looks like this:
+                       | hyper param config 1 | hyper param config 2 | hyper param config 3 |
+    mean train acc     |                      |                      |                      |
+    mean cross acc     |                      |                      |                      |
+    mean train roc auc |                      |                      |                      |
+    mean cross roc auc |                      |                      |                      |
+    """
+
+    summarized = {}
+    for hyper_param_config_key, folds_metric_values in results[estimator_name].items():
+
+        # calculate mean of each folds metric value
+        mean_train_acc = np.array(folds_metric_values["folds_train_acc"]).mean()
+        mean_cross_acc = np.array(folds_metric_values["folds_cross_acc"]).mean()
+        mean_train_prec = np.array(folds_metric_values["folds_train_prec"]).mean()
+        mean_cross_prec = np.array(folds_metric_values["folds_cross_prec"]).mean()
+        mean_train_rec = np.array(folds_metric_values["folds_train_rec"]).mean()
+        mean_cross_rec = np.array(folds_metric_values["folds_cross_rec"]).mean()
+        mean_train_f1 = np.array(folds_metric_values["folds_train_f1"]).mean()
+        mean_cross_f1 = np.array(folds_metric_values["folds_cross_f1"]).mean()
+        mean_train_roc_auc = np.array(folds_metric_values["folds_train_roc_auc"]).mean()
+        mean_cross_roc_auc = np.array(folds_metric_values["folds_cross_roc_auc"]).mean()
+        
+        # create column
+        summarized[hyper_param_config_key] = [
+            mean_train_acc,
+            mean_cross_acc,
+            mean_train_prec,
+            mean_cross_prec,
+            mean_train_rec,
+            mean_cross_rec,
+            mean_train_f1,
+            mean_cross_f1,
+            mean_train_roc_auc,
+            mean_cross_roc_auc]
+        
+    summarized_results = pd.DataFrame(summarized, index=[
+        "mean_train_acc",
+        "mean_cross_acc",
+        "mean_train_prec",
+        "mean_cross_prec",
+        "mean_train_rec",
+        "mean_cross_rec",
+        "mean_train_f1",
+        "mean_cross_f1",
+        "mean_train_roc_auc",
+        "mean_cross_roc_auc"])
+    
+    return summarized_results
 
 # def device_exists():
 #     """
@@ -171,26 +262,6 @@ def load_model(path: str):
         file.close()
 
     return model
-
-def save_tokenizer(path: str, tokenizer):
-    """
-    saves the tokenizer fitted on the NLP training data 
-    """
-    tokenizer_json = tokenizer.to_json()
-    with open(path, 'w', encoding='utf-8') as file:
-        json.dump(tokenizer_json, file, ensure_ascii=False)
-        file.close()
-
-# def load_tokenizer(path: str):
-#     """
-#     The data can be loaded using tokenizer_from_json function 
-#     from keras_preprocessing.text
-#     """
-#     with open(path, 'r') as f:
-#         data = json.load(f)
-#         tokenizer = tokenizer_from_json(data)
-
-#     return tokenizer
 
 def create_metrics_df(train_metric_values, 
                       val_metric_values, 

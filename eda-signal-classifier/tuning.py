@@ -15,12 +15,12 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 from argparse import ArgumentParser
 
-from utilities.loaders import concur_load_data
+from utilities.loaders import concur_load_data, save_lookup_array
 
 def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, selector_config: str, n_features_to_select: int, sample_ids: list | pd.Series | np.ndarray):
     # select best features first by means of backward
     # feature selection based on support vector classifiers
-    model = SVC(kernel='linear') if selector_config == "taylor" else RandomForestClassifier()
+    model = SVC() if selector_config == "taylor" else RandomForestClassifier()
     # selector = SequentialFeatureSelector(svc, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
     selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
     
@@ -37,6 +37,9 @@ def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFra
     # has been removed in X
     feats_mask = selector.get_support().tolist() + [True]
     selected_feats = subjects_features.columns[feats_mask]
+
+    # create and save a .txt file containing the selected features by RFE
+    save_lookup_array(f'./results/reduced_{selector_config}_feature_set.txt')
 
     return selected_feats
 
@@ -67,11 +70,11 @@ def check_file_key(estimator_name, hyper_param_config_key):
     if os.path.exists(f'./results/{estimator_name}_results.json'):
         # read json file as dictionary
         with open(f'./results/{estimator_name}_results.json') as file:
-            results = json.loads(file)
+            results = json.load(file)
         
             # also if hyper param already exists as a key then 
             # move on to next hyper param by returning from function
-            if hyper_param_config_key in results[f'{estimator_name}']:
+            if hyper_param_config_key in results[estimator_name]:
                 return False
             
             file.close()
@@ -123,12 +126,13 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
     # if file exists or not return a dictionary but if hyper param 
     # config key already exists return from function
     if check_file_key(estimator_name, hyper_param_config_key) != False:
-        results = check_file_key(estimator, hyper_param_config_key)
+        results = check_file_key(estimator_name, hyper_param_config_key)
     else:
         return
     
+    print(results)
     # create model with specific hyper param configurations
-    model = estimator(**hyper_param_config)
+    model = estimator(**hyper_param_config, verbose=1)
 
     # initialize empty lists to collect all metric values per fold
     folds_train_acc = []
@@ -181,7 +185,12 @@ def loso_cross_validation(subjects_features: pd.DataFrame, subjects_labels: pd.D
         folds_train_roc_auc.append(fold_train_roc_auc)
         folds_cross_roc_auc.append(fold_cross_roc_auc)
 
-        print(f'fold: {subject_id} with hyper params: {hyper_param_config}')
+        print(f"fold: {subject_id} with hyper params: {hyper_param_config} \
+              \ntrain acc: {fold_train_acc} cross acc: {fold_cross_acc} \
+              \ntrain prec: {fold_train_prec} cross prec: {fold_cross_prec} \
+              \ntrain rec: {fold_train_rec} cross rec: {fold_cross_rec} \
+              \ntrain f1: {fold_train_f1} cross f1: {fold_cross_f1} \
+              \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc}")
 
     # once all fold train and cross metric values collected update read
     # dictionary with specific hyper param config as key and its recorded
@@ -231,8 +240,9 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
     sample_ids = np.random.choice(subjects_features.shape[0], size=n_rows_to_sample)
 
     # use returned features from select_features()
-    selected_feats = select_features(subjects_features, subjects_labels, selector_config=selector_config, n_features_to_select=n_features_to_select, sample_ids=sample_ids)
-    subjects_features = subjects_features[selected_feats].iloc[sample_ids]
+    # selected_feats = select_features(subjects_features, subjects_labels, selector_config=selector_config, n_features_to_select=n_features_to_select, sample_ids=sample_ids)
+    # subjects_features = subjects_features[selected_feats].iloc[sample_ids]
+    subjects_features = subjects_features.iloc[sample_ids]
     subjects_labels = subjects_labels.drop(columns=['subject_id']).iloc[sample_ids]
 
     # unpack the dictionaries items and separate into list of keys and values
