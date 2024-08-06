@@ -240,9 +240,9 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame, subjects_labels: pd.Dat
     sample_ids = np.random.choice(subjects_features.shape[0], size=n_rows_to_sample)
 
     # use returned features from select_features()
-    # selected_feats = select_features(subjects_features, subjects_labels, selector_config=selector_config, n_features_to_select=n_features_to_select, sample_ids=sample_ids)
-    # subjects_features = subjects_features[selected_feats].iloc[sample_ids]
-    subjects_features = subjects_features.iloc[sample_ids]
+    selected_feats = select_features(subjects_features, subjects_labels, selector_config=selector_config, n_features_to_select=n_features_to_select, sample_ids=sample_ids)
+    subjects_features = subjects_features[selected_feats].iloc[sample_ids]
+    # subjects_features = subjects_features.iloc[sample_ids]
     subjects_labels = subjects_labels.drop(columns=['subject_id']).iloc[sample_ids]
 
     # unpack the dictionaries items and separate into list of keys and values
@@ -328,8 +328,7 @@ if __name__ == "__main__":
         },
         'gbt': {
             'model': GradientBoostingClassifier, 
-            # 'hyper_params': {'n_estimators': [200, 400, 600], 'learning_rate': [0.01, 0.1], 'max_depth': [3, 5, 10], 'verbose': [1]}
-            'hyper_params': {'n_estimators': [200, 400], 'learning_rate': [0.01], 'max_depth': [3], 'verbose': [1]}
+            'hyper_params': {'n_estimators': [200, 400, 600], 'learning_rate': [0.01, 0.1], 'max_depth': [3, 5, 10]}
         },
     }
 
