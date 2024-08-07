@@ -39,7 +39,7 @@ def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFra
     selected_feats = subjects_features.columns[feats_mask]
 
     # create and save a .txt file containing the selected features by RFE
-    save_lookup_array(f'./results/reduced_{selector_config}_feature_set.txt')
+    save_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_feature_set.txt', selected_feats)
 
     return selected_feats
 
