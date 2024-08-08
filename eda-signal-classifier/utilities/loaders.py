@@ -200,14 +200,18 @@ def summarize_results(estimator_name: str, results: dict):
 def load_lookup_array(path: str):
     """
     reads a text file containing a list of all unique values
-    and returns this
+    and returns this. If no file is found a false boolean is
+    returned
     """
 
-    with open(path, 'rb') as file:
-        char_to_idx = pickle.load(file)
-        file.close()
+    try:
+        with open(path, 'r') as file:
+            char_to_idx = pickle.load(file)
+            file.close()
 
-    return char_to_idx
+        return char_to_idx
+    except FileNotFoundError as e:
+        return False
 
 def save_lookup_array(path: str, uniques: list):
     """
@@ -215,7 +219,7 @@ def save_lookup_array(path: str, uniques: list):
     a file for later loading by load_lookup_array()
     """
 
-    with open(path, 'wb') as file:
+    with open(path, 'w') as file:
         pickle.dump(uniques, file)
         file.close()
 

@@ -15,9 +15,14 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 from argparse import ArgumentParser
 
-from utilities.loaders import concur_load_data, save_lookup_array
+from utilities.loaders import concur_load_data, save_lookup_array, load_lookup_array
 
 def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFrame, selector_config: str, n_features_to_select: int, sample_ids: list | pd.Series | np.ndarray):
+    
+    if load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_feature_set.txt') != False:
+        # if features have already been saved load it
+        selected_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_feature_set.txt')
+
     # select best features first by means of backward
     # feature selection based on support vector classifiers
     model = SVC() if selector_config == "taylor" else RandomForestClassifier()
