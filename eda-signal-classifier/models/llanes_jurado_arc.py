@@ -12,7 +12,6 @@ import keras
 
 import keras.backend as K
 from tensorflow.keras.optimizers import RMSProp
-from tensorflow.keras import Sequential, Model
 from tensorflow.keras.layers import (
     Activation,
     Dropout,
@@ -24,15 +23,12 @@ from tensorflow.keras.layers import (
     BatchNormalization,
     Lambda,
     Add,
-    concatenate,
-    Reshape)
-from keras.layers.merge import Concatenate
-from keras.callbacks import ModelCheckpoint, LearningRateScheduler, EarlyStopping, ReduceLROnPlateau,TensorBoard
-from keras.layers.convolutional import Conv1D, MaxPooling1D
-from keras.losses import binary_crossentropy
-
-from tensorflow.keras.losses import CategoricalCrossentropy as cce_loss
-from tensorflow.keras.metrics import CategoricalCrossentropy as cce_metric, CategoricalAccuracy
+    Concatenate,
+    Reshape,
+    Conv1D,
+    MaxPooling1D)
+from tensorflow.keras.losses import BinaryCrossentropy as bce_loss, Dice
+from tensorflow.keras.metrics import BinaryCrossentropy as bce_metric
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 
@@ -136,6 +132,105 @@ def model_recognition(window, dropout_value = 0.05):
     
     model = Model(inputs, dense3)
 
+@tf.keras.utils.register_keras_serializable()
+class LSTM_CNN_JURADO(tf.keras.Model):
+    def __init__(self, window_size=5 * 128, drop_prob=0.0, filter_size=32, kernel_size=5,  **kwargs):
+        super(LSTM_CNN_JURADO, self).__init__(**kwargs)
+        self.window_size = window_size
+        self.drop_prob = drop_prob
+        self.filter_size = 32
+        self.kernel_size = kernel_size
+
+        self.lstm_layer_1 = LSTM(16, activation="tanh", return_sequences=True)(inputs)
+        self.lstm_norm_1 = BatchNormalization()(lstm1)
+        self.lstm_drop_1 = Dropout(dropout_value)(lstm1)
+
+        lstm2 = LSTM(16, activation="tanh", return_sequences=True)(lstm1_drop)
+        lstm2 = BatchNormalization()(lstm2)
+        lstm2_drop = Dropout(dropout_value)(lstm2)
+
+        # ### 1D CNN layers ###
+        
+        conv1 = Conv1D(filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(lstm2_drop)
+        conv1 = BatchNormalization()(conv1)
+        conv1_1 = Conv1D(filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv1)
+        conv1_1 = BatchNormalization()(conv1_1)
+        conv1_2 = Conv1D(filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv1_1)
+        conv1_2 = BatchNormalization()(conv1_2)
+        drop1 = Dropout(dropout_value)(conv1_2)
+        add1 = Add()([drop1, conv1])
+        max1 = MaxPooling1D(pool_size=2)(add1)
+        
+        conv2 = Conv1D(2*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(max1)
+        conv2 = BatchNormalization()(conv2)
+        conv2_1 = Conv1D(2*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv2)
+        conv2_1 = BatchNormalization()(conv2_1)
+        conv2_2 = Conv1D(2*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv2_1)
+        conv2_2 = BatchNormalization()(conv2_2)
+        drop2 = Dropout(dropout_value)(conv2_2)
+        add1 = Add()([drop2, conv2])
+        max2 = MaxPooling1D(pool_size=2)(add1)
+        
+        conv3 = Conv1D(4*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(max2)
+        conv3 = BatchNormalization()(conv3)
+        conv3_1 = Conv1D(4*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv3)
+        conv3_1 = BatchNormalization()(conv3_1)
+        conv3_2 = Conv1D(4*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv3_1)
+        conv3_2 = BatchNormalization()(conv3_2)
+        drop3 = Dropout(dropout_value)(conv3_2)
+        add3 = Add()([drop3, conv3])
+        max3 = MaxPooling1D(pool_size=2)(add3)
+
+        conv4 = Conv1D(8*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(max3)
+        conv4 = BatchNormalization()(conv4)
+        conv4_1 = Conv1D(8*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv4)
+        conv4_1 = BatchNormalization()(conv4_1)
+        conv4_2 = Conv1D(8*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv4_1)
+        conv4_2 = BatchNormalization()(conv4_2)
+        drop4 = Dropout(dropout_value)(conv4_2)
+        add4 = Add()([drop4, conv4])
+        max4 = MaxPooling1D(pool_size=2)(add4)
+
+        conv5 = Conv1D(16*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(max4)
+        conv5 = BatchNormalization()(conv5)
+        conv5_1 = Conv1D(16*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv5)
+        conv5_1 = BatchNormalization()(conv5_1)
+        conv5_2 = Conv1D(16*filter_size, kernel_size, activation='relu', padding = 'same',
+                    kernel_initializer = 'he_normal')(conv5_1)
+        conv5_2 = BatchNormalization()(conv5_2)
+        drop5 = Dropout( dropout_value )(conv5_2)
+        add5 = Add()([drop5, conv5])
+        max5 = MaxPooling1D(pool_size=2)(add5)
+            
+        flat = Flatten()(max5)
+        
+        # ### Dense layers ###
+        
+        dense1 = Dense(256, activation = "relu")(flat)
+        dense1 = BatchNormalization()(dense1)
+        dense1 = Dropout(0.5)(dense1)
+        
+        dense2 = Dense(16, activation="relu")(dense1)
+        dense2 = BatchNormalization()(dense2)
+        dense2 = Dropout(0.5)(dense2)
+        
+        dense3 = Dense(1, activation="sigmoid")(dense2)
+
+    def call(self, inputs, training=False)
 
 # @tf.keras.utils.register_keras_serializable()
 # class GenPhiloTextA(tf.keras.Model):
