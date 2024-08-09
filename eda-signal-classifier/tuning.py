@@ -25,7 +25,7 @@ def select_features(subjects_features: pd.DataFrame, subjects_labels: pd.DataFra
 
     # select best features first by means of backward
     # feature selection based on support vector classifiers
-    model = SVC() if selector_config == "taylor" else RandomForestClassifier()
+    model = SVC(kernel='linear') if selector_config == "taylor" else RandomForestClassifier()
     # selector = SequentialFeatureSelector(svc, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
     selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
     
