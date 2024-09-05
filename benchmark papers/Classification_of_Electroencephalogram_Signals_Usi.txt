@@ -1,0 +1,1 @@
+Mohsen, Saeed & Ghoneim, Sherif & Alzaidi, Mohammed & Alzahrani, Abdullah & Mohamed Ali Hassan, Ashraf. (2023). Classification of Electroencephalogram Signals Using LSTM and SVM Based on Fast Walsh-Hadamard Transform. Computers, Materials & Continua. 75. 5271-5286. 10.32604/cmc.2023.038758. 

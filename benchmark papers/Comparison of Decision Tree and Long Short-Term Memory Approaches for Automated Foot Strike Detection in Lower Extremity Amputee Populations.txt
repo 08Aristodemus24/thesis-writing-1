@@ -1,0 +1,1 @@
+Juneau, P.; Baddour, N.; Burger, H.; Bavec, A.; Lemaire, E.D. Comparison of Decision Tree and Long Short-Term Memory Approaches for Automated Foot Strike Detection in Lower Extremity Amputee Populations. Sensors 2021, 21, 6974. https://doi.org/10.3390/s21216974

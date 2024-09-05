@@ -1,0 +1,2 @@
+P. Shi, A. Gangopadhyay, C. Owens, B. Blunt and C. Grogan, A hybrid model using LSTM and decision tree for mortality prediction and its application in provider performance evaluation, 2019 IEEE International Conference on Big Data (Big Data), Los Angeles, CA, USA, 2019, pp. 2773-2781, doi 10.1109BigData47090.2019.9005958. keywords {Data models;Logistics;Regression tree analysis;Predictive models;Machine learning;Diseases;Mortality prediction;LSTM;decision tree;ESRD},
+

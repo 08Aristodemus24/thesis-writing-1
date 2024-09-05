@@ -1,0 +1,1 @@
+Agarap, Abien Fred. (2017). A Neural Network Architecture Combining Gated Recurrent Unit (GRU) and Support Vector Machine (SVM) for Intrusion Detection in Network Traffic Data. 
