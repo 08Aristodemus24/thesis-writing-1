@@ -1,2 +1,3 @@
 /server-side/modelling/data/*
 !/server-side/modelling/data/dummy.txt
+/server-side/.env
