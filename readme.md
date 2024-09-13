@@ -532,10 +532,12 @@ them
 * review Smart Technologies for Long-Term Stress Monitoring at Work
 * 
 
-## Task delegation
-* work around the clock like madmen 30min on and then off then repeat
-* Deseree and Johana on the paper
-* me and Taline sa implementation
+## Recording problems after copying of:
+* `pip install -r requirements.txt` gives version error even if python version is supposed to be compatble with the package versions
+* `conda create -n thesis-writing-1 python=3.12.3` sometimes gives error
+* vs code not being able to download server with host 202.90.149.55 or saliksik.asti.dost.gov.ph
+* extremely slow installation of packages
+* unable to `git push origin master` always requires authentication and when I do input my credentials it throws `fatal authentication error` but weirdly able to `git add .` and `git commit -m "update"`. I've tried adding my username and email via `git config --user.name "<my github user name>"` and git config --user.email "<my email>" 
 
 ## Messaging Experts
 * <s>message llanes jurado et al</s>
