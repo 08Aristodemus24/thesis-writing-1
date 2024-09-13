@@ -554,8 +554,8 @@ if we were to use a gpu our partition and qos parameters would be set to the fol
 #SBATCH --account=<slurm_group_acct>
 #SBATCH --partition=batch
 #SBATCH --qos=batch_default
-#SBATCH --nodes=
-#SBATCH --ntasks=<num_cpus>
+#SBATCH --nodes=36
+#SBATCH --ntasks=86
 #SBATCH --job-name="<jobname>"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
