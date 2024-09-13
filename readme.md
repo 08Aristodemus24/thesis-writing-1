@@ -436,6 +436,8 @@ TensorShape([100, 30, 10])
 TensorShape([100, 10])
 ```
 
+10. we can actually run python scripts even from different locations and directories i.e. if we are in a directory `(thesis-writing-1) D:\Projects>` and the script is relative to this directory we can run in by enclosing the path to the script by quotation marks `"<relative or absolute path to script>.<extension>"`. Running `python "./to github/thesis-writing-1/test.py"` for instance will output `testing`
+
 # To do:
 
 ## artifact detection and correction:
