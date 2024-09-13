@@ -1,3 +1,4 @@
 /server-side/modelling/data/*
 !/server-side/modelling/data/dummy.txt
 /server-side/.env
+/hpc_compute_res_details.md
