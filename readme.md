@@ -542,6 +542,13 @@ them
 * unable to `git push origin master` always requires authentication and when I do input my credentials it throws `fatal authentication error` but weirdly able to `git add .` and `git commit -m "update"`. I've tried adding my username and email via `git config --user.name "<my github user name>"` and git config --user.email "<my email>" 
 
 ## Running scripts in HPC:
+if we were to use a gpu our partition and qos parameters would be set to the following valuess
+```
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu-p40_default
+#SBATCH --gres=gpu:1  ## or --gres=gpu:p40:1
+```
+
 ```
 #!/bin/bash
 #SBATCH --account=<slurm_group_acct>
