@@ -389,6 +389,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # read and load data
+    print(os.getcwd())
     subjects_features, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pl)
 
     # model hyper params
@@ -416,6 +417,7 @@ if __name__ == "__main__":
     }
 
     if args.mode.lower() == "tuning":
+        
         # do feature selection, hyperparameter tuning, 
         # loso cross validation across all subjects, and
         # save model & results
