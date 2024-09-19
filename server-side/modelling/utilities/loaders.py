@@ -98,6 +98,7 @@ def concur_load_data(feat_config: str="Taylor"):
             # select all features associated with feat_config, include also subject_id
             subjects_features = subjects_features[feat_set + ['subject_id']]
 
+        print("subjects features and labels and subject to id lookup loaded")
         return subjects_features, subjects_labels, subject_to_id
 
     elif feat_config.capitalize() == "Jurado" or feat_config.capitalize() == "Cueva":
@@ -123,7 +124,7 @@ def concur_load_data(feat_config: str="Taylor"):
             # find a way here to combine all 3d subject_signals and subject_labels
             subjects_signals, subjects_labels = _combine_data(subjects_data)
 
-
+        print("subjects signals and labels and subject to id lookup loaded")
         return subjects_signals, subjects_labels, subject_to_id
 
 def load_results(filename: str):
