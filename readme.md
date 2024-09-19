@@ -438,6 +438,8 @@ TensorShape([100, 10])
 
 10. we can actually run python scripts even from different locations and directories i.e. if we are in a directory `(thesis-writing-1) D:\Projects>` and the script is relative to this directory we can run in by enclosing the path to the script by quotation marks `"<relative or absolute path to script>.<extension>"`. Running `python "./to github/thesis-writing-1/test.py"` for instance will output `testing`
 
+11. you can run vs code via command `code .`
+
 # To do:
 
 ## artifact detection and correction:
@@ -617,9 +619,14 @@ echo "Total runtime (sec): ${run_time}"
 
 
 ## Front end setup
-* install node.js
-* run `npm create vite@latest client-side -- --template react` or `npm create vite@latest` and just follow the subsequent prompts that will ask you what template you want to use i.e. react, svelte, vue etc. and what name will the project be, in directory `~/thesis-writing-1`
-* start developing in react so its quick  
+* <s>install node.js</s>
+* <s>run `npm create vite@latest client-side -- --template react` or `npm create vite@latest` and just follow the subsequent prompts that will ask you what template you want to use i.e. react, svelte, vue etc. and what name will the project be, in directory `~/thesis-writing-1`</s>
+* <s>start developing in react so its quick</s>
+
+## Building components
+* setup css files first in order to build navbar
+* search some way how to visualize time series data like eda signals in react
+* search some way to upload .csv files to backend via frontend my guess is this would be akin to submitting an image like file like what you did in the micro organism classifier
 
 
 ## Messaging Experts
