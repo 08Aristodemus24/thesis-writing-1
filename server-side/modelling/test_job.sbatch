@@ -2,8 +2,8 @@
 #SBATCH --account=pup-manila    
 #SBATCH --partition=batch
 #SBATCH --qos=batch_default
-#SBATCH --nodes=10
-#SBATCH --ntasks=10
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
 #SBATCH --job-name="test_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
