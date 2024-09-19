@@ -1,38 +1,13 @@
-Submitted on Thu Sep 19 16:54:09 PST 2024
+Submitted on Thu Sep 19 19:55:42 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 26055
+SLURM_JOB_ID          : 26081
 SLURM_JOB_NAME        : tuning_ml_job
 SLURM_JOB_NUM_NODES   : 20
 SLURM_JOB_NODELIST    : saliksik-cpu-[01-09,14-16,26-27,31-36]
 SLURM_NTASKS          : 20
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/26055
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/26081
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-/scratch1/michael.cueva/thesis-writing-1/server-side/modelling
-subjects features and labels and subject to id lookup loaded
-file not found please run needed script first to produce file
-Fitting estimator with 138 features.
-Traceback (most recent call last):
-  File "/scratch1/michael.cueva/thesis-writing-1/server-side/modelling/tuning_ml.py", line 424, in <module>
-    grid_search_loso_cv(
-  File "/scratch1/michael.cueva/thesis-writing-1/server-side/modelling/tuning_ml.py", line 291, in grid_search_loso_cv
-    selected_feats = select_features(subjects_features, subjects_labels, estimator_name, selector_config=selector_config, n_features_to_select=n_features_to_select, sampled_ids=sampled_ids)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch1/michael.cueva/thesis-writing-1/server-side/modelling/tuning_ml.py", line 67, in select_features
-    selector.fit(X, Y)
-  File "/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/base.py", line 1473, in wrapper
-    return fit_method(estimator, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/feature_selection/_rfe.py", line 268, in fit
-    return self._fit(X, y, **fit_params)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/feature_selection/_rfe.py", line 326, in _fit
-    importances = _get_feature_importances(
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/feature_selection/_base.py", line 228, in _get_feature_importances
-    raise ValueError(
-ValueError: when `importance_getter=='auto'`, the underlying estimator SVC should have `coef_` or `feature_importances_` attribute. Either pass a fitted estimator to feature selector or call fit before calling transform.
-Finished on Thu Sep 19 19:35:39 PST 2024
-Total runtime (sec): 9689.179205417633
+slurmstepd: error: *** JOB 26081 ON saliksik-cpu-01 CANCELLED AT 2024-09-19T20:08:30 ***

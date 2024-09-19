@@ -55,9 +55,9 @@ def select_features(subjects_features: pd.DataFrame,
 
     # select best features first by means of backward
     # feature selection based on support vector classifiers
-    model = SVC(kernel='rbf') if selector_config == "taylor" else RandomForestClassifier()
-    selector = SequentialFeatureSelector(model, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
-    # selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
+    model = SVC(kernel='linear') if selector_config == "taylor" else RandomForestClassifier()
+    # selector = SequentialFeatureSelector(model, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
+    selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
     
     # remove subject_id column then convert to numpy array
     X = subjects_features.loc[sampled_ids, subjects_features.columns != 'subject_id'].to_numpy()
