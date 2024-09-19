@@ -31,8 +31,8 @@ def sample_ids(subjects_features, n_rows_to_sample):
 
 def select_features(subjects_features: pd.DataFrame,
     subjects_labels: pd.DataFrame,
-    selector_config: str,
     estimator_name: str,
+    selector_config: str,
     n_features_to_select: int,
     sampled_ids: list | pd.Series | np.ndarray):
 
@@ -56,8 +56,8 @@ def select_features(subjects_features: pd.DataFrame,
     # select best features first by means of backward
     # feature selection based on support vector classifiers
     model = SVC(kernel='rbf') if selector_config == "taylor" else RandomForestClassifier()
-    # selector = SequentialFeatureSelector(svc, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
-    selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
+    selector = SequentialFeatureSelector(model, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
+    # selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
     
     # remove subject_id column then convert to numpy array
     X = subjects_features.loc[sampled_ids, subjects_features.columns != 'subject_id'].to_numpy()

@@ -2,8 +2,8 @@
 #SBATCH --account=pup-manila    
 #SBATCH --partition=batch
 #SBATCH --qos=batch_default
-#SBATCH --nodes=10
-#SBATCH --ntasks=10
+#SBATCH --nodes=20
+#SBATCH --ntasks=20
 #SBATCH --job-name="tuning_ml_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
