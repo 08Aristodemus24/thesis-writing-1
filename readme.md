@@ -440,6 +440,8 @@ TensorShape([100, 10])
 
 11. you can run vs code via command `code .`
 
+12. Now I know when copying a repository to another machine and then enterign the remote origin url and then adding, committing, and pushing to it requires your github username and password, the password entered can be based from the github classic personal access token you must create in order to push to push to such a remote repository from a remote or another machine besides your local
+
 # To do:
 
 ## artifact detection and correction:
