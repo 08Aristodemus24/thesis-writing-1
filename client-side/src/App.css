@@ -1,42 +1,2027 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* LANDING SECTION */
+#data-form-section{
+  /* size for each section*/
+  /* take into account navbar in data-form section */
+  /* min-height: calc(100vh - clamp(3.5rem, 6.5vw, 6.5rem)); */
+  min-height: 100vh;
+
+  /* position */
+  position: relative;
+
+  /* display */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* design */
+  background-color: var(--primary-background);
+  /* border: 2px solid lightseagreen; */
+}
+
+#data-form-section::after{
+  /* size */
+  width: 100%;
+  height: 100%;
+
+  /* position */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  /* to not affect contents color place pseudo element behind content */
+  z-index: -1;
+
+  /* design */
+  content: '';
+  background-image: url('https://raw.githubusercontent.com/08Aristodemus24/project-seraphim/master/svelte-client-side/src/assets/mediafiles/journey-painting-wallpaper.jpg');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: brightness(75%);
+}
+
+.data-form-content{
+  /* alignment */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* design */
+  /* outline: 3px solid purple; */
+}
+
+.form-container{
+  /* design */
+  /* outline: 1px solid yellow; */
+
+  /* size */
+  /* width: 100%; */
+
+  /* spacing */
+  margin-block: 1rem;
+}
+
+.form{
+  /* display */
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+
+  /* size */
+  padding: 5px;
+
+  /* design */
+  /* outline: 2px solid red; */
+  background-color: var(--primary-background);
+}
+
+.sharp-minimal label[class*="name-label"]{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal input[class*="name-field"]{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  background-color: transparent;
+  color: var(--primary-color);
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+/* Chrome, Firefox, Opera, Safari 10.1+ */
+.sharp-minimal input[class*="name-field"]::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1; /* Firefox */
+}
+
+/* Internet Explorer 10-11 */
+.sharp-minimal input[class*="name-field"]:-ms-input-placeholder{
+  color: var(--tertiary-color);
+}
+
+/* Microsoft Edge */
+.sharp-minimal input[class*="name-field"]::-ms-input-placeholder{
+  color: var(--tertiary-color);
+}
+
+div[class*="name-container"].light-neomorphic{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic label[class*="name-label"]{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic input[class*="name-field"]{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic input[class*="name-field"]::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.light-neomorphic input[class*="name-field"]:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic input[class*="name-field"]::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+div[class*="name-container"].dark-neomorphic{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic label[class*="name-label"]{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic input[class*="name-field"]{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px -2px var(--secondary-shadow);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic input[class*="name-field"]::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.dark-neomorphic input[class*="name-field"]:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic input[class*="name-field"]::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .email-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .email-field{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  background-color: transparent;
+  color: var(--primary-color);
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+/* Chrome, Firefox, Opera, Safari 10.1+ */
+.email-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1; /* Firefox */
+}
+
+/* Internet Explorer 10-11 */
+.email-field:-ms-input-placeholder{
+  color: var(--tertiary-color);
+}
+
+/* Microsoft Edge */
+.email-field::-ms-input-placeholder{
+  color: var(--tertiary-color);
+}
+
+.light-neomorphic.email-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .email-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .email-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .email-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.light-neomorphic .email-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic .email-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic.mobile-num-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .email-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .email-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px -2px var(--secondary-shadow);
+  border-radius: 10px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+
+  /* functionality */
+  resize: none;
+}
+
+.dark-neomorphic .email-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.dark-neomorphic .email-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic .email-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .country-code-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .country-code-field{
+  /* design */
+  background-color: transparent;
+  color: var(--primary-color);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .country-code-field option{
+  /* design */
+  background-color: rgba(255, 0, 0, 0);
+  color: black;
+}
+
+.light-neomorphic.country-code-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .country-code-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .country-code-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow:
+      3px 3px 8px 0 var(--primary-shadow),
+      -3px -3px 8px 0 var(--secondary-shadow);;
+  border-radius: 10px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic.country-code-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .country-code-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .country-code-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      3px 7px 8px 0 var(--primary-shadow),
+      -2px -2px 8px -3px var(--secondary-shadow);
+  border-radius: 10px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .mobile-num-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .mobile-num-field{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  background-color: transparent;
+  color: var(--primary-color);
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+/* Chrome, Firefox, Opera, Safari 10.1+ */
+.sharp-minimal .mobile-num-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1; /* Firefox */
+}
+
+/* Internet Explorer 10-11 */
+.sharp-minimal .mobile-num-field:-ms-input-placeholder{
+  color: var(--tertiary-color);
+}
+
+/* Microsoft Edge */
+.sharp-minimal .mobile-num-field::-ms-input-placeholder{
+  color: var(--tertiary-color);
+}
+
+.light-neomorphic.mobile-num-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .mobile-num-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .mobile-num-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .mobile-num-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.light-neomorphic .mobile-num-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic .mobile-num-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic.mobile-num-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .mobile-num-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .mobile-num-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px -2px var(--secondary-shadow);
+  border-radius: 10px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+
+  /* functionality */
+  resize: none;
+}
+
+.dark-neomorphic .mobile-num-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.dark-neomorphic .mobile-num-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic .mobile-num-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .message-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .message-field{
+  /* design */
+  background-color: transparent;
+  color: var(--primary-color);
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+
+  /* functionality */
+  resize: none;
+}
+
+.sharp-minimal .message-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.sharp-minimal .message-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .message-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic.message-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .message-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .message-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  border-radius: 10px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+
+  /* functionality */
+  resize: none;
+}
+
+.light-neomorphic .message-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.light-neomorphic .message-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic .message-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic.message-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .message-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .message-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px -2px var(--secondary-shadow);
+  border-radius: 10px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+
+  /* functionality */
+  resize: none;
+}
+
+.dark-neomorphic .message-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.dark-neomorphic .message-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic .message-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .model-name-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .model-name-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .model-name-field option{
+  /* design */
+  background-color: rgba(255, 0, 0, 0);
+  color: black;
+}
+
+.light-neomorphic.model-name-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .model-name-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .model-name-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow:
+      3px 3px 8px 0 var(--primary-shadow),
+      -3px -3px 8px 0 var(--secondary-shadow);;
+  border-radius: 10px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .model-name-field option{
+  /* design */
+  background-color: rgba(255, 0, 0, 0);
+  color: black;
+}
+
+.dark-neomorphic.model-name-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .model-name-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .model-name-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      3px 7px 8px 0 var(--primary-shadow),
+      -2px -2px 8px -3px var(--secondary-shadow);
+
+  /* box-shadow: 
+      3px 2px 8px 1px var(--primary-shadow),
+      -2px -1.5px 5px -1px var(--secondary-shadow); */
+  border-radius: 10px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .model-name-field option{
+  /* design */
+  background-color: rgba(255, 0, 0, 0);
+  color: black;
+}
+
+.sharp-minimal .prompt-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .prompt-field{
+  /* design */
+  background-color: transparent;
+  color: var(--primary-color);
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .prompt-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.sharp-minimal .prompt-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .prompt-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic.prompt-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .prompt-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .prompt-field{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .prompt-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.light-neomorphic .prompt-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic .prompt-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic .prompt-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .prompt-field{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px -2px var(--secondary-shadow);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .prompt-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.dark-neomorphic .prompt-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic .prompt-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .seq-len-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .seq-len-field{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  background-color: transparent;
+  color: var(--primary-color);
+  font-size: clamp(12px, 1vw, 1rem);
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .seq-len-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.sharp-minimal .seq-len-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .seq-len-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic.seq-len-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .seq-len-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .seq-len-field{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .seq-len-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.light-neomorphic .seq-len-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.light-neomorphic .seq-len-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic.seq-len-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .seq-len-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .seq-len-field{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px -2px var(--secondary-shadow);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  width: 12rem;
+  padding: 0.5em 1em;
+  /* width: 30rem; */
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .seq-len-field::placeholder{
+  color: var(--tertiary-color);
+  opacity: 1;            
+}
+
+.dark-neomorphic .seq-len-field:-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.dark-neomorphic .seq-len-field::-ms-input-placeholder{
+  color: var(--tertiary-color);                
+}
+
+.sharp-minimal .temp-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .temp-field{
+  /* size */
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* design */
+  background-color: var(--primary-color);
+  -webkit-appearance: none;
+}
+
+.sharp-minimal .temp-field::-webkit-slider-runnable-track{
+  /* size */
+  height: 0.5px;
+
+  /* design */
+  cursor: pointer;
+  border-radius: 0px;
+  border: 0px solid black;
+  box-shadow: none;
+  appearance: none;
+}
+
+.sharp-minimal .temp-field::-ms-track{
+  /* size */
+  height: 1px;
+
+  /* design */
+  cursor: pointer;
+  border-radius: 0px;
+  border: 0px solid black;
+  box-shadow: none;
+  appearance: none;
+}
+
+.sharp-minimal .temp-field::-webkit-slider-thumb{
+  /* size */
+  height: 20px;
+  width: 3px;
+
+  /* design */
+  box-shadow: none;
+  border: 0px solid black;
+  background-color: var(--primary-color);
+  cursor: pointer;
+  margin-top: -10px;
+  -webkit-appearance: none;
+}
+
+.sharp-minimal .temp-field::-ms-thumb{
+  /* size */
+  height: 20px;
+  width: 3px;
+
+  /* design */
+  box-shadow: none;
+  border: 0px solid black;
+  background-color: var(--primary-color);
+  cursor: pointer;
+  margin-top: -10px;
+  -webkit-appearance: none;
+}
+
+.light-neomorphic.temp-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .temp-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .temp-field{
+  /* size */
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* design */
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  -webkit-appearance: none;
+}
+
+.light-neomorphic .temp-field::-webkit-slider-runnable-track{
+  /* size */
+  height: 20px;
+
+  /* design */
+  cursor: pointer;
+  border-radius: 10px;
+  border: 0px solid black;
+  box-shadow: none;
+  appearance: none;
+}
+
+.light-neomorphic .temp-field::-ms-track{
+  /* size */
+  height: 20px;
+
+  /* design */
+  cursor: pointer;
+  border-radius: 10px;
+  border: 0px solid black;
+  box-shadow: none;
+  appearance: none;
+}
+
+.light-neomorphic .temp-field::-webkit-slider-thumb{
+  /* size */
+  height: 20px;
+  width: 20px;
+
+  /* design */
+  background-color: var(--secondary-color);
+  box-shadow: 
+      3px 3px 10px 0 var(--primary-shadow),
+      -3px -3px 10px 0 var(--secondary-shadow),
+      -3px 3px 10px 0 var(--primary-shadow);
+      
+  border-radius: 50%;
+  border: 0px solid black;
+  cursor: pointer;
+  -webkit-appearance: none;
+
+  /* position */
+  margin-top: -0.5px;
+}
+
+.dark-neomorphic.temp-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .temp-label{
+  /* design */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  /* outline: 1px solid brown; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .temp-field{
+  /* size */
+  width: 12rem;
+  /* width: 30rem; */
+
+  /* design */
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px -2px var(--secondary-shadow);
+  -webkit-appearance: none;
+}
+
+.dark-neomorphic .temp-field::-webkit-slider-runnable-track{
+  /* size */
+  height: 20px;
+
+  /* design */
+  cursor: pointer;
+  border-radius: 10px;
+  border: 0px solid black;
+  box-shadow: none;
+  appearance: none;
+}
+
+.dark-neomorphic .temp-field::-ms-track{
+  /* size */
+  height: 20px;
+
+  /* design */
+  cursor: pointer;
+  border-radius: 10px;
+  border: 0px solid black;
+  box-shadow: none;
+  appearance: none;
+}
+
+.dark-neomorphic .temp-field::-webkit-slider-thumb{
+  /* size */
+  height: 20px;
+  width: 20px;
+
+  /* design */
+  background-color: var(--secondary-color);
+  box-shadow: 
+      3px 2px 8px 1px var(--primary-shadow),
+      -2px -1.5px 5px -1px var(--secondary-shadow);
+      
+  border-radius: 50%;
+  border: 0px solid black;
+  cursor: pointer;
+  -webkit-appearance: none;
+
+  /* position */
+  margin-top: -0.5px;
+}
+
+.image-upload-container{
+  /* design */
+  /* outline: 1px solid red; */
+
+  /* display */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+
+  /* spacing */
+  /* put padding of 5px since outlien offset 
+  of 5px for image is specified */
+  padding: 5px;
+}
+
+.sharp-minimal .uploaded-image{
+  /* design */
+  outline: 1px dashed var(--primary-color);
+  outline-offset: 5px;
+
+  /* size */
+  height: 500px;
+  width: 500px;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .uploaded-image{
+  /* design */
+  background-color: var(--secondary-color);
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  border-radius: 20px;
+
+  /* size */
+  height: 500px;
+  width: 500px;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .uploaded-image{
+  /* design */
+  background-color: var(--secondary-color);
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px 0 var(--secondary-shadow);
+  border-radius: 20px;
+  /* outline: 1px solid rebeccapurple; */
+
+  /* size */
+  height: 500px;
+  width: 500px;
+
+  /* display */
+  display: block;
+}
+
+.image-upload-field-wrapper{
+  /* design */
+  /* outline: 1px solid var(--primary-color); */
+
+  /* display */
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sharp-minimal .image-upload-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  /* outline: 1px solid yellow; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .image-upload-field{
+  /* design */
+  background-color: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
   text-align: center;
+  /* outline: 1px solid greenyellow; */
+
+  /* display */
+  display: flex;
+
+  /* size */
+  padding: 0.5em;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.sharp-minimal .image-upload-field::-webkit-file-upload-button{
+  /* design */
+  color: var(--primary-color);
+  background-color: transparent;
+  cursor: pointer;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  -webkit-user-select: none;
+  
+  /* size */
+  border: 1px solid var(--primary-color);
+  padding: .5em 1.5em;
+  margin-right: 2.5rem;
+  
+  /* display */
+  display: inline-block;
+
+  /* transition */
+  transition-property: background-color, color;
+  transition-duration: 250ms, 250ms;
+  transition-timing-function: ease-in-out, ease-in-out;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.sharp-minimal .image-upload-field::-webkit-file-upload-button:hover{
+  /* design */
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.light-neomorphic.image-upload-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
 }
 
-.card {
-  padding: 2em;
+.light-neomorphic .image-upload-label{
+  /* design */
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  /* outline: 1px solid yellow; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
 }
 
-.read-the-docs {
-  color: #888;
+.light-neomorphic .image-upload-field{
+  /* design */
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  text-align: center;
+  /* outline: 1px solid greenyellow; */
+
+  /* display */
+  display: flex;
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .image-upload-field::-webkit-file-upload-button{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  box-shadow: 
+      3px 3px 8px 0 var(--primary-shadow),
+      -3px -3px 8px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 300;
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  -webkit-user-select: none;
+  
+  /* size */
+  border: none;
+  padding: .5em 1.5em;
+  margin-right: 2.5rem;
+  
+  /* display */
+  display: inline-block;
+
+  /* transition */
+  transition-property: background-color, color;
+  transition-duration: 250ms, 250ms;
+  transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.light-neomorphic.image-upload-field.clicked::-webkit-file-upload-button{
+  /* design */
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+}
+
+.dark-neomorphic.image-upload-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .image-upload-label{
+  /* design */
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  /* outline: 1px solid yellow; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .image-upload-field{
+  /* design */
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  text-align: center;
+  /* outline: 1px solid greenyellow; */
+
+  /* display */
+  display: flex;
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .image-upload-field::-webkit-file-upload-button{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  box-shadow: 
+      3px 7px 8px 0 var(--primary-shadow),
+      -2px -2px 8px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 300;
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  -webkit-user-select: none;
+  
+  /* size */
+  border: none;
+  padding: .5em 1.5em;
+  margin-right: 2.5rem;
+  
+  /* display */
+  display: inline-block;
+
+  /* transition */
+  transition-property: background-color, color;
+  transition-duration: 250ms, 250ms;
+  transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.dark-neomorphic.image-upload-field.clicked::-webkit-file-upload-button{
+  /* design */
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px 0 var(--secondary-shadow);
+}
+
+.sharp-minimal .submit-btn{
+  /* design */
+  background-color: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  border: none;
+  outline: 1px solid var(--primary-color);
+  
+  /* size */
+  padding: .5em 5em;
+
+  /* alignment */
+  justify-self: center;
+
+  /* animation */
+  transition-property: background-color, color;
+  transition-duration: 250ms, 250ms;
+  transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.sharp-minimal .submit-btn:hover{
+  /* design */
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+.light-neomorphic.submit-btn-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .submit-btn{
+  /* design */
+  background-color: var(--secondary-color);
+  box-shadow: 
+      3px 3px 8px 0 var(--primary-shadow),
+      -10px -10px 15px 0 var(--secondary-shadow);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  padding: .5em 5em;  
+
+  /* alignment */
+  justify-self: center;
+}
+
+.light-neomorphic.submit-btn.clicked{
+  /* design */
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+}
+
+.dark-neomorphic.submit-btn-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .submit-btn{
+  /* design */
+  background-color: var(--secondary-color);
+  box-shadow: 
+      3px 7px 8px 0 var(--primary-shadow),
+      -2px -2px 8px 0 var(--secondary-shadow);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  border-radius: 50px;
+  border: none;
+
+  /* size */
+  padding: .5em 5em;  
+
+  /* alignment */
+  justify-self: center;
+}
+
+.dark-neomorphic.submit-btn.clicked{
+  /* design */
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px 0 var(--secondary-shadow);
+}
+
+.alert{
+  /* position */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  z-index: 20;
+
+  /* design */
+  opacity: 0%;
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.377);
+
+  /* transition */
+  transition: 
+      opacity 0.25s ease-in-out,
+      visibility 0.25s ease-in-out;
+}
+
+.alert.show{
+  opacity: 100%;
+  visibility: visible;
+}
+
+.alert-wrapper{
+  /* position */
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  margin-inline: auto;
+
+  /* display */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* size */
+  height: 12.5%;
+  width: max(10rem, 25%);
+  padding: 1rem;
+
+  /* design */
+  color: black;
+  text-align: center;
+  font-size: clamp(10px, 1vw, 1rem);
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  background-color: white;
+  /* outline: 1px solid; */
 }
