@@ -616,6 +616,11 @@ echo "Total runtime (sec): ${run_time}"
 ```
 
 
+## Front end setup
+* install node.js
+* run `npm create vite@latest client-side -- --template react` or `npm create vite@latest` and just follow the subsequent prompts that will ask you what template you want to use i.e. react, svelte, vue etc. and what name will the project be, in directory `~/thesis-writing-1`
+* start developing in react so its quick  
+
 
 ## Messaging Experts
 * <s>message llanes jurado et al</s>
