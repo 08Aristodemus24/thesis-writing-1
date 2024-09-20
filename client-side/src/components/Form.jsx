@@ -8,7 +8,7 @@ import PromptInput from './PromptInput';
 import SequenceLengthInput from './SequenceLengthInput';
 import TemperatureInput from './TemperatureInput';
 import ImageInput from './ImageInput';
-import SpreadsheetInput from './SpreadsheetInput';
+import SpreadSheetInput from './SpreadSheetInput';
 import Button from "./Button";
 
 import { useContext, useState } from "react";
@@ -29,6 +29,7 @@ export default function Form(){
     let [seqLen, setSeqLen] = useState("250");
     let [temperature, setTemperature] = useState("1.0");
     let [image, setImage] = useState(null);
+    let [sprSheet, setSprSheet] = useState(null);
 
     let style;
     const designs = useContext(DesignsContext);
@@ -55,14 +56,15 @@ export default function Form(){
             form_data.append('first_name', fname);
             form_data.append('last_name', lname);
             form_data.append('email_address', email);
-            form_data.append('country_code', mobileNum);
-            form_data.append('mobile_num', countryCode);
+            form_data.append('country_code', countryCode);
+            form_data.append('mobile_num', mobileNum);
             form_data.append('message', message);
             form_data.append('model_name', modelName);
             form_data.append('prompt', prompt);
             form_data.append('seq_len', seqLen);
             form_data.append('temperature', temperature);
             form_data.append('image', image);
+            form_data.append('spread_sheet', sprSheet)
 
             // once data is validated submitted and then extracted
             // reset form components form element
@@ -77,6 +79,7 @@ export default function Form(){
             setSeqLen("250");
             setTemperature("1.0");
             setImage(null);
+            setSprSheet(null);
 
             // send here the data from the contact component to 
             // the backend proxy server
@@ -126,6 +129,7 @@ export default function Form(){
             seqLen, setSeqLen,
             temperature, setTemperature,
             image, setImage,
+            sprSheet, setSprSheet,
             handleSubmit,
         }}>
             <div className="form-container">
@@ -145,7 +149,7 @@ export default function Form(){
                     <SequenceLengthInput/>
                     <TemperatureInput/>
                     <ImageInput/>
-                    <SpreadsheetInput/>
+                    <SpreadSheetInput/>
                     <Button/>
                 </form>
                 <div className={`alert ${msgStatus !== undefined ? 'show' : ''}`} onClick={(event) => {

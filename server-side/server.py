@@ -152,3 +152,46 @@ def page_not_found(error):
 #     # occur on mere loading of the model
 #     return jsonify(data)
 
+# @app.route('/send-data', methods=['POST'])
+# def test_predict_a():
+#     # extract raw data from client
+#     raw_data = request.form
+#     raw_files = request.files
+#     print(raw_data)
+#     print(raw_files)
+
+#     first_name = raw_data['first_name']
+#     last_name = raw_data['last_name']
+#     email_address = raw_data['email_address']
+#     country_code = raw_data['country_code']
+#     mobile_num = raw_data['mobile_num']
+#     message = raw_data['message']
+#     model_name = raw_data['model_name']
+#     prompt = raw_data['prompt']
+#     seq_len = int(raw_data['seq_len'])
+#     temperature = float(raw_data['temperature'])
+#     image = raw_files['image']
+
+#     # preprocessing/encoding image stream into a matrix
+#     encoded_img = encode_image(image.stream)
+#     rescaled_img = standardize_image(encoded_img)
+#     print(rescaled_img.max())
+#     print(rescaled_img.shape)
+
+#     # predictor
+    
+#     # reshape the image since the model takes in an (m, 256, 256, 3)
+#     # input, or in this case a single (1, 256, 256, 3) input
+#     img_shape = rescaled_img.shape
+#     reshaped_img = np.reshape(rescaled_img, newshape=(1, img_shape[0], img_shape[1], img_shape[2]))
+    
+#     # predictor
+#     logits = models[0].predict(reshaped_img)
+
+#     # decoding stage
+#     Y_preds = activate_logits(logits)
+#     Y_preds = decode_one_hot(Y_preds)
+#     final_preds = re_encode_sparse_labels(Y_preds, new_labels=['Amoeba', 'Euglena', 'Hydra', 'Paramecium', 'Rod_bacteria', 'Spherical_bacteria', 'Spiral_bacteria', 'Yeast'])
+#     print(final_preds)
+    
+#     return jsonify({'prediction': final_preds.tolist()})

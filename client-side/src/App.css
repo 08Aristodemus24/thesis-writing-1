@@ -1877,6 +1877,293 @@ div[class*="name-container"].dark-neomorphic{
       inset -2px -2px 5px 0 var(--secondary-shadow);
 }
 
+.file-upload-container{
+  /* design */
+  /* outline: 1px solid red; */
+
+  /* display */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+
+  /* spacing */
+  /* put padding of 5px since outlien offset 
+  of 5px for image is specified */
+  padding: 5px;
+}
+
+.sharp-minimal .uploaded-file{
+  /* design */
+  outline: 1px dashed var(--primary-color);
+  outline-offset: 5px;
+
+  /* size */
+  height: 500px;
+  width: 500px;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .uploaded-file{
+  /* design */
+  background-color: var(--secondary-color);
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+  border-radius: 20px;
+
+  /* size */
+  height: 500px;
+  width: 500px;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .uploaded-file{
+  /* design */
+  background-color: var(--secondary-color);
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px 0 var(--secondary-shadow);
+  border-radius: 20px;
+  /* outline: 1px solid rebeccapurple; */
+
+  /* size */
+  height: 500px;
+  width: 500px;
+
+  /* display */
+  display: block;
+}
+
+.file-upload-field-wrapper{
+  /* design */
+  /* outline: 1px solid var(--primary-color); */
+
+  /* display */
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sharp-minimal .file-upload-label{
+  /* design */
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  /* outline: 1px solid yellow; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.sharp-minimal .file-upload-field{
+  /* design */
+  background-color: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  text-align: center;
+  /* outline: 1px solid greenyellow; */
+
+  /* display */
+  display: flex;
+
+  /* size */
+  padding: 0.5em;
+}
+
+.sharp-minimal .file-upload-field::-webkit-file-upload-button{
+  /* design */
+  color: var(--primary-color);
+  background-color: transparent;
+  cursor: pointer;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  -webkit-user-select: none;
+  
+  /* size */
+  border: 1px solid var(--primary-color);
+  padding: .5em 1.5em;
+  margin-right: 2.5rem;
+  
+  /* display */
+  display: inline-block;
+
+  /* transition */
+  transition-property: background-color, color;
+  transition-duration: 250ms, 250ms;
+  transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.sharp-minimal .file-upload-field::-webkit-file-upload-button:hover{
+  /* design */
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+.light-neomorphic.file-upload-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .file-upload-label{
+  /* design */
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  /* outline: 1px solid yellow; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.light-neomorphic .file-upload-field{
+  /* design */
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  text-align: center;
+  /* outline: 1px solid greenyellow; */
+
+  /* display */
+  display: flex;
+
+  /* size */
+  padding: 1em;
+}
+
+.light-neomorphic .file-upload-field::-webkit-file-upload-button{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  box-shadow: 
+      3px 3px 8px 0 var(--primary-shadow),
+      -3px -3px 8px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 300;
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  -webkit-user-select: none;
+  
+  /* size */
+  border: none;
+  padding: .5em 1.5em;
+  margin-right: 2.5rem;
+  
+  /* display */
+  display: inline-block;
+
+  /* transition */
+  transition-property: background-color, color;
+  transition-duration: 250ms, 250ms;
+  transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.light-neomorphic.file-upload-field.clicked::-webkit-file-upload-button{
+  /* design */
+  box-shadow: 
+      inset 3px 3px 7px 0 var(--primary-shadow),
+      inset -3px -3px 7px 0 var(--secondary-shadow);
+}
+
+.dark-neomorphic.file-upload-container{
+  /* design */
+  background-color: var(--secondary-color);
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .file-upload-label{
+  /* design */
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 1rem);
+  color: var(--primary-color);
+  /* outline: 1px solid yellow; */
+
+  /* spacing */
+  margin-block: 1em;
+
+  /* display */
+  display: block;
+}
+
+.dark-neomorphic .file-upload-field{
+  /* design */
+  background-color: var(--secondary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  font-weight: 300;
+  color: var(--primary-color);
+  text-align: center;
+  /* outline: 1px solid greenyellow; */
+
+  /* display */
+  display: flex;
+
+  /* size */
+  padding: 1em;
+}
+
+.dark-neomorphic .file-upload-field::-webkit-file-upload-button{
+  /* design */
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  box-shadow: 
+      3px 7px 8px 0 var(--primary-shadow),
+      -2px -2px 8px 0 var(--secondary-shadow);
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 300;
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(12px, 1vw, 1rem);
+  -webkit-user-select: none;
+  
+  /* size */
+  border: none;
+  padding: .5em 1.5em;
+  margin-right: 2.5rem;
+  
+  /* display */
+  display: inline-block;
+
+  /* transition */
+  transition-property: background-color, color;
+  transition-duration: 250ms, 250ms;
+  transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.dark-neomorphic.file-upload-field.clicked::-webkit-file-upload-button{
+  /* design */
+  box-shadow: 
+      inset 3px 7px 8px 0 var(--primary-shadow),
+      inset -2px -2px 5px 0 var(--secondary-shadow);
+}
+
 .sharp-minimal .submit-btn{
   /* design */
   background-color: transparent;

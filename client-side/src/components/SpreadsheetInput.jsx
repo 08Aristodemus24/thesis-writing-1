@@ -3,7 +3,7 @@ import { ThemeContext } from "../contexts/ThemeContext";
 import { DesignsContext } from "../contexts/DesignsContext";
 import { FormInputsContext } from "../contexts/FormInputsContext";
 
-export default function ImageInput({ children }){
+export default function SpreadSheetInput({ children }){
     // initialize and define theme of component by using
     // context
     let style;
@@ -23,13 +23,13 @@ export default function ImageInput({ children }){
     // all its states we use the state appropriate to the ImageInput
     // component and its setter to set from this component the state of
     // the form
-    let { image, setImage } = useContext(FormInputsContext);
-    let [imageObj, setImageObj] = useState(null);
-    let src = imageObj != null ? imageObj.length != 0 ? URL.createObjectURL(imageObj[0]) : null : null;
+    let { sprSheet, setSprSheet } = useContext(FormInputsContext);
+    let [sprSheetObj, setSprSheetObj] = useState(null);
+    let src = sprSheetObj != null ? sprSheetObj.length != 0 ? URL.createObjectURL(sprSheetObj[0]) : null : null;
 
     const handleUpload = (event) => {
-        setImageObj(event.target.files);
-        setImage(event.target.files[0]);
+        setSprSheetObj(event.target.files);
+        setSprSheet(event.target.files[0]);
         console.log('image uploaded');
     }
 
@@ -43,18 +43,18 @@ export default function ImageInput({ children }){
     } : null;
 
     return (
-        <div className={`image-upload-container ${design}`} style={style}>
-            {/* when image is uploaded images becomes are not null anymore
-            but when another upload occurs and is cancelled images becomes
+        <div className={`file-upload-container ${design}`} style={style}>
+            {/* when file is uploaded files becomes are not null anymore
+            but when another upload occurs and is cancelled files becomes
             a list of length 0 */}
-            <img className={`uploaded-image ${design}`} src={src} alt=" "/>
-            <div className="image-upload-field-wrapper">
-                <label htmlFor="image-upload" className="image-upload-label">Image</label>    
+            <img className={`uploaded-file ${design}`} src={src} alt=" "/>
+            <div className="file-upload-field-wrapper">
+                <label htmlFor="file-upload" className="file-upload-label">file</label>    
                 <input 
                     type="file" 
-                    accept="image/*" 
-                    id="image-upload" 
-                    className={`image-upload-field ${design}`} 
+                    accept="file/*" 
+                    id="file-upload" 
+                    className={`file-upload-field ${design}`} 
                     onChange={handleUpload} 
                     onMouseDown={toggle} 
                     onMouseUp={toggle}
