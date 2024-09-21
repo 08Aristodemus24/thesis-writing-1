@@ -199,11 +199,21 @@ def test_predict_a():
     print(subject_eda_data)
 
     # this is if deep learning model is chosen
-    if model_name not in ["taylor_lr", "taylor_svm", "taylor_rf", "hossain_lr", "hossain_svm", "hossain_gbt"]:
-        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
-    
-    else:
+    if model_name in ["taylor_lr", "taylor_svm", "taylor_rf", "hossain_lr", "hossain_svm", "hossain_gbt"]:
+        # extract features of the test data
         subject_features, subject_labels = extract_features(subject_eda_data)
+
+        # convert features and labels into numpy matrices
+        X = subject_features.numpy()
+        Y = subject_labels.numpy().ravel()
+
+        if "hossain" in model_name:
+            
+            X = hossain_lr_scaler.transform(X)
+
+    else:
+        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
+        
 
     # convert eda signal df to numerical features if ml model is to be used
     # but if dl model then leave the signal df as it is and pass it to trained
