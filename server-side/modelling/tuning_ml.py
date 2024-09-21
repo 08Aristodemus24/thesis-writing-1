@@ -78,14 +78,16 @@ def select_features(subjects_features: pd.DataFrame,
     # has been removed in X
     return selected_feats + [True]
 
-def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_id: int):
+def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_id: int, selector_config: str):
     """
     args:
         features - 
         labels - 
-        subjects - 
         subject_id - id of the subject to leave out from the set 
         of subjects features and set of subjects labels
+        selector_config - what authors scaler would be used to scale
+        features. Hossain et al. (2022) for instance has used a StandardScaler()
+        to normalize the features into smaller values for computational efficiency
     """
 
     # create boolean values
@@ -99,6 +101,12 @@ def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_
     train_features = features.loc[~cross_set, features.columns != 'subject_id'].to_numpy()
     train_labels = labels.loc[~cross_set, labels.columns != 'subject_id'].to_numpy().ravel()
     
+    """
+    when hossain is picked as the pipeline we need some way to
+    scale/normalize the train features, transform the cross features
+    on the scaler fitted on the train features, this means at every
+    fold or split we must fit a scaler on the train features
+    """
     return train_features, train_labels, cross_features, cross_labels 
 
 def check_file_key(selector_config, estimator_name, hyper_param_config_key):
@@ -193,7 +201,13 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
     for subject_id in subject_to_id.values():
         # split data by leaving one subject out for testing
         # and the rest for training
-        train_features, train_labels, cross_features, cross_labels = leave_one_subject_out(subjects_features, subjects_labels, subject_id)
+
+        # subjects_features will initially one giant dataframe of 
+        # all subjects features extracted from their signals, we 
+        # want to at every fold have the train features scaled and 
+        # normalized and the cross features scaled and normalized 
+        # using the scaler fitted on the train features 
+        train_features, train_labels, cross_features, cross_labels = leave_one_subject_out(subjects_features, subjects_labels, subject_id, selector_config)
 
         # train model
         model.fit(train_features, train_labels)

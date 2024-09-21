@@ -47,7 +47,6 @@ export default function SpreadSheetInput({ children }){
             {/* when file is uploaded files becomes are not null anymore
             but when another upload occurs and is cancelled files becomes
             a list of length 0 */}
-            <img className={`uploaded-file ${design}`} src={src} alt=" "/>
             <div className="file-upload-field-wrapper">
                 <label htmlFor="file-upload" className="file-upload-label">file</label>    
                 <input 
