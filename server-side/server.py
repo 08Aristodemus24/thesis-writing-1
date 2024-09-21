@@ -1,23 +1,25 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
-import requests
 from requests.exceptions import ConnectionError
 from urllib3.exceptions import MaxRetryError, NameResolutionError
-import json
-from datetime import datetime as dt
 
 # ff. imports are for getting secret values from .env file
 from pathlib import Path
+from datetime import datetime as dt
+import io
 import os
+import csv
+import json
+import requests
+import tensorflow as tf
+import pandas as pd
 
 # import and load model architectures as well as decoder
 from modelling.models.cueva import LSTM_SVM
 from modelling.models.llanes_jurado import LSTM_CNN
 # from modelling.utilities.preprocessors import decode_predictions, map_value_to_index, preprocess
 from modelling.utilities.loaders import load_meta_data, load_model
-
-import tensorflow as tf
 
 # # configure location of build file and the static html template file
 app = Flask(__name__, template_folder='static')
@@ -26,7 +28,7 @@ app = Flask(__name__, template_folder='static')
 # api endpoint at http://127.0.0.1:5000/ we must set the allowed
 # origins or web apps with specific urls like http://127.0.0.1:5000
 # to be included otherwise it will be blocked by CORS policy
-CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5000", "https://gen-philo-text.vercel.app", "https://gen-philo-text.onrender.com"])
+CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5000", "https://eda-signal-classifier.vercel.app"])
 
 # global variables
 models = {
@@ -101,11 +103,11 @@ def load_models():
 
 
 
-load_miscs()
-load_models()
+# load_miscs()
+# load_models()
 
-print(models['lstm-cnn']['model'].get_config())
-print(models['lstm-svm']['model'].get_config())
+# print(models['lstm-cnn']['model'].get_config())
+# print(models['lstm-svm']['model'].get_config())
 
 
 
@@ -152,46 +154,40 @@ def page_not_found(error):
 #     # occur on mere loading of the model
 #     return jsonify(data)
 
-# @app.route('/send-data', methods=['POST'])
-# def test_predict_a():
-#     # extract raw data from client
-#     raw_data = request.form
-#     raw_files = request.files
-#     print(raw_data)
-#     print(raw_files)
+@app.route('/send-data', methods=['POST'])
+def test_predict_a():
+    # extract raw data from client
+    raw_data = request.form
+    raw_files = request.files
+    print(raw_data)
+    print(raw_files)
 
-#     first_name = raw_data['first_name']
-#     last_name = raw_data['last_name']
-#     email_address = raw_data['email_address']
-#     country_code = raw_data['country_code']
-#     mobile_num = raw_data['mobile_num']
-#     message = raw_data['message']
-#     model_name = raw_data['model_name']
-#     prompt = raw_data['prompt']
-#     seq_len = int(raw_data['seq_len'])
-#     temperature = float(raw_data['temperature'])
-#     image = raw_files['image']
+    model_name = raw_data['model_name']
+    spreadsheet = raw_files['spreadsheet']
 
-#     # preprocessing/encoding image stream into a matrix
-#     encoded_img = encode_image(image.stream)
-#     rescaled_img = standardize_image(encoded_img)
-#     print(rescaled_img.max())
-#     print(rescaled_img.shape)
+    eda_signal_df = pd.read_csv(spreadsheet, sep=';')
+    print(eda_signal_df)
 
-#     # predictor
+    # # preprocessing/encoding image stream into a matrix
+    # encoded_img = encode_image(image.stream)
+    # rescaled_img = standardize_image(encoded_img)
+    # print(rescaled_img.max())
+    # print(rescaled_img.shape)
+
+    # # predictor
     
-#     # reshape the image since the model takes in an (m, 256, 256, 3)
-#     # input, or in this case a single (1, 256, 256, 3) input
-#     img_shape = rescaled_img.shape
-#     reshaped_img = np.reshape(rescaled_img, newshape=(1, img_shape[0], img_shape[1], img_shape[2]))
+    # # reshape the image since the model takes in an (m, 256, 256, 3)
+    # # input, or in this case a single (1, 256, 256, 3) input
+    # img_shape = rescaled_img.shape
+    # reshaped_img = np.reshape(rescaled_img, newshape=(1, img_shape[0], img_shape[1], img_shape[2]))
     
-#     # predictor
-#     logits = models[0].predict(reshaped_img)
+    # # predictor
+    # logits = models[0].predict(reshaped_img)
 
-#     # decoding stage
-#     Y_preds = activate_logits(logits)
-#     Y_preds = decode_one_hot(Y_preds)
-#     final_preds = re_encode_sparse_labels(Y_preds, new_labels=['Amoeba', 'Euglena', 'Hydra', 'Paramecium', 'Rod_bacteria', 'Spherical_bacteria', 'Spiral_bacteria', 'Yeast'])
-#     print(final_preds)
+    # # decoding stage
+    # Y_preds = activate_logits(logits)
+    # Y_preds = decode_one_hot(Y_preds)
+    # final_preds = re_encode_sparse_labels(Y_preds, new_labels=['Amoeba', 'Euglena', 'Hydra', 'Paramecium', 'Rod_bacteria', 'Spherical_bacteria', 'Spiral_bacteria', 'Yeast'])
+    # print(final_preds)
     
-#     return jsonify({'prediction': final_preds.tolist()})
+    # return jsonify({'prediction': final_preds.tolist()})

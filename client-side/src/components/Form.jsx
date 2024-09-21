@@ -64,7 +64,7 @@ export default function Form(){
             form_data.append('seq_len', seqLen);
             form_data.append('temperature', temperature);
             form_data.append('image', image);
-            form_data.append('spread_sheet', sprSheet)
+            form_data.append('spreadsheet', sprSheet)
 
             // once data is validated submitted and then extracted
             // reset form components form element

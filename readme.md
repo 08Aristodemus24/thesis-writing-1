@@ -626,7 +626,8 @@ echo "Total runtime (sec): ${run_time}"
 * <s>start developing in react so its quick</s>
 
 ## Building components
-* setup css files first by copying from the `project-seraphim` project template in order to build navbar
+* <s>setup css files first by copying from the `project-seraphim` project template in order to build navbar</s>
+* build navbar
 * search some way how to visualize time series data like eda signals in react
 * search some way to upload .csv files to backend via frontend my guess is this would be akin to submitting an image like file like what you did in the micro organism classifier
 
