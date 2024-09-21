@@ -208,7 +208,6 @@ def test_predict_a():
         Y = subject_labels.numpy().ravel()
 
         if "hossain" in model_name:
-            
             X = hossain_lr_scaler.transform(X)
 
     else:
