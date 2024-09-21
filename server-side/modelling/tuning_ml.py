@@ -51,7 +51,7 @@ def select_features(subjects_features: pd.DataFrame,
         # if features have already been saved load it
         selected_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt')
 
-        return selected_feats
+        return selected_feats + ['subject_id']
 
     # select best features first by means of backward
     # feature selection based on support vector classifiers
@@ -69,14 +69,16 @@ def select_features(subjects_features: pd.DataFrame,
     # obtain feature mask boolean values, and use it as index
     # to select only the columns that have been selected by BFS 
     feats_mask = selector.get_support().tolist()
-    selected_feats = subjects_features.columns[feats_mask]
+    subjects_features_cols = subjects_features.columns[subjects_features.columns != 'subject_id']
+    selected_feats = subjects_features_cols[feats_mask].to_list()
+    print(f"selected features: {selected_feats}")
 
     # create and save a .txt file containing the selected features by RFE
     save_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt', selected_feats)
 
     # append also True element to feature mask since subject id
     # has been removed in X
-    return selected_feats + [True]
+    return selected_feats + ['subject_id']
 
 def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_id: int, selector_config: str):
     """
@@ -108,6 +110,9 @@ def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_
         # on the scaler fitted on the train features, this means at every
         # fold or split we must fit a scaler on the train features
         scaler = StandardScaler()
+
+        # scale train and cross features according to train features
+        print("scaling features")
         train_features = scaler.fit_transform(train_features)
         cross_features = scaler.transform(cross_features)
 
