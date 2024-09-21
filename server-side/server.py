@@ -194,9 +194,16 @@ def test_predict_a():
     model_name = raw_data['model_name']
     spreadsheet = raw_files['spreadsheet']
 
-    eda_signal_df = pd.read_csv(spreadsheet, sep=';')
-    print(eda_signal_df)
+    subject_eda_data = pd.read_csv(spreadsheet, sep=';')
+    subject_eda_data.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
+    print(subject_eda_data)
 
+    # this is if deep learning model is chosen
+    if model_name not in ["taylor_lr", "taylor_svm", "taylor_rf", "hossain_lr", "hossain_svm", "hossain_gbt"]:
+        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
+    
+    else:
+        subject_features, subject_labels = extract_features(subject_eda_data)
 
     # convert eda signal df to numerical features if ml model is to be used
     # but if dl model then leave the signal df as it is and pass it to trained
