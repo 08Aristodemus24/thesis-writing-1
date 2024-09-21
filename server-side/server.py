@@ -19,7 +19,9 @@ import pandas as pd
 from modelling.models.cueva import LSTM_SVM
 from modelling.models.llanes_jurado import LSTM_CNN
 # from modelling.utilities.preprocessors import decode_predictions, map_value_to_index, preprocess
-from modelling.utilities.loaders import load_meta_data, load_model
+from modelling.utilities.loaders import load_meta_data, load_model, charge_raw_data
+from modelling.utilities.feature_extractors import extract_features
+from modelling.tuning_ml import select_features
 
 # # configure location of build file and the static html template file
 app = Flask(__name__, template_folder='static')
@@ -82,6 +84,10 @@ def load_preprocessors():
     """
     # load here feature set of taylor and hossain and reduce the data 
     # to be uploaded by the user to only these feature sets features
+    hossain_lr_scaler = load_model('./modelling/saved/misc/hossain_lr_scaler.pkl')
+    hossain_svm_scaler = load_model('./modelling/saved/misc/hossain_svm_scaler.pkl')
+    hossain_gbt_scaler = load_model('./modelling/saved/misc/hossain_gbt_scaler.pkl')
+
 
     
 
@@ -156,6 +162,29 @@ def page_not_found(error):
 
 @app.route('/send-data', methods=['POST'])
 def test_predict_a():
+    """
+    this route will receive clients uploaded .csv file which contains
+    the eda signals of a subject 
+
+    this function will then parse and convert the eda signals from dataframe
+    to numerical features if ml model is to be used but if dl model then the
+    eda signal df is left as it is and passed to trained model
+
+    if dl models are chosen the charge_raw_data() function is used to 
+    preprocess the eda signal df and be used as input to the dl model
+    and if ml models signals are then used to extract features from
+    via extract_features() function
+
+    we will also have to select only the features as selected during tuning
+
+    depending on what model the client chooses the model may be under Hossain
+    et al. (2022), Taylor et al. (2015), or Llanes-Jurado et al. (2023) pipeline
+    which may or may not have used StandardScaler() during training, if such is
+    the case that the user chooses a model under Hossain et al. (2022) then the
+    eda signal df which have now been transformed to numerical features must undergo
+    further normalization based on the scaler used during training
+    """
+
     # extract raw data from client
     raw_data = request.form
     raw_files = request.files
@@ -168,11 +197,14 @@ def test_predict_a():
     eda_signal_df = pd.read_csv(spreadsheet, sep=';')
     print(eda_signal_df)
 
+
     # convert eda signal df to numerical features if ml model is to be used
     # but if dl model then leave the signal df as it is and pass it to trained
     # model
     # charge signal first via charge_raw_data() and extract features from signal
     # via extract_features()
+
+    # we will also have to select only the features as selected during tuning
 
     # # preprocessing/encoding image stream into a matrix
     # encoded_img = encode_image(image.stream)
