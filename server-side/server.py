@@ -168,6 +168,12 @@ def test_predict_a():
     eda_signal_df = pd.read_csv(spreadsheet, sep=';')
     print(eda_signal_df)
 
+    # convert eda signal df to numerical features if ml model is to be used
+    # but if dl model then leave the signal df as it is and pass it to trained
+    # model
+    # charge signal first via charge_raw_data() and extract features from signal
+    # via extract_features()
+
     # # preprocessing/encoding image stream into a matrix
     # encoded_img = encode_image(image.stream)
     # rescaled_img = standardize_image(encoded_img)
