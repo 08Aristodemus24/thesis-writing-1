@@ -101,12 +101,20 @@ def leave_one_subject_out(features: pd.DataFrame, labels: pd.DataFrame, subject_
     train_features = features.loc[~cross_set, features.columns != 'subject_id'].to_numpy()
     train_labels = labels.loc[~cross_set, labels.columns != 'subject_id'].to_numpy().ravel()
     
-    """
-    when hossain is picked as the pipeline we need some way to
-    scale/normalize the train features, transform the cross features
-    on the scaler fitted on the train features, this means at every
-    fold or split we must fit a scaler on the train features
-    """
+
+    if selector_config == "hossain":
+        # when hossain is picked as the pipeline we need some way to
+        # scale/normalize the train features, transform the cross features
+        # on the scaler fitted on the train features, this means at every
+        # fold or split we must fit a scaler on the train features
+        scaler = StandardScaler()
+        train_features = scaler.fit_transform(train_features)
+        cross_features = scaler.transform(cross_features)
+
+        # note: we do not need to save the scaler here as long
+        # as the mode is set to "tuning" but if during training
+        # the scaler must be saved
+    
     return train_features, train_labels, cross_features, cross_labels 
 
 def check_file_key(selector_config, estimator_name, hyper_param_config_key):
@@ -358,6 +366,11 @@ def train_final_estimator(subjects_features: pd.DataFrame,
     # convert to numpy arrays
     X = subjects_features.to_numpy()
     Y = subjects_labels.to_numpy().ravel()
+
+    if selector_config == "hossain":
+        scaler = StandardScaler()
+        X = scaler.fit_transform(X)
+        save_model(scaler, f'./saved/misc/{selector_config}_{estimator_name}_scaler.pkl')
 
     # create model with specific hyper param configurations
     # and fit to whole training and validation dataset
