@@ -1,14 +1,12 @@
-Submitted on Fri Sep 20 13:54:52 PST 2024
+Submitted on Sat Sep 21 19:09:29 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 26475
+SLURM_JOB_ID          : 26635
 SLURM_JOB_NAME        : tuning_ml_job
 SLURM_JOB_NUM_NODES   : 20
-SLURM_JOB_NODELIST    : saliksik-cpu-[01-16,28-29,35-36]
+SLURM_JOB_NODELIST    : saliksik-cpu-[01-11,25,28-29,31-36]
 SLURM_NTASKS          : 30
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/26475
-Module unload: anaconda/3-2023.07-2
-/var/spool/slurm/job26475/slurm_script: line 5: conda: command not found
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/26635
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
