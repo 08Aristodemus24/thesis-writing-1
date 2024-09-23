@@ -1,0 +1,12 @@
+Submitted on Mon Sep 23 09:54:19 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 26908
+SLURM_JOB_NAME        : hossain_lr_tuning_job
+SLURM_JOB_NUM_NODES   : 20
+SLURM_JOB_NODELIST    : saliksik-cpu-[01-08,25-36]
+SLURM_NTASKS          : 70
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/26908
+Module load: anaconda/3-2023.07-2
+Python 3.12.3

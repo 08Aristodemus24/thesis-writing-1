@@ -4,7 +4,7 @@
 #SBATCH --qos=batch_default
 #SBATCH --nodes=20
 #SBATCH --ntasks=20
-#SBATCH --job-name="tuning_ml_job"
+#SBATCH --job-name="taylor_lr_tuning_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
 ##SBATCH --mail-user=<email_add>  ## optional
