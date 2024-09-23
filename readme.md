@@ -442,6 +442,8 @@ TensorShape([100, 10])
 
 12. Now I know when copying a repository to another machine and then enterign the remote origin url and then adding, committing, and pushing to it requires your github username and password, the password entered can be based from the github classic personal access token you must create in order to push to push to such a remote repository from a remote or another machine besides your local
 
+13. in order to run a `.sh` file in command prompt you need to add `C:\Program Files\Git\bin` as a value to the PATH environment variable. That way we don't need to create anymore `.bat` files that only windows can recognize but not linux, as `.sh` files can be run via `sh <name of shell file>.sh` and `bash <name of shell file>.sh` in windows and linux os' respectively
+
 # To do:
 
 ## artifact detection and correction:
