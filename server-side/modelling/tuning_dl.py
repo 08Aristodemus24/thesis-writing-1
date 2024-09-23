@@ -412,7 +412,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # read and load data
-    subjects_signals, subjects_labels, subject_to_id = concur_load_data(split='train', feat_config=args.pipeline)
+    subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
 
     # # create and load test data
     # m = 1000
