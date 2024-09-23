@@ -3,7 +3,7 @@
 #SBATCH --partition=batch
 #SBATCH --qos=batch_default
 #SBATCH --nodes=20
-#SBATCH --ntasks=30
+#SBATCH --ntasks=70
 #SBATCH --job-name="tuning_ml_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional

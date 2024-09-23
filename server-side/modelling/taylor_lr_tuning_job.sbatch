@@ -3,7 +3,7 @@
 #SBATCH --partition=batch
 #SBATCH --qos=batch_default
 #SBATCH --nodes=20
-#SBATCH --ntasks=70
+#SBATCH --ntasks=20
 #SBATCH --job-name="tuning_ml_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
@@ -49,7 +49,7 @@ module load anaconda/3-2023.07-2
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
-python tuning_ml.py -m svm -pl taylor --mode tuning
+python tuning_ml.py -m lr -pl taylor --mode tuning
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then
