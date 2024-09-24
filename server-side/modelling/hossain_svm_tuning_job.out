@@ -1,0 +1,59 @@
+Submitted on Mon Sep 23 14:18:02 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 26909
+SLURM_JOB_NAME        : hossain_svm_tuning_job
+SLURM_JOB_NUM_NODES   : 20
+SLURM_JOB_NODELIST    : saliksik-cpu-[02-11,13-18,33-36]
+SLURM_NTASKS          : 70
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/26909
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
+................................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 50742
+obj = -67196.404163, rho = 3.294486
+nSV = 68600, nBSV = 68477
+Total nSV = 68600
+...............................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 50228
+obj = -65947.504754, rho = 3.293837
+nSV = 67324, nBSV = 67219
+Total nSV = 67324
+...............................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 50324
+obj = -64371.437436, rho = 3.380436
+nSV = 65735, nBSV = 65622
+Total nSV = 65735
+..............................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 48835
+obj = -63895.612902, rho = 3.233350
+nSV = 65202, nBSV = 65079
+Total nSV = 65202
+...................................
