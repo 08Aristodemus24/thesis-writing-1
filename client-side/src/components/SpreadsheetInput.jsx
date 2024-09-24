@@ -46,7 +46,12 @@ export default function SpreadSheetInput({ children }){
         <div className={`file-upload-container ${design}`} style={style}>
             {/* when file is uploaded files becomes are not null anymore
             but when another upload occurs and is cancelled files becomes
-            a list of length 0 */}
+            a list of length 0 
+            
+            when the .csv file is uploaded we need someway to visualize
+            the signals inside it. So we need to parse the uploaded .csv
+            file into some kind of dataframe
+            */}
             <div className="file-upload-field-wrapper">
                 <label htmlFor="file-upload" className="file-upload-label">file</label>    
                 <input 
