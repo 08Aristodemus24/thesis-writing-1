@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { DesignsContext } from "../contexts/DesignsContext";
 import { FormInputsContext } from "../contexts/FormInputsContext";
+import Papa from "papaparse";
 
 export default function SpreadSheetInput({ children }){
     // initialize and define theme of component by using
@@ -25,12 +26,11 @@ export default function SpreadSheetInput({ children }){
     // the form
     let { sprSheet, setSprSheet } = useContext(FormInputsContext);
     let [sprSheetObj, setSprSheetObj] = useState(null);
-    let src = sprSheetObj != null ? sprSheetObj.length != 0 ? URL.createObjectURL(sprSheetObj[0]) : null : null;
+    // let src = sprSheetObj != null ? sprSheetObj.length != 0 ? URL.createObjectURL(sprSheetObj[0]) : null : null;
 
     const handleUpload = (event) => {
-        setSprSheetObj(event.target.files);
         setSprSheet(event.target.files[0]);
-        console.log('image uploaded');
+        console.log('file uploaded');
     }
 
     const toggle = design.includes('neomorphic') ? (event) => {
@@ -41,6 +41,22 @@ export default function SpreadSheetInput({ children }){
             event.target.classList.add('clicked');
         }
     } : null;
+
+    useEffect(() => {
+        if(sprSheet != null){
+            // initially sprSheet will be null so until sprSheet is
+            // set we must not execute these lines
+            Papa.parse(sprSheet, {
+                delimiter: ";",
+                complete: (result) => {
+                    console.log("setting csv as spreadsheet objects state");
+                    setSprSheetObj(result.data);
+                }
+            });
+        }
+    }, []);
+
+    console.log(sprSheetObj);
 
     return (
         <div className={`file-upload-container ${design}`} style={style}>
@@ -53,7 +69,7 @@ export default function SpreadSheetInput({ children }){
             file into some kind of dataframe
             */}
             <div className="file-upload-field-wrapper">
-                <label htmlFor="file-upload" className="file-upload-label">file</label>    
+                <label htmlFor="file-upload" className="file-upload-label">File</label>    
                 <input 
                     type="file" 
                     accept="file/*" 
