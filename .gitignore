@@ -1,6 +1,10 @@
-/server-side/modelling/data/*
-!/server-side/modelling/data/dummy.txt
+/server-side/modelling/data/Artifact Detection Data/*
+/server-side/modelling/data/Electrodermal Activity artifact correction BEnchmark (EDABE)/
+/server-side/modelling/data/EDABE dataset.zip
 /server-side/.env
+
+!/server-side/modelling/data/dummy.txt
+!/server-side/modelling/data/Artifact Detection Data/reduced_*.txt
 
 # Logs
 /client-side/logs
