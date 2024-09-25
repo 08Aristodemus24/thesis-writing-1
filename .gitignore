@@ -1,5 +1,6 @@
 /server-side/modelling/data/*
 !/server-side/modelling/data/dummy.txt
+!/server-side/modelling/data/Artifact Detection Data/reduced_test.txt
 /server-side/.env
 
 # Logs
