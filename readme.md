@@ -274,6 +274,8 @@ wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh: downlo
 
 `scp -r -i "C:\Users\<username>/.ssh/id_rsa" C:\Users\<username>/Documents/Scripts/thesis-writing-1/ <coare username>@saliksik.asti.dost.gov.ph:/home/<coare username>`: copies a folder and its file from our local machine to our remote server
 
+`scp -r -i C:/Users/LARRY/.ssh/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/" michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/data/`
+
 `scp -i "C:\Users\<username>/.ssh/id_rsa" C:\Users\<username>/Documents/Scripts/thesis-writing-1/<some file>.<ext> <coare username>@saliksik.asti.dost.gov.ph:/home/<coare username>`: copies a file from a local machine to a remote server
 
 9. calculating L2 norm or eculidean distance in the gaussian kernel of SVM
