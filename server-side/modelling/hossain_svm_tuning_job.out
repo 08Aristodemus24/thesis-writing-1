@@ -177,3 +177,57 @@ optimization finished, #iter = 50983
 obj = -66187.026456, rho = 3.321279
 nSV = 67570, nBSV = 67456
 Total nSV = 67570
+.................................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 51753
+obj = -67613.097240, rho = 3.316321
+nSV = 69021, nBSV = 68900
+Total nSV = 69021
+...........................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 46970
+obj = -59257.892813, rho = 3.113810
+nSV = 60644, nBSV = 60502
+Total nSV = 60644
+...............................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 49453
+obj = -65625.383914, rho = 3.513816
+nSV = 67024, nBSV = 66908
+Total nSV = 67024
+.................................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 51522
+obj = -67731.286253, rho = 3.317396
+nSV = 69124, nBSV = 69029
+Total nSV = 69124
+................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 51659
+obj = -67735.292037, rho = 3.235923
+nSV = 69126, nBSV = 69023
+Total nSV = 69126
+slurmstepd: error: *** JOB 26909 ON saliksik-cpu-02 CANCELLED AT 2024-09-26T08:12:43 ***
