@@ -1,16 +1,12 @@
-Submitted on Thu Sep 26 11:09:39 PST 2024
+Submitted on Fri Sep 27 18:39:26 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 27353
+SLURM_JOB_ID          : 27544
 SLURM_JOB_NAME        : hossain_gbt_tuning_job
-SLURM_JOB_NUM_NODES   : 20
-SLURM_JOB_NODELIST    : saliksik-cpu-[01-18,25-26]
+SLURM_JOB_NUM_NODES   : 2
+SLURM_JOB_NODELIST    : saliksik-cpu-[35-36]
 SLURM_NTASKS          : 70
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/27353
-Cache ERROR: Cache file requires at least Modules version 5.4
-  In '/opt/modules/modulefiles/cpu/.modulecache'
-  Please contact <root@localhost>
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/27544
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-slurmstepd: error: *** JOB 27353 ON saliksik-cpu-01 CANCELLED AT 2024-09-27T10:39:40 ***
