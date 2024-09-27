@@ -108,7 +108,7 @@ run_time=$(python -c "print($end_time - $start_time)")
 echo "Total runtime (sec): ${run_time}"
 ```
 
-and when we submitted it via sbatch test_job.sbatch it will always just normally say submitted job <certain job number> because this indicates that other people using the computing resources have submitted a job script of their in order to run their individual scripts also, which therefore means we have to wait for our turn. And when it is our turn the job script is finally run and the instructions inside it indicating the scripts we want to run are then run, resulting in a .out file akin to the interface of a command line output where we run our scripts normally and get certain outputs this .out file also contains such outputs when the HPC finally runs our job scripts and therefore the individual scripts written inside of it 
+and when we submitted it via `sbatch test_job.sbatch` it will always just normally say `submitted job <certain job number>` because this indicates that other people using the computing resources have submitted a job script of their in order to run their individual scripts also, which therefore means we have to wait for our turn. And when it is our turn the job script is finally run and the instructions inside it indicating the scripts we want to run are then run, resulting in a `.out` file akin to the interface of a command line output where we run our scripts normally and get certain outputs this `.out` file also contains such outputs when the HPC finally runs our job scripts and therefore the individual scripts written inside of it 
 
 ```
 Submitted on Fri Sep 13 18:37:50 PST 2024
@@ -233,3 +233,6 @@ Change: 2024-09-21 19:09:28.000000000 +0800
  Birth: -
 [michael.cueva@saliksik Artifact Detection Data]$
 ```
+
+limit of submitted jobs can only be 45
+limit of concurrently running jobs can only be 30
