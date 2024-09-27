@@ -3,6 +3,8 @@ import { DesignsProvider } from './contexts/DesignsContext';
 
 import Correspondence from './components/Correspondence';
 import './App.css';
+import './navbar-862-and-up.css';
+import './navbar-862-down.css';
 
 function App() {
 
