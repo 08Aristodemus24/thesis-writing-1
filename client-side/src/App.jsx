@@ -9,6 +9,7 @@ function App() {
   return (
     <DesignsProvider>
       <ThemeContext.Provider value={{design: "sharp-minimal", theme: 'light'}}>
+        <Navbar/>
         <Correspondence/>
       </ThemeContext.Provider>  
     </DesignsProvider> 
