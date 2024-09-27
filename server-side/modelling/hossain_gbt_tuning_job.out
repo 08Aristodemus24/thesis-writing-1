@@ -13,3 +13,4 @@ Cache ERROR: Cache file requires at least Modules version 5.4
   Please contact <root@localhost>
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
+slurmstepd: error: *** JOB 27353 ON saliksik-cpu-01 CANCELLED AT 2024-09-27T10:39:40 ***
