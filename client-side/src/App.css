@@ -20,26 +20,26 @@
 
 #data-form-section::after{
   /* size */
-  width: 100%;
-  height: 100%;
+  /* width: 100%;
+  height: 100%; */
 
   /* position */
-  position: absolute;
+  /* position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  bottom: 0;
+  bottom: 0; */
   /* to not affect contents color place pseudo element behind content */
-  z-index: -1;
+  /* z-index: -1; */
 
   /* design */
-  content: '';
+  /* content: '';
   background-image: url('https://raw.githubusercontent.com/08Aristodemus24/project-seraphim/master/svelte-client-side/src/assets/mediafiles/journey-painting-wallpaper.jpg');
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  filter: brightness(75%);
+  filter: brightness(75%); */
 }
 
 .data-form-content{
@@ -2311,4 +2311,61 @@ div[class*="name-container"].dark-neomorphic{
   font-weight: 300;
   background-color: white;
   /* outline: 1px solid; */
+}
+
+#about-section{
+  /* size for each section*/
+  /* take into account navbar in data-form section */
+  /* min-height: calc(100vh - clamp(3.5rem, 6.5vw, 6.5rem)); */
+  min-height: 100vh;
+
+  /* position */
+  position: relative;
+
+  /* display */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* design */
+  background-color: var(--primary-background);
+  /* border: 2px solid lightseagreen; */
+}
+
+#researchers-section{
+  /* size for each section*/
+  /* take into account navbar in data-form section */
+  /* min-height: calc(100vh - clamp(3.5rem, 6.5vw, 6.5rem)); */
+  min-height: 100vh;
+
+  /* position */
+  position: relative;
+
+  /* display */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* design */
+  background-color: var(--primary-background);
+  /* border: 2px solid lightseagreen; */
+}
+
+#faq-section{
+  /* size for each section*/
+  /* take into account navbar in data-form section */
+  /* min-height: calc(100vh - clamp(3.5rem, 6.5vw, 6.5rem)); */
+  min-height: 100vh;
+
+  /* position */
+  position: relative;
+
+  /* display */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* design */
+  background-color: var(--primary-background);
+  /* border: 2px solid lightseagreen; */
 }

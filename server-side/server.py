@@ -43,27 +43,30 @@ models = {
     },
     'taylor-svm': {
         # 'model':
-        # 'hyper_params':
+        # 'selected_feats':
     },
     'taylor-lr': {
         # 'model':
-        # 'hyper_params':
+        # 'selected_feats':
     },
     'taylor-rf': {
         # 'model':
-        # 'hyper_params':
+        # 'selected_feats':
     },
     'hossain-gbt': {
         # 'model':
-        # 'hyper_params':
+        # 'selected_feats':
+        # 'scaler':
     },
     'hossain-svm': {
         # 'model':
-        # 'hyper_params':
+        # 'selected_feats':
+        # 'scaler':
     },
     'hossain-lr': {
         # 'model':
-        # 'hyper_params':
+        # 'selected_feats':
+        # 'scaler':
     }
 }
 
@@ -77,13 +80,32 @@ def load_miscs():
     """
 
     global models
+
+    # this is for loading miscellaneous variables for 
+    # deep learning models such as hyper parameters
     lstm_svm_hp = load_meta_data('./modelling/saved/misc/lstm_svm_meta_data.json')
     lstm_cnn_hp = load_meta_data('./modelling/saved/misc/lstm_cnn_meta_data.json')
 
-    models['lstm-svm'] = {'hyper_params': lstm_svm_hp}
-    models['lstm-cnn'] = {'hyper_params': lstm_cnn_hp}
+    models['cueva-lstm-svm']['hyper_params'] = lstm_svm_hp
+    models['jurado-lstm-cnn']['hyper_params'] = lstm_cnn_hp
 
-    # selected_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt')
+    # this is for loading miscellaneous variables for
+    # machine learning models such as the reduced feature set
+    taylor_lr_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_lr_feature_set.txt')
+    taylor_svm_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_svm_feature_set.txt')
+    taylor_rf_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_rf_feature_set.txt')
+    hossain_lr_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_lr_feature_set.txt')
+    hossain_svm_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_svm_feature_set.txt')
+    hossain_gbt_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_gbt_feature_set.txt')
+
+    # pre-load reduced features here so that features don't have to 
+    # be loaded every single time user makes a request
+    models['taylor-lr']['selected_feats'] = taylor_lr_red_feats
+    models['taylor-svm']['selected_feats'] = taylor_svm_red_feats
+    models['taylor-rf']['selected_feats'] = taylor_rf_red_feats
+    models['hossain-lr']['selected_feats'] = hossain_lr_red_feats
+    models['hossain-svm']['selected_feats'] = hossain_svm_red_feats
+    models['hossain-gbt']['selected_feats'] = hossain_gbt_red_feats
 
 
 def load_preprocessors():
@@ -92,12 +114,14 @@ def load_preprocessors():
     the dataset to later transform raw user input from
     client-side
     """
-    # load here feature set of taylor and hossain and reduce the data 
-    # to be uploaded by the user to only these feature sets features
+    # pre-load here scaler of hossain used during training
     hossain_lr_scaler = load_model('./modelling/saved/misc/hossain_lr_scaler.pkl')
     hossain_svm_scaler = load_model('./modelling/saved/misc/hossain_svm_scaler.pkl')
     hossain_gbt_scaler = load_model('./modelling/saved/misc/hossain_gbt_scaler.pkl')
 
+    models['hossain-lr']['scaler'] = hossain_lr_scaler
+    models['hossain-svm']['scaler'] = hossain_svm_scaler
+    models['hossain-gbt']['scaler'] = hossain_gbt_scaler
 
     
 
@@ -106,16 +130,33 @@ def load_models():
     prepares and loads sample input and custom model in
     order to use trained weights/parameters/coefficients
     """
-    lstm_svm = LSTM_SVM(**models['lstm-svm']['hyper_params'])
-    lstm_cnn = LSTM_CNN(**models['lstm-cnn']['hyper_params'])
+    
+    jurado_lstm_cnn = LSTM_CNN(**models['jurado-lstm-cnn']['hyper_params'])
+    cueva_lstm_svm = LSTM_SVM(**models['cueva-lstm-svm']['hyper_params'])
 
-    # load weights
-    lstm_svm.load_weights('./modelling/saved/weights/lstm_cnn_jurado_07_0.5200.weights.h5')
-    lstm_cnn.load_weights('./modelling/saved/weights/lstm_svm_87_0.5690.weights.h5')
+    # pre load saved weights for deep learning models
+    jurado_lstm_cnn.load_weights('./modelling/saved/weights/lstm_cnn_jurado_07_0.5200.weights.h5')
+    cueva_lstm_svm.load_weights('./modelling/saved/weights/lstm_svm_87_0.5690.weights.h5')
+
+    # pre load saved machine learning models
+    taylor_lr = load_model('./modelling/saved/mmodelsisc/taylor_lr_clf.pkl')
+    taylor_svm = load_model('./modelling/saved/models/taylor_svm_clf.pkl')
+    taylor_rf = load_model('./modelling/saved/models/taylor_rf_clf.pkl')
+    hossain_lr = load_model('./modelling/saved/models/hossain_lr_clf.pkl')
+    hossain_svm = load_model('./modelling/saved/models/hossain_svm_clf.pkl')
+    hossain_gbt = load_model('./modelling/saved/models/hossain_gbt_clf.pkl')
 
     # populate dictionary with loaded models
-    models['lstm-cnn']['model'] = lstm_cnn
-    models['lstm-svm']['model'] = lstm_svm
+    models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
+    models['cueva-lstm-svm']['model'] = cueva_lstm_svm
+    models['taylor-lr']['model'] = taylor_lr
+    models['taylor-svm']['model'] = taylor_svm
+    models['taylor-rf']['model'] = taylor_rf
+    models['hossain-lr']['model'] = hossain_lr
+    models['hossain-svm']['model'] = hossain_svm
+    models['hossain-gbt']['model'] = hossain_gbt
+
+    
 
 
 
@@ -171,7 +212,7 @@ def retrieve_model_names():
     return jsonify(data)
 
 @app.route('/send-data', methods=['POST'])
-def test_predict_a():
+def predict():
     """
     this route will receive clients uploaded .csv file which contains
     the eda signals of a subject 
@@ -208,17 +249,32 @@ def test_predict_a():
     subject_eda_data.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
     print(subject_eda_data)
 
+    selector_config, estimator_name = model_name.split('-')
+
     # this is if deep learning model is chosen
-    if model_name in ["taylor_lr", "taylor_svm", "taylor_rf", "hossain_lr", "hossain_svm", "hossain_gbt"]:
+    if selector_config is "hossain" or selector_config is "taylor":
         # extract features of the test data
         subject_features, subject_labels = extract_features(subject_eda_data)
+        print(subject_features)
+        print(subject_labels)
+
+        # once features are extracted features selected during
+        # tuning will be used in testing as done also during training
+        selected_feats = models[model_name]['selected_feats']
+        subject_features = subject_features[selected_feats]
 
         # convert features and labels into numpy matrices
         X = subject_features.numpy()
         Y = subject_labels.numpy().ravel()
 
-        if "hossain" in model_name:
-            X = hossain_lr_scaler.transform(X)
+        # if hossain is the researcher chosen the scaler used during training
+        # will be used to scale the test subject features
+        if selector_config is "hossain":    
+            scaler = models[model_name]['scaler']
+            X = scaler.transform(X)
+
+        model = models[model_name]['model']
+        Y_pred = model.predict(X)
 
     else:
         subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
