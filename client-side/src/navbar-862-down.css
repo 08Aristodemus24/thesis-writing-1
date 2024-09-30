@@ -35,7 +35,7 @@
 
     /* position */
     position: fixed;
-    top: -9%;
+    /* top: -9%; */
     z-index: 10;
 
     /* design */
@@ -146,7 +146,7 @@
 
     /* design */
     background-color: black;
-    /* outline: 1px solid yellow; */
+    /* outline: 5px solid red; */
 
     /* alignment */
     top: 0;

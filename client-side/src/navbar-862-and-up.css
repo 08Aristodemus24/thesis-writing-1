@@ -34,7 +34,7 @@ body{
 
     /* position */
     position: fixed;
-    top: -9%;
+    /* top: -9%; */
     z-index: 10;
 
     /* design */
