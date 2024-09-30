@@ -276,6 +276,9 @@ def predict():
         model = models[model_name]['model']
         Y_pred = model.predict(X)
 
+        # next task here is once predictions are out I need tsome way to map the 
+        # predictions to correct the artifacts in the raw data
+
     else:
         subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
         
