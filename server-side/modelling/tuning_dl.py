@@ -49,11 +49,11 @@ def leave_one_subject_out(subjects_signals: list[np.ndarray], subjects_labels: l
 
     return train_signals, train_labels, cross_signals, cross_labels
 
-def check_file_key(estimator_name, hyper_param_config_key):
+def check_file_key(selector_config, estimator_name, hyper_param_config_key):
     # if json file exists read and use it
-    if os.path.exists(f'./results/{estimator_name}_results.json'):
+    if os.path.exists(f'./results/{selector_config}_{estimator_name}_results.json'):
         # read json file as dictionary
-        with open(f'./results/{estimator_name}_results.json') as file:
+        with open(f'./results/{selector_config}_{estimator_name}_results.json') as file:
             results = json.load(file)
         
             # also if hyper param already exists as a key then 
@@ -447,8 +447,8 @@ if __name__ == "__main__":
             'model': LSTM_CNN,
             'hyper_params': {
                 'window_size': [5 * 128], 
-                'n_a': [16],#, 32, 64],
-                'drop_prob': [0.05],#, 0.1, 0.5, 0.75],
+                'n_a': [16, 32],
+                'drop_prob': [0.05, 0.1, 0.75],
                 'filter_size': [32],
                 'kernel_size': [5]
             },

@@ -1,20 +1,20 @@
-Submitted on Mon Sep 30 18:15:25 PST 2024
+Submitted on Mon Sep 30 19:18:02 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 27747
+SLURM_JOB_ID          : 27760
 SLURM_JOB_NAME        : jurado_lstm_cnn_tuning_job
 SLURM_JOB_NUM_NODES   : 1
 SLURM_JOB_NODELIST    : saliksik-gpu-02
 SLURM_NTASKS          : 10
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/27747
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/27760
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-2024-09-30 18:15:31.284745: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-09-30 18:15:31.938084: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
-2024-09-30 18:15:32.160605: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
-2024-09-30 18:15:32.361762: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-2024-09-30 18:15:32.413511: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
-2024-09-30 18:15:32.906637: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+2024-09-30 19:18:05.933751: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-09-30 19:18:05.938171: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2024-09-30 19:18:05.950773: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2024-09-30 19:18:05.970674: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2024-09-30 19:18:05.976697: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2024-09-30 19:18:05.991677: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
 To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2024-09-30 18:15:39.665856: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-09-30 19:18:08.924476: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
