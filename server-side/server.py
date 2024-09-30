@@ -279,6 +279,9 @@ def predict():
         # next task here is once predictions are out I need tsome way to map the 
         # predictions to correct the artifacts in the raw data
 
+        # take each 0.5s signal and see if that segment is to be corrected or spline or not
+        # according to the prediction of the model on the test data
+
     else:
         subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
         
