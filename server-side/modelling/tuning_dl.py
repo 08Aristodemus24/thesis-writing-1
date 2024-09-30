@@ -447,8 +447,8 @@ if __name__ == "__main__":
             'model': LSTM_CNN,
             'hyper_params': {
                 'window_size': [5 * 128], 
-                'n_a': [16, 32, 64],
-                'drop_prob': [0.05, 0.1, 0.5, 0.75],
+                'n_a': [16],#, 32, 64],
+                'drop_prob': [0.05],#, 0.1, 0.5, 0.75],
                 'filter_size': [32],
                 'kernel_size': [5]
             },
