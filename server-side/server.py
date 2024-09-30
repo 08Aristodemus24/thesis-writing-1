@@ -282,6 +282,8 @@ def predict():
         # take each 0.5s signal and see if that segment is to be corrected or spline or not
         # according to the prediction of the model on the test data
 
+        # so lets say we have our signals we'd have to divide these segments into 
+
     else:
         subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
         
