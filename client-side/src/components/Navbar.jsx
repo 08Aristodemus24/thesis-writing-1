@@ -63,8 +63,8 @@ export default function Navbar({ children }){
           <div className="nav-menu-container">
             <div className="nav-menu">
               <a className="nav-item about-section" aria-current="page" onClick={close_and_go}>ABOUT</a>
-              <a className="nav-item work-group-section" onClick={close_and_go}>WORK</a>
-              <a className="nav-item contact-section" onClick={close_and_go}>CONTACT</a>
+              <a className="nav-item work-group-section" onClick={close_and_go}>RESEARCHERS</a>
+              <a className="nav-item contact-section" onClick={close_and_go}>FAQ</a>
             </div>
           </div>
         </nav>

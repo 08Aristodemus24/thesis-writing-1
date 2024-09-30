@@ -19,9 +19,8 @@ import pandas as pd
 from modelling.models.cueva import LSTM_SVM
 from modelling.models.llanes_jurado import LSTM_CNN
 # from modelling.utilities.preprocessors import decode_predictions, map_value_to_index, preprocess
-from modelling.utilities.loaders import load_meta_data, load_model, charge_raw_data
+from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
 from modelling.utilities.feature_extractors import extract_features
-from modelling.tuning_ml import select_features
 
 # # configure location of build file and the static html template file
 app = Flask(__name__, template_folder='static')
@@ -34,30 +33,38 @@ CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5000", "https://ed
 
 # global variables
 models = {
-    # 'lstm-svm': {
-    #     'model':
-    #     'hyper_params':
-    # },
-    # 'lstm-cnn': {
-    #     'model':
-    #     'hyper_params':
-    # },
-    # 'svm': {
-    #     'model':
-    #     'hyper_params':
-    # },
-    # 'lr': {
-    #     'model':
-    #     'hyper_params':
-    # },
-    # 'rf': {
-    #     'model':
-    #     'hyper_params':
-    # },
-    # 'gbt': {
-    #     'model':
-    #     'hyper_params':
-    # }
+    'cueva-lstm-svm': {
+        # 'model':
+        # 'hyper_params':
+    },
+    'jurado-lstm-cnn': {
+        # 'model':
+        # 'hyper_params':
+    },
+    'taylor-svm': {
+        # 'model':
+        # 'hyper_params':
+    },
+    'taylor-lr': {
+        # 'model':
+        # 'hyper_params':
+    },
+    'taylor-rf': {
+        # 'model':
+        # 'hyper_params':
+    },
+    'hossain-gbt': {
+        # 'model':
+        # 'hyper_params':
+    },
+    'hossain-svm': {
+        # 'model':
+        # 'hyper_params':
+    },
+    'hossain-lr': {
+        # 'model':
+        # 'hyper_params':
+    }
 }
 
 
@@ -75,6 +82,9 @@ def load_miscs():
 
     models['lstm-svm'] = {'hyper_params': lstm_svm_hp}
     models['lstm-cnn'] = {'hyper_params': lstm_cnn_hp}
+
+    # selected_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt')
+
 
 def load_preprocessors():
     """
@@ -139,26 +149,26 @@ def page_not_found(error):
     print(error)
     return 'This page does not exist', 404
 
-# # upon loading of client side fetch the model names
-# @app.route('/model-names', methods=['GET'])
-# def retrieve_model_names():
-#     """
-#     flask app will run at http://127.0.0.1:5000 if /
-#     in url succeeds another string <some string> then
-#     app will run at http://127.0.0.1:5000/<some string>
+# upon loading of client side fetch the model names
+@app.route('/model-names', methods=['GET'])
+def retrieve_model_names():
+    """
+    flask app will run at http://127.0.0.1:5000 if /
+    in url succeeds another string <some string> then
+    app will run at http://127.0.0.1:5000/<some string>
 
-#     returns json object of all model names loaded upon
-#     start of server and subsequent request of client to
-#     this view function
-#     """
+    returns json object of all model names loaded upon
+    start of server and subsequent request of client to
+    this view function
+    """
 
-#     data = {
-#         'model_names': list(models.keys())
-#     }
+    data = {
+        'model_names': list(models.keys())
+    }
 
-#     # return data at once since no error will most likely
-#     # occur on mere loading of the model
-#     return jsonify(data)
+    # return data at once since no error will most likely
+    # occur on mere loading of the model
+    return jsonify(data)
 
 @app.route('/send-data', methods=['POST'])
 def test_predict_a():
