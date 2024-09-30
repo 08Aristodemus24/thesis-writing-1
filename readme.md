@@ -783,7 +783,7 @@ Polytechnic University of the Philippines
 * <s>send email to hossain et al. </s>
 * <s>fill up and sign agreement form to access BioVid database data and send to sascha.gruss@uni-ulm.de</s>
 
-* <s>send out aplication to COARSE for computing services</s>
+* <s>send out aplication to COAREs for computing services</s>
 1. +63 (02) 8426-3572, gridops@asti.dost_gov.ph, coareservice@asti.dost.gov.ph
 2. you'll need an account for COARE
 3. apply for account to access COARE services like high perf. computing for training models on large data and science cloud for cloud based applications
