@@ -81,14 +81,14 @@ export default function SpreadSheetInput({ children }){
         console.log("state updated");
         console.log(sprSheet);
 
-        // const width = 500;
-        // const height = 250;
+        const width = 500;
+        const height = 250;
 
-        // const svg = d3.select(svgRef.current)
-        // .attr('width', width)
-        // .attr('height', height)
-        // .style('background-color', 'grey')
-        // .style('margin', '5rem');
+        const svg = d3.select(svgRef.current)
+        .attr('width', width)
+        .attr('height', height)
+        .style('background-color', 'rgba(195, 207, 217, 1')
+        .style('margin', '5rem');
 
         // // setting up x and y axes of the graph
         // const xScale = d3.scaleLinear()
