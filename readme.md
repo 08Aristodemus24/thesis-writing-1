@@ -448,6 +448,24 @@ TensorShape([100, 10])
 
 13. in order to run a `.sh` file in command prompt you need to add `C:\Program Files\Git\bin` as a value to the PATH environment variable. That way we don't need to create anymore `.bat` files that only windows can recognize but not linux, as `.sh` files can be run via `sh <name of shell file>.sh` and `bash <name of shell file>.sh` in windows and linux os' respectively
 
+14. https://dmitripavlutin.com/react-useeffect-explanation/#21-dependencies-argument:
+```
+useEffect(() => {
+    // Runs once, after mounting
+    document.title = 'Greetings page';
+  }, []);
+```
+
+is akin to `componentDidMount()` and 
+
+```
+useEffect(() => {
+    // Side-effect uses `prop` and `state`
+}, [prop, state]);
+```
+
+is akin to `componentDidUpdate()`
+
 # To do:
 
 ## artifact detection and correction:

@@ -50,12 +50,14 @@
   align-items: center;
 
   /* design */
-  /* outline: 3px solid purple; */
+  outline: 3px solid purple;
+
+  /* spacing */
 }
 
 .form-container{
   /* design */
-  /* outline: 1px solid yellow; */
+  outline: 3px solid green;
 
   /* size */
   /* width: 100%; */
@@ -68,14 +70,14 @@
   /* display */
   display: flex;
   align-items: center;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 1rem;
 
   /* size */
   padding: 5px;
 
   /* design */
-  /* outline: 2px solid red; */
+  outline: 5px solid red;
   background-color: var(--primary-background);
 }
 

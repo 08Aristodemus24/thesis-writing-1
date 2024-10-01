@@ -249,10 +249,12 @@ def predict():
     subject_eda_data.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
     print(subject_eda_data)
 
-    selector_config, estimator_name = model_name.split('-')
+    selector_config, estimator_name = model_name.split('-', 1)
+    print(selector_config)
+    print(estimator_name)
 
     # this is if deep learning model is chosen
-    if selector_config is "hossain" or selector_config is "taylor":
+    if selector_config == "hossain" or selector_config == "taylor":
         # extract features of the test data
         subject_features, subject_labels = extract_features(subject_eda_data)
         print(subject_features)
@@ -286,6 +288,8 @@ def predict():
 
     else:
         subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
+        print(subject_signals)
+        print(subject_labels)
         
 
     # convert eda signal df to numerical features if ml model is to be used

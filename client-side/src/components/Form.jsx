@@ -19,7 +19,7 @@ import { FormInputsContext } from "../contexts/FormInputsContext";
 
 export default function Form(){
     let [modelName, setModelName] = useState("");
-    let [sprSheet, setSprSheet] = useState(null);
+    let [sprSheet, setSprSheet] = useState([]);
 
     let style;
     const designs = useContext(DesignsContext);

@@ -2,7 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { DesignsContext } from "../contexts/DesignsContext";
 import { FormInputsContext } from "../contexts/FormInputsContext";
+
 import Papa from "papaparse";
+import * as d3 from 'd3';
 
 export default function SpreadSheetInput({ children }){
     // initialize and define theme of component by using
@@ -26,11 +28,40 @@ export default function SpreadSheetInput({ children }){
     // the form
     let { sprSheet, setSprSheet } = useContext(FormInputsContext);
     let [sprSheetObj, setSprSheetObj] = useState(null);
-    // let src = sprSheetObj != null ? sprSheetObj.length != 0 ? URL.createObjectURL(sprSheetObj[0]) : null : null;
 
     const handleUpload = (event) => {
-        setSprSheet(event.target.files[0]);
-        console.log('file uploaded');
+        event.preventDefault();
+        let reader = new FileReader();
+        let file = event.target.files[0];
+        reader.onload = (event) => {
+            let csvToText = event.target.result;
+            let output = csvToJSON(csvToText);
+            setSprSheet(output);
+        };
+        reader.readAsText(file);
+    }
+
+    const csvToJSON = (csv) => {
+        let lines = csv.split("\n");
+        let result = [];
+        let headers;
+        headers = lines[0].split(";");
+    
+        for (let i = 1; i < lines.length; i++) {
+            let obj = {};
+    
+            if(lines[i] == undefined || lines[i].trim() == "") {
+                continue;
+            }
+    
+            let words = lines[i].split(";");
+            for(let j = 0; j < words.length; j++) {
+                obj[headers[j].trim()] = words[j];
+            }
+    
+            result.push(obj);
+        }
+        return result;
     }
 
     const toggle = design.includes('neomorphic') ? (event) => {
@@ -43,20 +74,19 @@ export default function SpreadSheetInput({ children }){
     } : null;
 
     useEffect(() => {
-        if(sprSheet != null){
-            // initially sprSheet will be null so until sprSheet is
-            // set we must not execute these lines
-            Papa.parse(sprSheet, {
-                delimiter: ";",
-                complete: (result) => {
-                    console.log("setting csv as spreadsheet objects state");
-                    setSprSheetObj(result.data);
-                }
-            });
-        }
-    }, []);
+        console.log("state updated");
+        console.log(sprSheet);
+    });
 
-    console.log(sprSheetObj);
+    // const createGraph = async () => {
+    //     console.log('test')
+    //     let data = await d3.csv(sprSheet);
+
+    //     data.forEach((row) => {
+    //         console.log(row.rawdata);
+    //     });
+    // };
+    
 
     return (
         <div className={`file-upload-container ${design}`} style={style}>
@@ -75,7 +105,7 @@ export default function SpreadSheetInput({ children }){
                     accept="file/*" 
                     id="file-upload" 
                     className={`file-upload-field ${design}`} 
-                    onChange={handleUpload} 
+                    onChange={handleUpload}
                     onMouseDown={toggle} 
                     onMouseUp={toggle}
                 />
