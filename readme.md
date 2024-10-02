@@ -120,6 +120,9 @@ https://www.analyticsvidhya.com/blog/2021/04/backward-feature-elimination-and-it
 10. implementing radial basis function in tensorflow
 https://www.kaggle.com/code/residentmario/radial-basis-networks-and-custom-keras-layers
 
+11. using d3.js with react for visualizing line charts pie charts csv data etc.
+https://d3-graph-gallery.com/graph/line_color_gradient_svg.html
+
 # Insights:
 1. WESAD dataset may contain raw eda signals that are labeled with stress or not stressed
 2. $AR(1)$ Model:
@@ -465,6 +468,8 @@ useEffect(() => {
 ```
 
 is akin to `componentDidUpdate()`
+
+15.
 
 # To do:
 
