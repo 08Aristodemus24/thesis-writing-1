@@ -50,14 +50,14 @@
   align-items: center;
 
   /* design */
-  outline: 3px solid purple;
+  /* outline: 3px solid purple; */
 
   /* spacing */
 }
 
 .form-container{
   /* design */
-  outline: 3px solid green;
+  /* outline: 3px solid green; */
 
   /* size */
   /* width: 100%; */
@@ -70,6 +70,7 @@
   /* display */
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
 
@@ -227,13 +228,6 @@
   color: black;
 }
 
-.spreadsheet-graph{
-  width: 500px;
-  height: 250px;
-  background-color: rgba(195, 207, 217, 1);
-  margin: 2.5rem;
-}
-
 .spreadsheet-upload-container{
   /* design */
   /* outline: 1px solid red; */
@@ -251,9 +245,16 @@
   padding: 5px;
 }
 
+.spreadsheet-graph{
+  /* width: 500px;
+  height: 250px; */
+  background-color: rgba(195, 207, 217, 1);
+  margin: 2.5rem;
+}
+
 .spreadsheet-upload-field-wrapper{
   /* design */
-  outline: 1px solid var(--primary-color);
+  /* outline: 1px solid var(--primary-color); */
 
   /* display */
   display: flex;

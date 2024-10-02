@@ -81,10 +81,12 @@ export default function SpreadSheetInput({ children }){
         console.log("state updated");
         console.log(sprSheet);
 
-        const width = 500;
-        const height = 250;
+        const width = 'clamp(500px, 75vw, 1260px)';
+        const height = '250px';
 
         const svg = d3.select(svgRef.current)
+        .attr('width', width)
+        .attr('height', height);
         
         // // setting up x and y axes of the graph
         // const xScale = d3.scaleLinear()
