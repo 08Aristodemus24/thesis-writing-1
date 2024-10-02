@@ -85,11 +85,7 @@ export default function SpreadSheetInput({ children }){
         const height = 250;
 
         const svg = d3.select(svgRef.current)
-        .attr('width', width)
-        .attr('height', height)
-        .style('background-color', 'rgba(195, 207, 217, 1')
-        .style('margin', '5rem');
-
+        
         // // setting up x and y axes of the graph
         // const xScale = d3.scaleLinear()
         // .domain([0, sprSheet.length - 1])
@@ -127,31 +123,30 @@ export default function SpreadSheetInput({ children }){
     });
 
     return (
-        <div className="spreadsheet-input-container">
-            <svg ref={svgRef}>
+        
+        <div className={`spreadsheet-upload-container ${design}`} style={style}>
+            {/* when spreadsheet is uploaded spreadsheets becomes are not null anymore
+            but when another upload occurs and is cancelled spreadsheets becomes
+            a list of length 0 
+            
+            when the .csv spreadsheet is uploaded we need someway to visualize
+            the signals inside it. So we need to parse the uploaded .csv
+            spreadsheet into some kind of dataframe
+            */}
+            <svg ref={svgRef} className="spreadsheet-graph">
 
             </svg>
-            <div className={`file-upload-container ${design}`} style={style}>
-                {/* when file is uploaded files becomes are not null anymore
-                but when another upload occurs and is cancelled files becomes
-                a list of length 0 
-                
-                when the .csv file is uploaded we need someway to visualize
-                the signals inside it. So we need to parse the uploaded .csv
-                file into some kind of dataframe
-                */}
-                <div className="file-upload-field-wrapper">
-                    <label htmlFor="file-upload" className="file-upload-label">File</label>    
-                    <input 
-                        type="file" 
-                        accept="file/*" 
-                        id="file-upload" 
-                        className={`file-upload-field ${design}`} 
-                        onChange={handleUpload}
-                        onMouseDown={toggle} 
-                        onMouseUp={toggle}
-                    />
-                </div>
+            <div className="spreadsheet-upload-field-wrapper">
+                <label htmlFor="spreadsheet-upload" className="spreadsheet-upload-label">File</label>    
+                <input 
+                    type="file" 
+                    accept="file/*" 
+                    id="spreadsheet-upload" 
+                    className={`spreadsheet-upload-field ${design}`} 
+                    onChange={handleUpload}
+                    onMouseDown={toggle} 
+                    onMouseUp={toggle}
+                />
             </div>
         </div>
     );
