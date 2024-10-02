@@ -248,6 +248,7 @@
 .spreadsheet-graph{
   /* width: 500px;
   height: 250px; */
+  overflow-x: scroll;
   background-color: rgba(195, 207, 217, 1);
   margin: 2.5rem;
 }

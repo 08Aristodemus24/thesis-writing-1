@@ -6,7 +6,7 @@ import { FormInputsContext } from "../contexts/FormInputsContext";
 import Papa from "papaparse";
 import * as d3 from 'd3';
 
-export default function SpreadSheetInput({ children }){
+export default function SpreadSheetInput({ children, props }){
     // recall useRef() is akin in html to selecting an element via
     // the document tree object
     const svgRef = useRef();
@@ -81,12 +81,80 @@ export default function SpreadSheetInput({ children }){
         console.log("state updated");
         console.log(sprSheet);
 
-        const width = 'clamp(500px, 75vw, 1260px)';
-        const height = '250px';
+        if(sprSheet.length != 0){
+            let max_signal = d3.max(sprSheet, (row) => row['raw_signal']);
+            let min_signal = d3.min(sprSheet, (row) => row['raw_signal']);
+            let min_sec = sprSheet[0]['time'];
+            let max_sec = sprSheet[sprSheet.length - 1]['time'];
 
-        const svg = d3.select(svgRef.current)
-        .attr('width', width)
-        .attr('height', height);
+            console.log(`max signal: ${max_signal}`);
+            console.log(min_signal);
+            console.log(max_sec);
+            console.log(min_sec);
+
+            // const width = 'clamp(500px, 75vw, 1260px)';
+            // const height = '250px';
+            const margin = {top: 10, right: 30, bottom: 30, left: 60, }
+            const width = 768 - margin["left"] - margin["right"];
+            const height = 486 - margin["top"] - margin["bottom"]; 
+
+            const svg = d3.select(svgRef.current)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin["left"]}, ${margin["top"]})`);
+
+            // x here is a callback function 
+            let x = d3.scaleTime()
+            .domain([min_sec, max_sec])
+            .range([0, width]);
+
+            svg.append('g')
+            .attr('transform', `translate(0, ${height})`)
+            .call(d3.axisBottom);
+            
+            // y here is also callback function
+            let y = d3.scaleTime()
+            .domain([min_signal, max_signal])
+            .range([height, 0]);
+
+            svg.append("g")
+            .call(d3.axisLeft(y));
+      
+            // Set the gradient
+            svg.append("linearGradient")
+            .attr("id", "line-gradient")
+            .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", 0)
+            .attr("y1", y(0))
+            .attr("x2", 0)
+            .attr("y2", y(max_signal))
+            .selectAll("stop")
+            .data([
+                {offset: "0%", color: "blue"},
+                {offset: "100%", color: "red"}
+            ])
+            .enter().append("stop")
+            .attr("offset", function(d) { return d.offset; })
+            .attr("stop-color", function(d) { return d.color; });
+      
+          // Add the line
+          svg.append("path")
+            .datum(sprSheet)
+            .attr("fill", "none")
+            .attr("stroke", "url(#line-gradient)" )
+            .attr("stroke-width", 2)
+            .attr("d", d3.line()
+                .x(function(d) { return x(d['time']) })
+                .y(function(d) { return y(d['raw_signal']) })
+            )
+
+        }else{
+
+            console.log('spreadsheet input mounted');
+        }
+
+        
         
         // // setting up x and y axes of the graph
         // const xScale = d3.scaleLinear()
@@ -122,7 +190,7 @@ export default function SpreadSheetInput({ children }){
         // .attr('d', (d) => genScaledLine(d))
         // .attr('fill', 'none')
         // .attr('stroke', 'black')
-    });
+    }, [sprSheet]);
 
     return (
         
