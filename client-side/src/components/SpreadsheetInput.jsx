@@ -98,9 +98,11 @@ export default function SpreadSheetInput({ children, props }){
             const width = 768 - margin["left"] - margin["right"];
             const height = 486 - margin["top"] - margin["bottom"]; 
 
+            // recall translate takes in x and y coordinates of how much
+            // to move the element along the x and y axis respectively
             const svg = d3.select(svgRef.current)
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width + margin.left + margin.right) // still is 768 since we add back the subtracted values from margin top and margin bottom
+            .attr("height", height + margin.top + margin.bottom) // still is 486 since we add back the subtracted values from margin top and margin bottom
             .append("g")
             .attr("transform", `translate(${margin["left"]}, ${margin["top"]})`);
 
@@ -115,7 +117,7 @@ export default function SpreadSheetInput({ children, props }){
             
             // y here is also callback function
             let y = d3.scaleTime()
-            .domain([min_signal, max_signal])
+            .domain([0, max_signal])
             .range([height, 0]);
 
             svg.append("g")
