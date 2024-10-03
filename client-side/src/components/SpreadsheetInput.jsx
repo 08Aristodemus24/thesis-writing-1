@@ -145,8 +145,8 @@ export default function SpreadSheetInput({ children, props }){
             .attr("stroke", "url(#line-gradient)" )
             .attr("stroke-width", 2)
             .attr("d", d3.line()
-                .x(function(d) { return x(d['time']) })
-                .y(function(d) { return y(d['raw_signal']) })
+                .x((d) => x(d['time']))
+                .y((d) => y(d['raw_signal']))
             )
 
         }else{
