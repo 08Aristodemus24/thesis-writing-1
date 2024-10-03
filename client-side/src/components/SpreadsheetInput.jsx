@@ -88,43 +88,50 @@ export default function SpreadSheetInput({ children, props }){
             let max_sec = sprSheet[sprSheet.length - 1]['time'];
 
             console.log(`max signal: ${max_signal}`);
-            console.log(min_signal);
-            console.log(max_sec);
-            console.log(min_sec);
+            console.log(`min_signal: ${min_signal}`);
+            console.log(`max_sec: ${max_sec}`);
+            console.log(`min_sec: ${min_sec}`);
 
             // const width = 'clamp(500px, 75vw, 1260px)';
             // const height = '250px';
             const margin = {top: 10, right: 30, bottom: 30, left: 60, }
-            const width = 768 - margin["left"] - margin["right"];
-            const height = 486 - margin["top"] - margin["bottom"]; 
+            const width = 800 - margin["left"] - margin["right"];
+            const height = 400 - margin["top"] - margin["bottom"]; 
 
             // recall translate takes in x and y coordinates of how much
             // to move the element along the x and y axis respectively
             const svg = d3.select(svgRef.current)
             .attr("width", width + margin.left + margin.right) // still is 768 since we add back the subtracted values from margin top and margin bottom
             .attr("height", height + margin.top + margin.bottom) // still is 486 since we add back the subtracted values from margin top and margin bottom
+            // .attr("viewBox", [0, 0, width * 1.5, height * 1.5])
             .append("g")
-            .attr("transform", `translate(${margin["left"]}, ${margin["top"]})`);
+            .attr("class", "cartesian-plane")
+            .attr("transform", `translate(${margin["left"]}, ${margin["top"]})`); // this is the g element which draws the line
 
-            // x here is a callback function 
-            let x = d3.scaleTime()
+            // x here is a callback function
+            let x = d3.scaleLinear()
             .domain([min_sec, max_sec])
             .range([0, width]);
 
+            // we create a g element which will draw the x-axis
             svg.append('g')
+            .attr("class", "x-axis")
             .attr('transform', `translate(0, ${height})`)
-            .call(d3.axisBottom);
+            .call(d3.axisBottom(x));
             
             // y here is also callback function
-            let y = d3.scaleTime()
+            let y = d3.scaleLinear()
             .domain([0, max_signal])
             .range([height, 0]);
 
+            // we create a g element which will draw the y-axis
             svg.append("g")
+            .attr("class", "y-axis")
             .call(d3.axisLeft(y));
       
             // Set the gradient
             svg.append("linearGradient")
+            .attr("class", "line-gradient")
             .attr("id", "line-gradient")
             .attr("gradientUnits", "userSpaceOnUse")
             .attr("x1", 0)
@@ -133,15 +140,16 @@ export default function SpreadSheetInput({ children, props }){
             .attr("y2", y(max_signal))
             .selectAll("stop")
             .data([
-                {offset: "0%", color: "blue"},
-                {offset: "100%", color: "red"}
+                {offset: "0%", color: "#c78324"},
+                {offset: "50%", color: "#ab229d"},
+                {offset: "100%", color: "#2823ba"}
             ])
             .enter().append("stop")
-            .attr("offset", function(d) { return d.offset; })
-            .attr("stop-color", function(d) { return d.color; });
+            .attr("offset", (d) => d["offset"])
+            .attr("stop-color", (d) => d["color"]);
       
-          // Add the line
-          svg.append("path")
+            // Add the line
+            svg.append("path")
             .datum(sprSheet)
             .attr("fill", "none")
             .attr("stroke", "url(#line-gradient)" )
@@ -205,7 +213,7 @@ export default function SpreadSheetInput({ children, props }){
             the signals inside it. So we need to parse the uploaded .csv
             spreadsheet into some kind of dataframe
             */}
-            <svg ref={svgRef} className="spreadsheet-graph">
+            <svg ref={svgRef} className="spreadsheet-graph" width={800} height={400}>
 
             </svg>
             <div className="spreadsheet-upload-field-wrapper">

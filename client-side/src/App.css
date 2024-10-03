@@ -246,11 +246,34 @@
 }
 
 .spreadsheet-graph{
-  /* width: 500px;
-  height: 250px; */
+  /* overflow */
   overflow-x: scroll;
+
+  /* design */
   background-color: rgba(195, 207, 217, 1);
+  outline: 1px solid red;
+
+  /* spacing */
   margin: 2.5rem;
+}
+
+.spreadsheet-graph .cartesian-plane{
+  /* spacing */
+  /* padding: 5rem; */
+
+  /* outline: 1px solid green; */
+}
+
+.spreadsheet-graph .x-axis{
+  /* spacing */
+
+  /* design */
+  /* outline: 3px solid yellow; */
+}
+
+.spreadsheet-graph .y-axis{
+  /* design */
+  /* outline: 3px solid purple; */
 }
 
 .spreadsheet-upload-field-wrapper{
