@@ -1,0 +1,15 @@
+Submitted on Thu Oct  3 09:41:04 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 28081
+SLURM_JOB_NAME        : taylor_lr_tuning_job
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-12
+SLURM_NTASKS          : 70
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/28081
+Cache ERROR: Cache file requires at least Modules version 5.4
+  In '/opt/modules/modulefiles/cpu/.modulecache'
+  Please contact <root@localhost>
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
