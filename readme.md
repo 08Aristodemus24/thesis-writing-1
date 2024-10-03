@@ -122,6 +122,7 @@ https://www.kaggle.com/code/residentmario/radial-basis-networks-and-custom-keras
 
 11. using d3.js with react for visualizing line charts pie charts csv data etc.
 https://d3-graph-gallery.com/graph/line_color_gradient_svg.html
+https://www.digitalocean.com/community/tutorials/svg-svg-viewbox
 
 12. https://www.neurology.org/doi/pdfdirect/10.1212/WNL.39.6.868
 hybrid, long, short, term, memory, support, vector, machine, for, detecting recognizing, artifacts, in electrodermal activity data or galvanic skin response data signals, for stress detection recognition
