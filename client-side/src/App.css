@@ -250,8 +250,8 @@
   overflow-x: scroll;
 
   /* design */
-  background-color: rgba(195, 207, 217, 1);
-  outline: 1px solid red;
+  /* background-color: rgba(195, 207, 217, 1); */
+  outline: 1px solid black;
 
   /* spacing */
   margin: 2.5rem;
@@ -500,6 +500,10 @@
       inset -2px -2px 5px 0 var(--secondary-shadow);
 }
 
+.sharp-minimal.submit-btn-container{
+  padding: 1em;
+}
+
 .sharp-minimal .submit-btn{
   /* design */
   background-color: transparent;
@@ -509,15 +513,9 @@
   color: var(--primary-color);
   border: none;
   outline: 1px solid var(--primary-color);
-
-  /* position */
-  position: absolute;
-  top: 0;
-  left: 0;
-  
   
   /* size */
-  padding: .5em 5em;
+  padding: .5em 2em;
 
   /* animation */
   transition-property: background-color, color;

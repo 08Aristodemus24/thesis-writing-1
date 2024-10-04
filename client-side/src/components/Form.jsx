@@ -1,13 +1,4 @@
-import NameInput from "./NameInput";
-import EmailInput from './EmailInput';
-import MobileNumberInput from './MobileNumberInput';
-import CountryCodeInput from './CountryCodeInput';
-import MessageInput from './MessageInput';
 import ModelNameInput from './ModelNameInput';
-import PromptInput from './PromptInput';
-import SequenceLengthInput from './SequenceLengthInput';
-import TemperatureInput from './TemperatureInput';
-import ImageInput from './ImageInput';
 import SpreadSheetInput from './SpreadSheetInput';
 import Button from "./Button";
 
@@ -100,7 +91,6 @@ export default function Form(){
                 >
                     <ModelNameInput/>
                     <SpreadSheetInput/>
-                    <Button/>
                 </form>
                 <div className={`alert ${msgStatus !== undefined ? 'show' : ''}`} onClick={(event) => {
                     // remove class from alert container to hide it again

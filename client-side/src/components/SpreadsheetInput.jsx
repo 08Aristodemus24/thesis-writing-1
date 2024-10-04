@@ -3,7 +3,8 @@ import { ThemeContext } from "../contexts/ThemeContext";
 import { DesignsContext } from "../contexts/DesignsContext";
 import { FormInputsContext } from "../contexts/FormInputsContext";
 
-import Papa from "papaparse";
+import Button from "./Button";
+
 import * as d3 from 'd3';
 
 export default function SpreadSheetInput({ children, props }){
@@ -38,17 +39,17 @@ export default function SpreadSheetInput({ children, props }){
         let file = event.target.files[0];
         reader.onload = (event) => {
             let csvToText = event.target.result;
-            let output = csvToJSON(csvToText);
+            let output = csvToJSON(csvToText, ";");
             setSprSheet(output);
         };
         reader.readAsText(file);
     }
 
-    const csvToJSON = (csv) => {
+    const csvToJSON = (csv, delimiter) => {
         let lines = csv.split("\n");
         let result = [];
         let headers;
-        // headers = lines[0].split(";");
+        // headers = lines[0].split(delimiter);
         headers = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art'];
     
         for (let i = 1; i < lines.length; i++) {
@@ -58,7 +59,7 @@ export default function SpreadSheetInput({ children, props }){
                 continue;
             }
     
-            let words = lines[i].split(";");
+            let words = lines[i].split(delimiter);
             for(let j = 0; j < words.length; j++) {
                 obj[headers[j].trim()] = words[j];
             }
@@ -103,7 +104,11 @@ export default function SpreadSheetInput({ children, props }){
             const svg = d3.select(svgRef.current)
             .attr("width", width + margin.left + margin.right) // still is 768 since we add back the subtracted values from margin top and margin bottom
             .attr("height", height + margin.top + margin.bottom) // still is 486 since we add back the subtracted values from margin top and margin bottom
-            // .attr("viewBox", [0, 0, width * 1.5, height * 1.5])
+            .attr("viewBox", [
+                0,
+                0,
+                (width + margin.left + margin.right),
+                (height + margin.top + margin.bottom)])
             .append("g")
             .attr("class", "cartesian-plane")
             .attr("transform", `translate(${margin["left"]}, ${margin["top"]})`); // this is the g element which draws the line
@@ -111,7 +116,7 @@ export default function SpreadSheetInput({ children, props }){
             // x here is a callback function
             let x = d3.scaleLinear()
             .domain([min_sec, max_sec])
-            .range([0, width]);
+            .range([0, width])
 
             // we create a g element which will draw the x-axis
             svg.append('g')
@@ -128,8 +133,24 @@ export default function SpreadSheetInput({ children, props }){
             svg.append("g")
             .attr("class", "y-axis")
             .call(d3.axisLeft(y));
-      
-            // Set the gradient
+
+            // add title/label to both x and y axes
+            // x axis label
+            svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("x", width / 2) // positive values makes the label go right
+            .attr("y", height + margin["bottom"]) // positive values makes the label go down further
+            .text("time (s)");
+
+            // y axis label
+            svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "rotate(-90)") // rotated 90 degrees to the left in a counterclock wise manner
+            .attr("y", -margin["bottom"]) // moves to the right if positive value and left if negative value
+            .attr("x", -margin["left"] * 3) // moves up if positive value and down if negative value
+            .text("microsiemens (μS)")
+
+            // set the gradient
             svg.append("linearGradient")
             .attr("class", "line-gradient")
             .attr("id", "line-gradient")
@@ -163,43 +184,7 @@ export default function SpreadSheetInput({ children, props }){
 
             console.log('spreadsheet input mounted');
         }
-
         
-        
-        // // setting up x and y axes of the graph
-        // const xScale = d3.scaleLinear()
-        // .domain([0, sprSheet.length - 1])
-        // .range([0, width])
-
-        // const yScale = d3.scaleLinear()
-        // .domain([0, height])
-        // .range([height, 0])
-
-        // const genScaledLine = d3.line()
-        // .x((domain, x_i) => xScale(x_i))
-        // .y(yScale)
-        // .curve(d3.curveCardinal)
-
-        // const xAxis = d3.axisBottom(xScale)
-        // .ticks(sprSheet.length)
-        // .tickFormat((i) => i + 1);
-
-        // const yAxis = d3.axisLeft(yScale)
-        // .ticks(5);
-
-        // svg.append('g')
-        // .call(xAxis)
-        // .attr('transform', `translate(0, ${height})`);
-
-        // svg.append('g')
-        // .call(yAxis)
-
-        // svg.selectAll('.line')
-        // .data([sprSheet.map((row) => row['raw_signal'])])
-        // .join('path')
-        // .attr('d', (d) => genScaledLine(d))
-        // .attr('fill', 'none')
-        // .attr('stroke', 'black')
     }, [sprSheet]);
 
     return (
@@ -227,6 +212,7 @@ export default function SpreadSheetInput({ children, props }){
                     onMouseDown={toggle} 
                     onMouseUp={toggle}
                 />
+                <Button/>
             </div>
         </div>
     );
