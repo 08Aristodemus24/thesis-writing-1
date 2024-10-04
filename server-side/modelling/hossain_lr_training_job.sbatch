@@ -4,7 +4,7 @@
 #SBATCH --qos=debug_default
 ##SBATCH --nodes=20
 #SBATCH --ntasks=70
-#SBATCH --job-name="hossain_lr_tuning_job"
+#SBATCH --job-name="hossain_lr_training_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
 ##SBATCH --mail-user=<email_add>  ## optional

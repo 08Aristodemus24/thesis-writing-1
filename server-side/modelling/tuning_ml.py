@@ -356,7 +356,7 @@ def train_final_estimator(subjects_features: pd.DataFrame,
 
     # if reduced feature set does not yet exist then tuning_ml.py must
     # be run first in tuning mode in order to obtain reduced feature set
-    if load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_feature_set.txt') == False:
+    if load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt') == False:
         return
     
     # if features have already been saved load it
