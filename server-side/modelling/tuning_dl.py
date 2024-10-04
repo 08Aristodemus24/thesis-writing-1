@@ -409,6 +409,7 @@ if __name__ == "__main__":
     parser.add_argument("-bs", "--batch_size", type=int, default=512, help="batch size during model training")
     parser.add_argument("--mode", type=str, default="tuning", help="tuning mode will not save weights during \
         fitting and while in training mode saves weights")
+    parser.add_argument("--hyper_param_list", type=str, default="window_size_640", nargs="+", help="list of hyper parameters to be used as configuration during training")
     args = parser.parse_args()
 
     # read and load data
@@ -481,7 +482,7 @@ if __name__ == "__main__":
 
     elif args.mode.lower() == "training":
         # build hyper param config dictionary from input
-        hyper_param_config = create_hyper_param_config(hyper_params=models[args.model]['hyper_params'])
+        hyper_param_config = create_hyper_param_config(hyper_param_list=args.hyper_param_list)
         
         # we can just modify this script such that it doesn't loop through hyper param configs anymore and
         # will just only now 1. load the preprocessed features, load the reduced feature set, 

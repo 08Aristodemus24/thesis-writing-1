@@ -4,6 +4,7 @@ import itertools
 import json
 import numpy as np
 import ast
+import re
 
 from sklearn.feature_selection import SequentialFeatureSelector, RFE
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
@@ -386,18 +387,29 @@ def train_final_estimator(subjects_features: pd.DataFrame,
 
     save_model(model, f'./saved/models/{selector_config}_{estimator_name}_clf.pkl')
 
-def create_hyper_param_config(hyper_params: dict):
+def create_hyper_param_config(hyper_param_list: list[str]):
     """
     will create a hyper param config dicitonary containing the specific
     values of each hyper param for a model to train with
     args:
-        hyper_params - is a dictionary from the main script containing 
-        the hyper param name and its multiple values
+        hyper_param_list - is a list of strings containing 
+        the hyper param name and its respective values
+        that will be parsed and extracted its key
+        and value pairs to return as a dictionary
     """
 
     hyper_param_config = {}
-    for hyper_param in hyper_params.keys():
-        hyper_param_config[hyper_param] = ast.literal_eval(input(f"{hyper_param}: "))
+    hyper_param_pattern = r'[A-Za-z_]+'
+    value_pattern = r'\d+(\.\d+)?'
+    
+    for hyper_param in hyper_param_list:
+        # extract hyper param name and strip its last occuring underscore
+        key = re.search(hyper_param_pattern, hyper_param)[0].strip('_')
+
+        # extract hyper param value and convert to 
+        # appropriate data type using literal evaluator
+        value = re.search(value_pattern, hyper_param)[0]
+        hyper_param_config[key] = ast.literal_eval(value)
     
     return hyper_param_config
 
@@ -418,11 +430,14 @@ if __name__ == "__main__":
     parser.add_argument("--mode", type=str, default="tuning", help="tuning mode will not \
         save model/s during fitting, while training mode saves model single model with \
         specific hyper param config")
+    parser.add_argument("--hyper_param_list", type=str, default="C_100", nargs="+", help="list of hyper parameters to be used as configuration during training")
     args = parser.parse_args()
 
     # read and load data
     print(os.getcwd())
     subjects_features, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pl)
+    print(subjects_features)
+    print(subjects_labels)
 
     # model hyper params
     models = {
@@ -467,7 +482,7 @@ if __name__ == "__main__":
 
     elif args.mode.lower() == "training":
         # build hyper param config dictionary from input
-        hyper_param_config = create_hyper_param_config(hyper_params=models[args.m]['hyper_params'])
+        hyper_param_config = create_hyper_param_config(hyper_param_list=args.hyper_param_list)
         
         # we can just modify this script such that it doesn't loop through hyper param configs anymore and
         # will just only now 1. load the preprocessed features, load the reduced feature set, 
