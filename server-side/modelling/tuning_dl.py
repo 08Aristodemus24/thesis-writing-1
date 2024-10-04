@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import numpy as np
 import ast
-import inspect
+import re
 
 import tensorflow as tf
 from tensorflow.keras.optimizers import RMSprop
@@ -368,26 +368,29 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     callbacks=callbacks,
     verbose=1,)
 
-def create_hyper_param_config(hyper_params: dict):
+def create_hyper_param_config(hyper_param_list: list[str]):
     """
     will create a hyper param config dicitonary containing the specific
     values of each hyper param for a model to train with
-    
     args:
-        hyper_params - is a dictionary from the main script containing 
-        the hyper param name and its multiple values
+        hyper_param_list - is a list of strings containing 
+        the hyper param name and its respective values
+        that will be parsed and extracted its key
+        and value pairs to return as a dictionary
     """
 
     hyper_param_config = {}
-    for hyper_param in hyper_params.keys():
-        hp = input(f"{hyper_param}: ")
+    hyper_param_pattern = r'[A-Za-z_]+'
+    value_pattern = r'\d+(\.\d+)?'
+    
+    for hyper_param in hyper_param_list:
+        # extract hyper param name and strip its last occuring underscore
+        key = re.search(hyper_param_pattern, hyper_param)[0].strip('_')
 
-        # if user enters nothing and just presses enter then
-        # continue to next hyperparameter
-        if hp == "":
-            continue
-
-        hyper_param_config[hyper_param] = ast.literal_eval(hp)
+        # extract hyper param value and convert to 
+        # appropriate data type using literal evaluator
+        value = re.search(value_pattern, hyper_param)[0]
+        hyper_param_config[key] = ast.literal_eval(value)
     
     return hyper_param_config
 
@@ -430,8 +433,8 @@ if __name__ == "__main__":
             'model': LSTM_SVM, 
             'hyper_params': {
                 'window_size': [5 * 128], 
-                'n_a': [16, 32, 64], 
-                'drop_prob': [0.05, 0.1, 0.5, 0.75], 
+                'n_a': [16, 32], 
+                'drop_prob': [0.05, 0.1, 0.75], 
                 'C': [1, 10, 100, 1000], 
                 'gamma': [0.001, 0.01, 0.1, 1], 
                 'units': [10]
@@ -483,6 +486,7 @@ if __name__ == "__main__":
     elif args.mode.lower() == "training":
         # build hyper param config dictionary from input
         hyper_param_config = create_hyper_param_config(hyper_param_list=args.hyper_param_list)
+        print(hyper_param_config)
         
         # we can just modify this script such that it doesn't loop through hyper param configs anymore and
         # will just only now 1. load the preprocessed features, load the reduced feature set, 
