@@ -290,6 +290,8 @@ wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh: downlo
 
 `scp -r -i C:/Users/LARRY/.ssh/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/test/" michael.cueva@202.90.149.55:'"/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/"'`
 
+`scp -r -i C:/Users/LARRY/.ssh/<grup member>/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/" <group member coare userr name>@202.90.149.55:/home/<group member coare userr name>/scratch1/thesis-writing-1/server-side/modelling/`
+
 9. calculating L2 norm or eculidean distance in the gaussian kernel of SVM
 
 ```
@@ -476,7 +478,7 @@ useEffect(() => {
 
 is akin to `componentDidUpdate()`
 
-15.
+15. delete diretory in linux without constant prompting: `rm -rf <directory name>`
 
 # To do:
 
