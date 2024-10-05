@@ -19,7 +19,7 @@ export default function Checkbox(props){
         style = designs[design];
     }
 
-    console.log(props);
+    // console.log(props);
 
     // based on the context provider of wrapped Form containing
     // all its states we use the state appropriate to the ImageInput

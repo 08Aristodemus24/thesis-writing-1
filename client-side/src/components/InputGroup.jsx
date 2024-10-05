@@ -3,7 +3,7 @@ import { DesignsContext } from "../contexts/DesignsContext";
 import { ThemeContext } from "../contexts/ThemeContext";
 
 export default function InputGroup(props){
-    console.log(props);
+    // console.log(props);
 
     // initialize and define theme of component by using
     // context

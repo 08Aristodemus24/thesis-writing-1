@@ -8,6 +8,8 @@ import { useContext, useState } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { DesignsContext } from "../contexts/DesignsContext";
 import { FormInputsContext } from "../contexts/FormInputsContext";
+import Visualizer from './Visualizer';
+import Alert from './Alert';
 
 
 export default function Form(){
@@ -40,7 +42,10 @@ export default function Form(){
             event.preventDefault();
             const form_data = new FormData();
             form_data.append('model_name', modelName);
-            form_data.append('spreadsheet', sprSheet)
+            form_data.append('spreadsheet', sprSheet);
+            form_data.append('show_raw', showRaw);
+            form_data.append('show_correct', showCorrect);
+            form_data.append('show_art', showArt);
 
             // once data is validated submitted and then extracted
             // reset form components form element
@@ -89,6 +94,9 @@ export default function Form(){
             showRaw, setShowRaw,
             showCorrect, setShowCorrect,
             showArt, setShowArt,
+            response,
+            msgStatus, setMsgStatus,
+            errorType, 
             handleSubmit,
         }}>
             <div className="form-container">
@@ -106,19 +114,8 @@ export default function Form(){
                     </InputGroup>
                     <Button/>
                 </form>
-                <div className={`alert ${msgStatus !== undefined ? 'show' : ''}`} onClick={(event) => {
-                    // remove class from alert container to hide it again
-                    event.target.classList.remove('show');
-                
-                    // reset msg_status to undefined in case of another submission
-                    setMsgStatus(undefined);
-                }}>
-                    <div className="alert-wrapper">
-                        {msgStatus === "success" || msgStatus === "failed" ? 
-                        <span className="alert-message">Message has been sent with code {response?.status}</span> : 
-                        <span className="alert-message">Submission denied. Error {errorType?.message} occured</span>}
-                    </div>
-                </div>
+                <Alert/>
+                <Visualizer/>
             </div>
         </FormInputsContext.Provider>
     );

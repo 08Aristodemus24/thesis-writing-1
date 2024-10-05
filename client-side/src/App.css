@@ -62,6 +62,9 @@
   /* size */
   /* width: 100%; */
 
+  /* display */
+  display: flex;
+
   /* spacing */
   margin-block: 1rem;
 }
@@ -231,9 +234,9 @@
 
 
 /* visualizer */
-.spreadsheet-graph{
+.spreadsheet-graph-container{
   /* overflow */
-  overflow-x: scroll;
+  overflow: scroll;
 
   /* design */
   /* background-color: rgba(195, 207, 217, 1); */
@@ -242,12 +245,13 @@
   /* spacing */
   margin: 2.5rem;
 }
+.spreadsheet-graph{
+
+}
 
 .spreadsheet-graph .cartesian-plane{
-  /* spacing */
-  /* padding: 5rem; */
-
-  /* outline: 1px solid green; */
+  /* designd */
+  outline: 1px solid green;
 }
 
 .spreadsheet-graph .x-axis{
@@ -631,7 +635,7 @@
   justify-self: center;
 }
 
-.light-neomorphic.submit-btn.clicked{
+.light-neomorphic .submit-btn.clicked{
   /* design */
   box-shadow: 
       inset 3px 3px 7px 0 var(--primary-shadow),
@@ -666,7 +670,7 @@
   justify-self: center;
 }
 
-.dark-neomorphic.submit-btn.clicked{
+.dark-neomorphic .submit-btn.clicked{
   /* design */
   box-shadow: 
       inset 3px 7px 8px 0 var(--primary-shadow),

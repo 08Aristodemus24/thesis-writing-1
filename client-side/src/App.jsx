@@ -14,6 +14,10 @@ function App() {
 
   return (
     <DesignsProvider>
+      {/* values can be:
+      design: 'sharp-minimal' theme: 'light', 
+      design: 'light-neomorphic',
+      design: 'dark-neomorphic' */}
       <ThemeContext.Provider value={{design: "sharp-minimal", theme: 'light'}}>
         <Navbar/>
         <Correspondence/>
