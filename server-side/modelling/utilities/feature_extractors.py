@@ -759,6 +759,7 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     for i in range(len(timestamp_list) - 1):
         start_time = timestamp_list[i]
         end_time = timestamp_list[i + 1]
+        print(f'calculating features for ')
 
         data_segment = data[start_time:end_time].iloc[:-1]
         whole_wave_segment = whole_wave[start_time:end_time].iloc[:-1]
@@ -830,8 +831,12 @@ def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, w
         if verbose == True:
             print(f'processing hour {hour} - start: {start} | end: {end}')
 
+        # if 128 hertz data samples per sec will be 128 and samples per window size
+        # will be as specified which in this case must be 64
         whole_wave, half_wave = load_wavelet_data(curr_data, samples_per_sec, samples_per_win_size)
 
+        # samples per sec 128 samples per win size 64
+        # samples per sec 16 samples per win size 8
         features_per_hour.append(get_features(curr_data, whole_wave, half_wave, samples_per_sec, samples_per_win_size))
 
     return features_per_hour

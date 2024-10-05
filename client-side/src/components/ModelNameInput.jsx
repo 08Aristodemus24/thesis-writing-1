@@ -23,9 +23,9 @@ export default function ModelNameInput({ children }){
     // all its states we use the state appropriate to the ModelNameInput
     // component and its setter to set from this component the state of
     // the form
-    let { modelName, setModelName } = useContext(FormInputsContext);
+    let { modelNames, setModelNames, modelName, setModelName } = useContext(FormInputsContext);
 
-    let [modelNames, setModelNames] = useState([]);
+    
     const get_model_names = async () => {
         try{
             const url = 'http://127.0.0.1:5000/model-names';

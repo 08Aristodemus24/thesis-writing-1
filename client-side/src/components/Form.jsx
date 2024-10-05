@@ -14,7 +14,11 @@ import Alert from './Alert';
 
 export default function Form(){
     let [modelName, setModelName] = useState("");
+    let [modelNames, setModelNames] = useState([]);
+
+    let [sprSheetFile, setSprSheetFile] = useState(null);
     let [sprSheet, setSprSheet] = useState([]);
+
     let [showRaw, setShowRaw] = useState(false);
     let [showCorrect, setShowCorrect] = useState(false);
     let [showArt, setShowArt] = useState(false);
@@ -42,15 +46,19 @@ export default function Form(){
             event.preventDefault();
             const form_data = new FormData();
             form_data.append('model_name', modelName);
-            form_data.append('spreadsheet', sprSheet);
+            // form_data.append('spreadsheet', sprSheet);
+            form_data.append('spreadsheet_file', sprSheetFile)
             form_data.append('show_raw', showRaw);
             form_data.append('show_correct', showCorrect);
             form_data.append('show_art', showArt);
 
             // once data is validated submitted and then extracted
             // reset form components form element
-            setModelName("");
+            setModelName(modelNames.length != 0 ? modelNames[0] : "");
             // setSprSheet([]);
+            setShowRaw(false);
+            setShowCorrect(false);
+            setShowArt(false);
 
             // send here the data from the contact component to 
             // the backend proxy server
@@ -89,7 +97,9 @@ export default function Form(){
 
     return (
         <FormInputsContext.Provider value={{
+            modelNames, setModelNames,
             modelName, setModelName,
+            sprSheetFile, setSprSheetFile,
             sprSheet, setSprSheet,
             showRaw, setShowRaw,
             showCorrect, setShowCorrect,

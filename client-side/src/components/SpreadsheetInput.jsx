@@ -28,7 +28,7 @@ export default function SpreadSheetInput({ children }){
     // all its states we use the state appropriate to the ImageInput
     // component and its setter to set from this component the state of
     // the form
-    let { sprSheet, setSprSheet } = useContext(FormInputsContext);
+    let { sprSheet, setSprSheet, sprSheetFile, setSprSheetFile } = useContext(FormInputsContext);
 
     const handleUpload = (event) => {
         event.preventDefault();
@@ -36,6 +36,8 @@ export default function SpreadSheetInput({ children }){
         // read .csv file
         let reader = new FileReader();
         let file = event.target.files[0];
+
+        setSprSheetFile(file);
         reader.onload = (event) => {
             let csvToText = event.target.result;
             let output = csvToJSON(csvToText, ";");
