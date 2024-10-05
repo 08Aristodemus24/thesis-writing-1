@@ -1,5 +1,7 @@
 import ModelNameInput from './ModelNameInput';
 import SpreadSheetInput from './SpreadSheetInput';
+import InputGroup from './InputGroup';
+import Checkbox from './Checkbox';
 import Button from "./Button";
 
 import { useContext, useState } from "react";
@@ -84,6 +86,9 @@ export default function Form(){
         <FormInputsContext.Provider value={{
             modelName, setModelName,
             sprSheet, setSprSheet,
+            showRaw, setShowRaw,
+            showCorrect, setShowCorrect,
+            showArt, setShowArt,
             handleSubmit,
         }}>
             <div className="form-container">
@@ -94,9 +99,11 @@ export default function Form(){
                 >
                     <ModelNameInput/>
                     <SpreadSheetInput/>
-                    {/* <InputGroup>
-                    
-                    </InputGroup> */}
+                    <InputGroup>
+                        <Checkbox label="show raw" name="show_raw"/>
+                        <Checkbox label="show correct" name="show_correct"/>
+                        <Checkbox label="show artifact" name="show_artifact"/>
+                    </InputGroup>
                     <Button/>
                 </form>
                 <div className={`alert ${msgStatus !== undefined ? 'show' : ''}`} onClick={(event) => {

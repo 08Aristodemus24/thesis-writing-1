@@ -1,9 +1,9 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { DesignsContext } from "../contexts/DesignsContext";
 import { FormInputsContext } from "../contexts/FormInputsContext";
 
-export default function Checkbox({ children, props }){
+export default function Checkbox(props){
     // initialize and define theme of component by using
     // context
     let style;
@@ -19,11 +19,25 @@ export default function Checkbox({ children, props }){
         style = designs[design];
     }
 
+    console.log(props);
+
     // based on the context provider of wrapped Form containing
     // all its states we use the state appropriate to the ImageInput
     // component and its setter to set from this component the state of
     // the form
-    let { showRaw, setShowRaw, showCorrect, setShowCorrect, showArt, setShowArt } = useContext(FormInputsContext);
+    const { showRaw, setShowRaw, showCorrect, setShowCorrect, showArt, setShowArt } = useContext(FormInputsContext);
+    const check_setter = {
+        show_raw: [showRaw, setShowRaw],
+        show_correct: [showCorrect, setShowCorrect],
+        show_artifact: [showArt, setShowArt]
+    };
+    const [check, setter] = check_setter[props["name"]] ;
+
+    const handleCheck = (event) => {
+        // set boolean of check input to the
+        // opposite of it
+        setter((curr_state) => !curr_state);
+    }
 
     const toggle = design.includes('neomorphic') ? (event) => {
         console.log(event.target.classList);
@@ -34,9 +48,15 @@ export default function Checkbox({ children, props }){
         }
     } : null;
 
+    useEffect(() => {
+        console.log(`show artifact: ${showArt}`);
+        console.log(`show correct: ${showCorrect}`);
+        console.log(`show raw: ${showRaw}`);
+    }, [showArt, showCorrect, showRaw]);
+
     return (
-        <div className="checkbox-container">
-            <label htmlFor="checkbox" className="checkbox-label">{props["label"]}</label>    
+        <div className={`checkbox-container ${design}`} style={style}>
+                
             <input 
                 type="checkbox"  
                 id="checkbox"
@@ -46,11 +66,13 @@ export default function Checkbox({ children, props }){
                 // through show_artifacts key
                 name={`${props["name"]}`}
                 className={`checkbox-field ${design}`} 
-                value={false}
-                onChange={handleUpload}
+                checked={check}
+                value={check}
+                onChange={handleCheck}
                 onMouseDown={toggle} 
                 onMouseUp={toggle}
             />
+            <label htmlFor="checkbox" className="checkbox-label">{props["label"]}</label>
         </div>
     );
 }

@@ -7,7 +7,7 @@ import Button from "./Button";
 
 import * as d3 from 'd3';
 
-export default function SpreadSheetInput({ children, props }){
+export default function SpreadSheetInput({ children }){
 
     // initialize and define theme of component by using
     // context
@@ -79,6 +79,7 @@ export default function SpreadSheetInput({ children, props }){
 
     useEffect(() => {
         console.log("spreadsheet uploaded");
+        console.log(sprSheet);
     }, [sprSheet])
 
     return (
