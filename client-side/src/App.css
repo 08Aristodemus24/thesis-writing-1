@@ -236,7 +236,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
   gap: 1rem;
 
   /* spacing */
@@ -274,16 +273,6 @@
 .spreadsheet-graph .y-axis{
   /* design */
   /* outline: 3px solid purple; */
-}
-
-.spreadsheet-upload-field-wrapper{
-  /* design */
-  /* outline: 1px solid var(--primary-color); */
-
-  /* display */
-  display: flex;
-  align-items: center;
-  gap: 1rem;
 }
 
 .sharp-minimal .spreadsheet-upload-label{
@@ -501,7 +490,7 @@
 }
 
 .sharp-minimal.submit-btn-container{
-  padding: 1em;
+  /* padding: 1em; */
 }
 
 .sharp-minimal .submit-btn{
@@ -535,7 +524,7 @@
   background-color: var(--secondary-color);
 
   /* size */
-  padding: 1em;
+  /* padding: 1em; */
 }
 
 .light-neomorphic .submit-btn{
@@ -570,7 +559,7 @@
   background-color: var(--secondary-color);
 
   /* size */
-  padding: 1em;
+  /* padding: 1em; */
 }
 
 .dark-neomorphic .submit-btn{

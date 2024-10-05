@@ -11,6 +11,9 @@ import { FormInputsContext } from "../contexts/FormInputsContext";
 export default function Form(){
     let [modelName, setModelName] = useState("");
     let [sprSheet, setSprSheet] = useState([]);
+    let [showRaw, setShowRaw] = useState(false);
+    let [showCorrect, setShowCorrect] = useState(false);
+    let [showArt, setShowArt] = useState(false);
 
     let style;
     const designs = useContext(DesignsContext);
@@ -40,7 +43,7 @@ export default function Form(){
             // once data is validated submitted and then extracted
             // reset form components form element
             setModelName("");
-            setSprSheet(null);
+            // setSprSheet([]);
 
             // send here the data from the contact component to 
             // the backend proxy server
@@ -91,6 +94,10 @@ export default function Form(){
                 >
                     <ModelNameInput/>
                     <SpreadSheetInput/>
+                    {/* <InputGroup>
+                    
+                    </InputGroup> */}
+                    <Button/>
                 </form>
                 <div className={`alert ${msgStatus !== undefined ? 'show' : ''}`} onClick={(event) => {
                     // remove class from alert container to hide it again
