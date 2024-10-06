@@ -5,7 +5,7 @@
 ##SBATCH --nodes=20
 #SBATCH --ntasks=10
 #SBATCH --gres=gpu:p40:1
-#SBATCH --job-name="jurado_lstm_cnn_tuning_job"
+#SBATCH --job-name="jurado_lstm_cnn_tuning_job2"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
 ##SBATCH --mail-user=<email_add>  ## optional
