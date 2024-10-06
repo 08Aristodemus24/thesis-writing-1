@@ -1,0 +1,23 @@
+Submitted on Sat Oct  5 14:01:07 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 28275
+SLURM_JOB_NAME        : cueva_lstm_svm_tuning_job2
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-gpu-02
+SLURM_NTASKS          : 10
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 
+TMPDIR                : /tmp/christaline.calubayan/SLURM_JOB_ID/28275
+Module load: anaconda/3-2023.07-2
+
+EnvironmentNameNotFound: Could not find conda environment: thesis-writing-1
+You can list all discoverable environments with `conda info --envs`.
+
+
+Python 3.11.5
+Traceback (most recent call last):
+  File "/scratch1/christaline.calubayan/thesis-writing-1/server-side/modelling/tuning_dl.py", line 9, in <module>
+    import tensorflow as tf
+ModuleNotFoundError: No module named 'tensorflow'
+Finished on Sat Oct  5 14:01:14 PST 2024
+Total runtime (sec): 6.84147047996521
