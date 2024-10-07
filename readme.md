@@ -1,4 +1,6 @@
-<!-- updated -->
+# test commands:
+* `python tuning_dl.py -m lstm-cnn -pl jurado -lr 5e-5 --mode tuning`
+* `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode tuning`
 
 # This repository contains all generalized code snippets and templates relating to model experimentation, training, evaluation, testing, server-side loading, client-side requests, usage documentation, loaders, evaluators, visualizers, and preprocessor utilities, and the model architectures, figures, and final folder
 

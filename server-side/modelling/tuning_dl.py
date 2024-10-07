@@ -178,10 +178,28 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
             because we do this sign and casting only if the dense
             layers are unactivated like the svm
             """
+            print("converting output of lstm-svm to binary labels...")
             signed_train = tf.sign(pred_train_labels)
+
+            # using cast turns all negatives to -1, zeros to 0,
+            # and positives to 1
             pred_train_labels = tf.cast(signed_train >= 1, "float")
             signed_cross_labels = tf.sign(pred_cross_labels)
             pred_cross_labels = tf.cast(signed_cross_labels >= 1, "float")
+
+        elif estimator_name.lower() == "lstm-cnn":
+            # because the output of lstm-cnn are probability values we need
+            # to convert them to binary labels i.e. all those that are >= 0.5
+            # are considered positive labels and those < 0.5 are considered negative
+            # labels, but as mentioned in jurado's paper because of the imbalance
+            # we need our threshold to be 0.2 since only 20% of the dataset are
+            # positive classes
+            print("converting output of lstm-cnn to binary labels...")
+            pred_train_labels[pred_train_labels >= 0.2] = 1
+            pred_train_labels[pred_train_labels < 0.2] = 0
+            pred_cross_labels[pred_cross_labels >= 0.2] = 1
+            pred_cross_labels[pred_cross_labels < 0.2] = 0
+
 
         print(np.unique(pred_train_labels))
         print(np.unique(pred_cross_labels))
@@ -317,6 +335,7 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     threshold_epochs: int,
     training_epochs: int,
     batch_size: int,
+    estimator_name: str,
     estimator,
     hyper_param_config: dict):
 
@@ -350,14 +369,22 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     # define checkpoint and early stopping callback to save
     # best weights at each epoch and to stop if there is no improvement
     # of validation loss for 10 consecutive epochs
-    weights_path = f"./saved/weights/{selector_config}_{model.name}" + "_{epoch:02d}_{auc:.4f}.weights.h5"
-    checkpoint = ModelCheckpoint(weights_path, monitor='auc', verbose=1, save_best_only=True, save_weights_only=True, mode='max')
-    stopper = EarlyStopping(monitor='auc', patience=threshold_epochs)
+    weights_path = f"./saved/weights/{selector_config}_{estimator_name}" + "_{epoch:02d}_{auc:.4f}.weights.h5"
+    checkpoint = ModelCheckpoint(
+        weights_path,
+        monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1',
+        verbose=1,
+        save_best_only=True,
+        save_weights_only=True,
+        mode='max')
+    stopper = EarlyStopping(
+        monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', 
+        patience=threshold_epochs)
     callbacks = [checkpoint, stopper]
 
     # save hyper params and other attributes of model 
     # for later model loading
-    save_meta_data(f'./saved/misc/{selector_config}_{model.name}_meta_data.json', hyper_param_config)
+    save_meta_data(f'./saved/misc/{selector_config}_{estimator_name}_meta_data.json', hyper_param_config)
 
     # begin training final model, without validation data
     # as all data combining training and validation will all be used
@@ -366,6 +393,10 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     epochs=training_epochs,
     batch_size=batch_size, 
     callbacks=callbacks,
+
+    # we set the validation split to all possible signal values not 
+    # one subject so model can pull knowledge from more training subjects 
+    validation_split=0.3,
     verbose=1,)
 
 def create_hyper_param_config(hyper_param_list: list[str]):
@@ -407,25 +438,25 @@ if __name__ == "__main__":
         will use mostly the raw signals as features unlike variable frequency complex \
         demodulation based features which are used in Hossain et al. (2022) study")
     parser.add_argument("-lr", "--learning_rate", type=float, default=5e-5, help="what learning rate value should the optimizer of the model use")
-    parser.add_argument("-the", "--threshold_epochs", type=int, default=30, help="represents how many epochs should the early stopping callback stop training the model tolerate metrics that aren't improving")
-    parser.add_argument("-tre", "--training_epochs", type=int, default=100, help="represents how many epochs should at the maximum the model train regardless whether its metric values improve or not")
+    parser.add_argument("-the", "--threshold_epochs", type=int, default=10, help="represents how many epochs should the early stopping callback stop training the model tolerate metrics that aren't improving")
+    parser.add_argument("-tre", "--training_epochs", type=int, default=30, help="represents how many epochs should at the maximum the model train regardless whether its metric values improve or not")
     parser.add_argument("-bs", "--batch_size", type=int, default=512, help="batch size during model training")
     parser.add_argument("--mode", type=str, default="tuning", help="tuning mode will not save weights during \
         fitting and while in training mode saves weights")
     parser.add_argument("--hyper_param_list", type=str, default="window_size_640", nargs="+", help="list of hyper parameters to be used as configuration during training")
     args = parser.parse_args()
 
-    # read and load data
-    subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
+    # # read and load data
+    # subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
 
-    # # create and load test data
-    # m = 1000
-    # window_size = 320
-    # n_f = 1
-    # n_subjects = 5
-    # subjects_signals = [np.random.randn(m, window_size, 1) for _ in range(n_subjects)]
-    # subjects_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
-    # subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
+    # create and load test data
+    m = 1000
+    window_size = 320
+    n_f = 1
+    n_subjects = 5
+    subjects_signals = [np.random.randn(m, window_size, 1) for _ in range(n_subjects)]
+    subjects_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
+    subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
 
     # model hyper params
     models = {
@@ -504,6 +535,7 @@ if __name__ == "__main__":
             threshold_epochs=args.threshold_epochs,
             training_epochs=args.training_epochs,
             batch_size=args.batch_size,
+            estimator_name=args.model,
             estimator=models[args.model]['model'],
             hyper_param_config=hyper_param_config
         )
