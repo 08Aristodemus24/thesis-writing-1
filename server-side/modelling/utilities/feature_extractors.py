@@ -679,7 +679,7 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     
     return features
 
-def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_sec: int, samples_per_win_size: int):
+def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.ndarray, half_wave: pd.DataFrame | np.ndarray, samples_per_sec: int, samples_per_win_size: int):
     """
     creates and returns a dataframe containing all 
     the features for a data slice of at least 1 hour
@@ -756,7 +756,8 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     # size will get only a row of data every 64 rows
     # thus effectively resulting in a timestamp list that
     # increments by 0.5s
-    timestamp_list = data.index.tolist()[::samples_per_win_size]
+    timestamp_list = data_slice.index.tolist()[::samples_per_win_size]
+
     # print(timestamp_list)
     timestamp_list_len = len(timestamp_list)
 
@@ -764,18 +765,23 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     feature_segments = pd.DataFrame(np.zeros(shape=(timestamp_list_len, feature_names_len)), columns=feature_names, index=timestamp_list)
     labels = pd.Series(np.zeros(shape=(timestamp_list_len)))
     for i in range(len(timestamp_list) - 1):
+        # get start time, end time, and both its respective indeces in the
+        # dataframe to use for artifact correction later as these mappings
+        # from the timestamp to the created feature will be of paramount
+        # importance 
         start_time = timestamp_list[i]
         end_time = timestamp_list[i + 1]
-        
-        
 
-        data_segment = data[start_time:end_time].iloc[:-1]
+        data_segment = data_slice[start_time:end_time].iloc[:-1]
         whole_wave_segment = whole_wave[start_time:end_time].iloc[:-1]
         half_wave_segment = half_wave[start_time:end_time].iloc[:-1]
 
+        start_time_index = data.index.get_loc(start_time)
+        end_time_index = data.index.get_loc(data_segment.index.tolist()[-1])
+
         if i == 0 or i == i == (len(timestamp_list) - 2):
             print(f'calculating features from {start_time} to {end_time} for index {i}')
-            print()
+            print(f'calculating features from {start_time_index} to {end_time_index} for index {i}')
 
         # compute the features for each 0.5s segment and assign to
         # its respective index in the empty dataframe
@@ -847,7 +853,7 @@ def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, w
 
         # samples per sec 128 samples per win size 64
         # samples per sec 16 samples per win size 8
-        features_per_hour.append(get_features(curr_data, whole_wave, half_wave, samples_per_sec, samples_per_win_size))
+        features_per_hour.append(get_features(data, curr_data, whole_wave, half_wave, samples_per_sec, samples_per_win_size))
 
         if verbose == True:
             print(f'processed hour {hour} - start: {start} | end: {end}')

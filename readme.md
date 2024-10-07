@@ -568,6 +568,42 @@ them
 * <s>test llanes-jurado model on notebook and see if dataset will work</s>
 * review how automatic_EDA_correction() function by llanes-jurado works in order to start using the predicted data as basis to correct the eda signals
 
+calculating features from 1970-01-01 00:00:00 to 1970-01-01 00:00:00.500000 for index 0
+calculating features from 0 to 63 for index 0
+calculating features from 1970-01-01 00:59:59 to 1970-01-01 00:59:59.500000 for index 7198
+calculating features from 460672 to 460735 for index 7198
+processed hour 0 - start: 0 | end: 460800
+
+calculating features from 1970-01-01 01:00:00 to 1970-01-01 01:00:00.500000 for index 0
+calculating features from 460800 to 460863 for index 0
+calculating features from 1970-01-01 01:59:59 to 1970-01-01 01:59:59.500000 for index 7198
+calculating features from 921472 to 921535 for index 7198
+processed hour 1 - start: 460800 | end: 921600
+
+calculating features from 1970-01-01 02:00:00 to 1970-01-01 02:00:00.500000 for index 0
+calculating features from 921600 to 921663 for index 0
+calculating features from 1970-01-01 02:07:36.500000 to 1970-01-01 02:07:37 for index 913
+calculating features from 980032 to 980095 for index 913
+processed hour 2 - start: 921600 | end: 980118
+
+calculating features from 1970-01-01 00:00:00 to 1970-01-01 00:00:00.500000 for index 0
+calculating features from 0 to 7 for index 0
+calculating features from 1970-01-01 00:59:59 to 1970-01-01 00:59:59.500000 for index 7198
+calculating features from 57584 to 57591 for index 7198
+processed hour 0 - start: 0 | end: 57600
+
+calculating features from 1970-01-01 01:00:00 to 1970-01-01 01:00:00.500000 for index 0
+calculating features from 57600 to 57607 for index 0
+calculating features from 1970-01-01 01:59:59 to 1970-01-01 01:59:59.500000 for index 7198
+calculating features from 115184 to 115191 for index 7198
+processed hour 1 - start: 57600 | end: 115200
+
+calculating features from 1970-01-01 02:00:00 to 1970-01-01 02:00:00.500000 for index 0
+calculating features from 115200 to 115207 for index 0
+calculating features from 1970-01-01 02:07:36.500000 to 1970-01-01 02:07:37 for index 913
+calculating features from 122504 to 122511 for index 913
+processed hour 2 - start: 115200 | end: 122515
+
 
 
 ## SVM mechanism
