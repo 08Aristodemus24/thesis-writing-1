@@ -342,7 +342,14 @@ def _get_amp_phase(z):
     """
     # recall that a complex number consists of a 
     # real number and an imaginary number
-    z_imag, z_real = z.imag, z.real
+    z_imag = z.imag
+
+    # note to avoid using potential zero as a divisor
+    # we must add 1e-100 to make sure \
+    
+    z_real = z.real + 1e-100 if z.real == 0 else z.real
+
+    # calculate amplitude and phase
     amp = np.abs(z_imag ** 2 + z_real ** 2)
     phase = np.arctan(z_imag / z_real)
     return amp, phase
@@ -759,11 +766,16 @@ def get_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame | np.
     for i in range(len(timestamp_list) - 1):
         start_time = timestamp_list[i]
         end_time = timestamp_list[i + 1]
-        print(f'calculating features from {start_time} to {end_time} for index {i}')
+        
+        
 
         data_segment = data[start_time:end_time].iloc[:-1]
         whole_wave_segment = whole_wave[start_time:end_time].iloc[:-1]
         half_wave_segment = half_wave[start_time:end_time].iloc[:-1]
+
+        if i == 0 or i == i == (len(timestamp_list) - 2):
+            print(f'calculating features from {start_time} to {end_time} for index {i}')
+            print()
 
         # compute the features for each 0.5s segment and assign to
         # its respective index in the empty dataframe

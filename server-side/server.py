@@ -14,6 +14,7 @@ import json
 import requests
 import tensorflow as tf
 import pandas as pd
+import numpy as np
 
 # import and load model architectures as well as decoder
 from modelling.models.cueva import LSTM_SVM
@@ -21,6 +22,8 @@ from modelling.models.llanes_jurado import LSTM_CNN
 # from modelling.utilities.preprocessors import decode_predictions, map_value_to_index, preprocess
 from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
 from modelling.utilities.feature_extractors import extract_features
+
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 # # configure location of build file and the static html template file
 app = Flask(__name__, template_folder='static')
@@ -277,19 +280,37 @@ def predict():
         # tuning will be used in testing as done also during training
         selected_feats = models[model_name]['selected_feats']
         subject_features = subject_features[selected_feats]
+        print(subject_features.columns)
 
         # convert features and labels into numpy matrices
-        X = subject_features.numpy()
-        Y = subject_labels.numpy().ravel()
+        X = subject_features.to_numpy()
+        Y = subject_labels.to_numpy().ravel()
 
         # if hossain is the researcher chosen the scaler used during training
         # will be used to scale the test subject features
-        if selector_config is "hossain":    
+        if selector_config == "hossain":    
             scaler = models[model_name]['scaler']
             X = scaler.transform(X)
 
         model = models[model_name]['model']
         Y_pred = model.predict(X)
+        print(f"predicted Y: {Y_pred}")
+        print(f"unique values and counts: {np.unique(Y_pred, return_counts=True)}")
+        print(f"true Y: {Y}")
+        print(f"unique values and counts: {np.unique(Y, return_counts=True)}")
+
+        # compute performance metric values for each fold
+        fold_test_acc = accuracy_score(y_true=Y, y_pred=Y_pred)
+        fold_test_prec = precision_score(y_true=Y, y_pred=Y_pred)
+        fold_test_rec = recall_score(y_true=Y, y_pred=Y_pred)
+        fold_test_f1 = f1_score(y_true=Y, y_pred=Y_pred)
+        fold_test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred)
+        print(f"test acc: {fold_test_acc} \
+              \ntest prec: {fold_test_prec} \
+              \ntest rec: {fold_test_rec} \
+              \ntest f1: {fold_test_f1} \
+              \ntest roc_auc: {fold_test_roc_auc}")
+        
 
         # next task here is once predictions are out I need tsome way to map the 
         # predictions to correct the artifacts in the raw data

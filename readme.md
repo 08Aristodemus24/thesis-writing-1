@@ -483,6 +483,7 @@ useEffect(() => {
 is akin to `componentDidUpdate()`
 
 15. delete diretory in linux without constant prompting: `rm -rf <directory name>`
+16. moves directory to another directory: `mv <my folder> /home/<coare username>/...`
 
 # To do:
 
