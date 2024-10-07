@@ -604,7 +604,38 @@ calculating features from 1970-01-01 02:07:36.500000 to 1970-01-01 02:07:37 for 
 calculating features from 122504 to 122511 for index 913
 processed hour 2 - start: 115200 | end: 122515
 
+* calculating roc auc score from predicted and true labels
 
+```
+def get_auc_score(y_true, y_prob):
+    y_true = y_true.values
+    y_prob = y_prob.values
+    
+    # Get indices that would sort y_prob in descending order
+    sorted_indices = np.argsort(-y_prob)
+    
+    # Sort y_true using the same indices
+    sorted_y_true = y_true[sorted_indices]
+    
+    # Compute total number of positive and negative samples
+    num_positive = np.sum(sorted_y_true == 1)
+    num_negative = np.sum(sorted_y_true == 0)
+    
+    # Initialize arrays for TPR and FPR
+    tpr_array = []
+    fpr_array = []
+    
+    cum_tp = np.cumsum(sorted_y_true == 1)
+    cum_fp = np.cumsum(sorted_y_true != 1)
+    
+    tpr = cum_tp / num_positive
+    fpr = cum_fp / num_negative
+
+    tpr_array.append(tpr)
+    fpr_array.append(fpr)
+        
+    return np.trapz(tpr_array, fpr_array)
+```
 
 ## SVM mechanism
 * <s>I need to learn how SVM can be implemented in tensorflow</s>

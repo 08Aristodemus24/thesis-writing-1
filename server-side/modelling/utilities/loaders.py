@@ -203,6 +203,8 @@ def summarize_results(estimator_name: str, results: dict):
         mean_cross_f1 = np.array(folds_metric_values["folds_cross_f1"]).mean()
         mean_train_roc_auc = np.array(folds_metric_values["folds_train_roc_auc"]).mean()
         mean_cross_roc_auc = np.array(folds_metric_values["folds_cross_roc_auc"]).mean()
+        mean_train_roc_auc_prob = np.array(folds_metric_values["folds_train_roc_auc_prob"]).mean()
+        mean_cross_roc_auc_prob = np.array(folds_metric_values["folds_cross_roc_auc_prob"]).mean()
         
         # create column
         summarized[hyper_param_config_key] = [
@@ -215,7 +217,9 @@ def summarize_results(estimator_name: str, results: dict):
             mean_train_f1,
             mean_cross_f1,
             mean_train_roc_auc,
-            mean_cross_roc_auc]
+            mean_cross_roc_auc,
+            mean_train_roc_auc_prob,
+            mean_cross_roc_auc_prob]
         
     summarized_results = pd.DataFrame(summarized, index=[
         "mean_train_acc",
@@ -227,7 +231,9 @@ def summarize_results(estimator_name: str, results: dict):
         "mean_train_f1",
         "mean_cross_f1",
         "mean_train_roc_auc",
-        "mean_cross_roc_auc"])
+        "mean_cross_roc_auc",
+        "mean_train_roc_auc_prob",
+        "mean_cross_roc_auc_prob"])
     
     return summarized_results
 

@@ -208,6 +208,8 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
     folds_cross_rec = []
     folds_cross_f1 = []
     folds_cross_roc_auc = []
+    folds_train_roc_auc_prob = []
+    folds_cross_roc_auc_prob = []
 
     # split features and labels into train and cross by 
     # leaving 1 subject out for cross validatoin and the
@@ -229,6 +231,8 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         # compare true cross and train labels to pred cross and train labels
         pred_train_labels = model.predict(train_features)
         pred_cross_labels = model.predict(cross_features)
+        pred_train_probs = model.predict_proba(train_features)
+        pred_cross_probs = model.predict_proba(cross_features)
 
         # compute performance metric values for each fold
         fold_train_acc = accuracy_score(y_true=train_labels, y_pred=pred_train_labels)
@@ -241,6 +245,8 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         fold_cross_f1 = f1_score(y_true=cross_labels, y_pred=pred_cross_labels)
         fold_train_roc_auc = roc_auc_score(y_true=train_labels, y_score=pred_train_labels)
         fold_cross_roc_auc = roc_auc_score(y_true=cross_labels, y_score=pred_cross_labels)
+        fold_train_roc_auc_prob = roc_auc_score(y_true=train_labels, y_score=pred_train_probs)
+        fold_cross_roc_auc_prob = roc_auc_score(y_true=cross_labels, y_score=pred_cross_probs)
         
         # save append each metric value to each respective list
         folds_train_acc.append(fold_train_acc)
@@ -253,13 +259,16 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         folds_cross_f1.append(fold_cross_f1)
         folds_train_roc_auc.append(fold_train_roc_auc)
         folds_cross_roc_auc.append(fold_cross_roc_auc)
+        folds_train_roc_auc_prob.append(fold_train_roc_auc_prob)
+        folds_cross_roc_auc_prob.append(fold_cross_roc_auc_prob)
 
         print(f"fold: {subject_id} with hyper params: {hyper_param_config} \
               \ntrain acc: {fold_train_acc} cross acc: {fold_cross_acc} \
               \ntrain prec: {fold_train_prec} cross prec: {fold_cross_prec} \
               \ntrain rec: {fold_train_rec} cross rec: {fold_cross_rec} \
               \ntrain f1: {fold_train_f1} cross f1: {fold_cross_f1} \
-              \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc}")
+              \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc} \
+              \ntrain roc_auc_prob: {fold_train_roc_auc_prob} cross roc_auc_prob: {fold_cross_roc_auc_prob}")
 
     # once all fold train and cross metric values collected update read
     # dictionary with specific hyper param config as key and its recorded
@@ -274,7 +283,9 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         'folds_train_f1': folds_train_f1,
         'folds_cross_f1': folds_cross_f1,
         'folds_train_roc_auc': folds_train_roc_auc,
-        'folds_cross_roc_auc': folds_cross_roc_auc
+        'folds_cross_roc_auc': folds_cross_roc_auc,
+        'folds_train_roc_auc_prob': folds_train_roc_auc_prob,
+        'folds_cross_roc_auc_prob': folds_cross_roc_auc_prob
     }
 
     with open(f'results/{selector_config}_{estimator_name}_results.json', 'w') as file:
