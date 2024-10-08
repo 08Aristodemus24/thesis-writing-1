@@ -514,6 +514,7 @@ Then do:
 
 roc_auc_score(y_test, y_proba[:,1])
 ```
+18. `sed -i 's/\r$//' <filename_of_script>`: to convert slurm script to a unix char standard file
 
 
 ## artifact detection and correction:
