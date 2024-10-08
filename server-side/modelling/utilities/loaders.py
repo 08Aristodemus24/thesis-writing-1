@@ -190,50 +190,36 @@ def summarize_results(estimator_name: str, results: dict):
     """
 
     summarized = {}
+    final_metric_names = None
+    
     for hyper_param_config_key, folds_metric_values in results[estimator_name].items():
+        mean_metric_values = []
+        metric_names = []
 
         # calculate mean of each folds metric value
-        mean_train_acc = np.array(folds_metric_values["folds_train_acc"]).mean()
-        mean_cross_acc = np.array(folds_metric_values["folds_cross_acc"]).mean()
-        mean_train_prec = np.array(folds_metric_values["folds_train_prec"]).mean()
-        mean_cross_prec = np.array(folds_metric_values["folds_cross_prec"]).mean()
-        mean_train_rec = np.array(folds_metric_values["folds_train_rec"]).mean()
-        mean_cross_rec = np.array(folds_metric_values["folds_cross_rec"]).mean()
-        mean_train_f1 = np.array(folds_metric_values["folds_train_f1"]).mean()
-        mean_cross_f1 = np.array(folds_metric_values["folds_cross_f1"]).mean()
-        mean_train_roc_auc = np.array(folds_metric_values["folds_train_roc_auc"]).mean()
-        mean_cross_roc_auc = np.array(folds_metric_values["folds_cross_roc_auc"]).mean()
-        mean_train_roc_auc_prob = np.array(folds_metric_values["folds_train_roc_auc_prob"]).mean()
-        mean_cross_roc_auc_prob = np.array(folds_metric_values["folds_cross_roc_auc_prob"]).mean()
+        for key, value in folds_metric_values.items():
+            mean_metric_value = np.array(value).mean()
+            mean_metric_values.append(mean_metric_value)
+            metric_names.append(key)
+
+        # mean_train_acc = np.array(folds_metric_values["folds_train_acc"]).mean()
+        # mean_cross_acc = np.array(folds_metric_values["folds_cross_acc"]).mean()
+        # mean_train_prec = np.array(folds_metric_values["folds_train_prec"]).mean()
+        # mean_cross_prec = np.array(folds_metric_values["folds_cross_prec"]).mean()
+        # mean_train_rec = np.array(folds_metric_values["folds_train_rec"]).mean()
+        # mean_cross_rec = np.array(folds_metric_values["folds_cross_rec"]).mean()
+        # mean_train_f1 = np.array(folds_metric_values["folds_train_f1"]).mean()
+        # mean_cross_f1 = np.array(folds_metric_values["folds_cross_f1"]).mean()
+        # mean_train_roc_auc = np.array(folds_metric_values["folds_train_roc_auc"]).mean()
+        # mean_cross_roc_auc = np.array(folds_metric_values["folds_cross_roc_auc"]).mean()
+        # mean_train_roc_auc_prob = np.array(folds_metric_values["folds_train_roc_auc_prob"]).mean()
+        # mean_cross_roc_auc_prob = np.array(folds_metric_values["folds_cross_roc_auc_prob"]).mean()
         
         # create column
-        summarized[hyper_param_config_key] = [
-            mean_train_acc,
-            mean_cross_acc,
-            mean_train_prec,
-            mean_cross_prec,
-            mean_train_rec,
-            mean_cross_rec,
-            mean_train_f1,
-            mean_cross_f1,
-            mean_train_roc_auc,
-            mean_cross_roc_auc,
-            mean_train_roc_auc_prob,
-            mean_cross_roc_auc_prob]
+        summarized[hyper_param_config_key] = mean_metric_values
+        final_metric_names = metric_names
         
-    summarized_results = pd.DataFrame(summarized, index=[
-        "mean_train_acc",
-        "mean_cross_acc",
-        "mean_train_prec",
-        "mean_cross_prec",
-        "mean_train_rec",
-        "mean_cross_rec",
-        "mean_train_f1",
-        "mean_cross_f1",
-        "mean_train_roc_auc",
-        "mean_cross_roc_auc",
-        "mean_train_roc_auc_prob",
-        "mean_cross_roc_auc_prob"])
+    summarized_results = pd.DataFrame(summarized, index=final_metric_names)
     
     return summarized_results
 

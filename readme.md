@@ -1,6 +1,7 @@
 # test commands:
 * `python tuning_dl.py -m lstm-cnn -pl jurado -lr 5e-5 --mode tuning`
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode tuning`
+* `python tuning_ml.py -m lr -pl hossain --n_rows_to_sample 5000 --mode tuning`
 * `scp -r -i C:/Users/LARRY/.ssh/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/" michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/data/`
 
 # This repository contains all generalized code snippets and templates relating to model experimentation, training, evaluation, testing, server-side loading, client-side requests, usage documentation, loaders, evaluators, visualizers, and preprocessor utilities, and the model architectures, figures, and final folder
@@ -485,8 +486,35 @@ is akin to `componentDidUpdate()`
 
 15. delete diretory in linux without constant prompting: `rm -rf <directory name>`
 16. moves directory to another directory: `mv <my folder> /home/<coare username>/...`
+17. 
+```
+Your output from model.predict_proba() is a matrix with 2 columns, one for each class. To calculate roc, you need to provide the probability of the positive class:
 
-# To do:
+Using an example dataset:
+
+from sklearn.datasets import make_classification
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+
+X, y = make_classification(n_classes=2)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.33, random_state=42)
+rf = RandomForestClassifier()
+model = rf.fit(X_train, y_train)
+y_proba = model.predict_proba(X_test)
+It looks like this:
+
+array([[0.69, 0.31],
+       [0.13, 0.87],
+       [0.94, 0.06],
+       [0.94, 0.06],
+       [0.07, 0.93]])
+Then do:
+
+roc_auc_score(y_test, y_proba[:,1])
+```
+
 
 ## artifact detection and correction:
 * <s>clone and review repo of Taylor et al.</s>

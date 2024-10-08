@@ -130,15 +130,18 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
     
     # define early stopping callback to stop if there is no improvement
     # of validation loss for 30 consecutive epochs
-    stopper = EarlyStopping(monitor='val_loss', patience=threshold_epochs)
+    stopper = EarlyStopping(monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', patience=threshold_epochs)
     callbacks = [stopper]
 
     # initialize empty lists to collect all metric values per fold
+    folds_train_loss = []
     folds_train_acc = []
     folds_train_prec = []
     folds_train_rec = []
     folds_train_f1 = []
     folds_train_roc_auc = []
+
+    folds_cross_loss = []
     folds_cross_acc = []
     folds_cross_prec = []
     folds_cross_rec = []
@@ -189,42 +192,51 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
             pred_train_labels = tf.nn.sigmoid(pred_train_labels)
             pred_cross_labels = tf.nn.sigmoid(pred_cross_labels)
 
-        elif estimator_name.lower() == "lstm-cnn":
-            # because the output of lstm-cnn are probability values we need
-            # to convert them to binary labels i.e. all those that are >= 0.5
-            # are considered positive labels and those < 0.5 are considered negative
-            # labels, but as mentioned in jurado's paper because of the imbalance
-            # we need our threshold to be 0.2 since only 20% of the dataset are
-            # positive classes
-            print("converting output of lstm-cnn to binary labels...")
-            pred_train_labels[pred_train_labels >= 0.2] = 1
-            pred_train_labels[pred_train_labels < 0.2] = 0
-            pred_cross_labels[pred_cross_labels >= 0.2] = 1
-            pred_cross_labels[pred_cross_labels < 0.2] = 0
-
-
-        print(np.unique(pred_train_labels))
-        print(np.unique(pred_cross_labels))
+        # elif estimator_name.lower() == "lstm-cnn":
+        #     # because the output of lstm-cnn are probability values we need
+        #     # to convert them to binary labels i.e. all those that are >= 0.5
+        #     # are considered positive labels and those < 0.5 are considered negative
+        #     # labels, but as mentioned in jurado's paper because of the imbalance
+        #     # we need our threshold to be 0.2 since only 20% of the dataset are
+        #     # positive classes
+        #     print("converting output of lstm-cnn to binary labels...")
+        #     pred_train_labels[pred_train_labels >= 0.2] = 1
+        #     pred_train_labels[pred_train_labels < 0.2] = 0
+        #     pred_cross_labels[pred_cross_labels >= 0.2] = 1
+        #     pred_cross_labels[pred_cross_labels < 0.2] = 0
 
         # compute performance metric values for each fold
         # accuracy takes in solid 1s and 0s
         # precision takes in solid 1s and 0s
+        # recall takes in solid 1s and 0s
 
+        # binary cross entropy takes in probability outputst
         # binary accuracy takes in probability outputs
         # f1 score takes in probability outputs
-        
-        fold_train_acc = accuracy_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_acc = accuracy_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_prec = precision_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_prec = precision_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_rec = recall_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_rec = recall_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_f1 = f1_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_f1 = f1_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_roc_auc = roc_auc_score(y_true=train_labels, y_score=pred_train_labels)
-        fold_cross_roc_auc = roc_auc_score(y_true=cross_labels, y_score=pred_cross_labels)
+        # auc takes in probability outputs
+
+        print(np.unique(pred_train_labels))
+        print(np.unique(pred_cross_labels))
+
+        # now both models are able to output probability values
+        # what I want is to also save DSC and SquaredHinge losses
+        # in the dictionary of results
+        fold_train_loss = history.history['loss'][-1]
+        fold_cross_loss = history.history['val_loss'][-1]
+        fold_train_acc = history.history['binary_accuracy'][-1]
+        fold_cross_acc = history.history['val_binary_accuracy'][-1]
+        fold_train_prec = history.history['precision' if estimator_name.lower() == "lstm-svm" else "precision_1"][-1]
+        fold_cross_prec = history.history['val_precision' if estimator_name.lower() == "lstm-svm" else "val_precision_1"][-1]
+        fold_train_rec = history.history['recall' if estimator_name.lower() == "lstm-svm" else "recall_1"][-1]
+        fold_cross_rec = history.history['val_recall' if estimator_name.lower() == "lstm-svm" else "val_recall_1"][-1]
+        fold_train_f1 = history.history['f1_score'][-1]
+        fold_cross_f1 = history.history['val_f1_score'][-1]
+        fold_train_roc_auc = history.history['auc' if estimator_name.lower() == "lstm-svm" else "auc_1"][-1]
+        fold_cross_roc_auc = history.history['val_auc' if estimator_name.lower() == "lstm-svm" else "val_auc_1"][-1]
         
         # save append each metric value to each respective list
+        folds_train_loss.append(fold_train_loss)
+        folds_cross_loss.append(fold_cross_loss)
         folds_train_acc.append(fold_train_acc)
         folds_cross_acc.append(fold_cross_acc)
         folds_train_prec.append(fold_train_prec)
@@ -237,6 +249,7 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         folds_cross_roc_auc.append(fold_cross_roc_auc)
 
         print(f"fold: {subject_id} with hyper params: {hyper_param_config} \
+              \ntrain loss: {fold_train_loss} cross loss: {fold_cross_loss} \
               \ntrain acc: {fold_train_acc} cross acc: {fold_cross_acc} \
               \ntrain prec: {fold_train_prec} cross prec: {fold_cross_prec} \
               \ntrain rec: {fold_train_rec} cross rec: {fold_cross_rec} \
@@ -247,6 +260,8 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
     # dictionary with specific hyper param config as key and its recorded
     # metric values as value
     results[f'{estimator_name}'][hyper_param_config_key] = {
+        'folds_train_loss': folds_train_loss,
+        'folds_cross_loss': folds_cross_loss,
         'folds_train_acc':  folds_train_acc,
         'folds_cross_acc': folds_cross_acc,
         'folds_train_prec': folds_train_prec,
