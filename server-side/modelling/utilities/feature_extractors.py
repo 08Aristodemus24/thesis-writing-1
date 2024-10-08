@@ -757,18 +757,25 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
     # thus effectively resulting in a timestamp list that
     # increments by 0.5s
     timestamp_list = data_slice.index.tolist()[::samples_per_win_size]
-    timestamp_list = data_slice.index.tolist()[::samples_per_win_size] # """SAFETY TEST"""
-    """how do I include one last timestamp???"""
+    # timestamp list is goes from 0 to 63, 64 to 127, and so on
+    print(f'last timestamp: {data_slice.index[-1]}')
+    
+    # this includes one last timestamp:
+    # the exclusion timestamp index
+    exc_ts_index = data.index.get_loc(timestamp_list[-1])
+    exc_ts = data.index[exc_ts_index:exc_ts_index + samples_per_win_size]
+    # exc goes from '1970-01-01 00:59:59.500000' to '1970-01-01 00:59:59.992187500'
+    print(f'exclusion timestamp: {exc_ts} {exc_ts.shape}')
 
-    # print(timestamp_list)
     timestamp_list_len = len(timestamp_list)
     print(f'hour long timestamp list length: {timestamp_list_len}')
 
     # initially create empty feature_segments dataframe of zeros
+    # this will be of length 7200 because of the length of timestamps
     feature_segments = pd.DataFrame(np.zeros(shape=(timestamp_list_len, feature_names_len)), columns=feature_names, index=timestamp_list)
     labels = pd.Series(np.zeros(shape=(timestamp_list_len)))
-    # for i in range(timestamp_list_len - 1):
-    for i in range(timestamp_list_len): # """SAFETY TEST"""
+    for i in range(timestamp_list_len - 1):
+    # for i in range(timestamp_list_len): # """SAFETY TEST"""
         # get start time, end time, and both its respective indeces in the
         # dataframe to use for artifact correction later as these mappings
         # from the timestamp to the created feature will be of paramount
