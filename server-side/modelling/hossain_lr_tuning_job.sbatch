@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
-#SBATCH --partition=batch
+#SBATCH --partition=debug
 #SBATCH --qos=batch_default
 ##SBATCH --nodes=20
 #SBATCH --ntasks=70
