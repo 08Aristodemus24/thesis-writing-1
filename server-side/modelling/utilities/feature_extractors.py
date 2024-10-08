@@ -757,18 +757,26 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
     # thus effectively resulting in a timestamp list that
     # increments by 0.5s
     timestamp_list = data_slice.index.tolist()[::samples_per_win_size]
+    timestamp_list = data_slice.index.tolist()[::samples_per_win_size] # """SAFETY TEST"""
+    """how do I include one last timestamp???"""
 
     # print(timestamp_list)
     timestamp_list_len = len(timestamp_list)
+    print(f'hour long timestamp list length: {timestamp_list_len}')
 
     # initially create empty feature_segments dataframe of zeros
     feature_segments = pd.DataFrame(np.zeros(shape=(timestamp_list_len, feature_names_len)), columns=feature_names, index=timestamp_list)
     labels = pd.Series(np.zeros(shape=(timestamp_list_len)))
-    for i in range(len(timestamp_list) - 1):
+    # for i in range(timestamp_list_len - 1):
+    for i in range(timestamp_list_len): # """SAFETY TEST"""
         # get start time, end time, and both its respective indeces in the
         # dataframe to use for artifact correction later as these mappings
         # from the timestamp to the created feature will be of paramount
         # importance 
+
+        # because there is a i + 1 we are forced to cut short the loop
+        # only from [0] until [7198] since [7199 + 1] would be out of bounds
+        # and [7198 + 1] is still permitted
         start_time = timestamp_list[i]
         end_time = timestamp_list[i + 1]
 
@@ -779,9 +787,10 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
         start_time_index = data.index.get_loc(start_time)
         end_time_index = data.index.get_loc(data_segment.index.tolist()[-1])
 
-        if i == 0 or i == i == (len(timestamp_list) - 2):
+        if i == 0 or i == 1 or i == (timestamp_list_len - 3) or i == (timestamp_list_len - 2):
             print(f'calculating features from {start_time} to {end_time} for index {i}')
             print(f'calculating features from {start_time_index} to {end_time_index} for index {i}')
+            print(f'data segment: \n{data_segment}')
 
         # compute the features for each 0.5s segment and assign to
         # its respective index in the empty dataframe
@@ -793,6 +802,10 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
         # if more than 50% of the segment was labeled as an artifact, such a
         # segment of 0.5 s was labeled indeed as an artifact
         labels[i] = 1 if np.nanmean(data_segment['label']) > 0.5 else 0
+
+    # in theory we would have to still extract the features at timestamp_list[7199]
+    # to timestamp_list[7200] as timestamp_list[7200] would be a timestamp that will
+    # only be used as an exclusive time value and not used
 
     # fill any potential null or nan value with zeros
     feature_segments.fillna(0, inplace=True)
@@ -884,8 +897,8 @@ def extract_features(df: pd.DataFrame):
     eda_df_16hz['filtered_signal'] = butter_lowpass_filter(eda_df_16hz['raw_signal'], cutoff=1.0, samp_freq=16, order=6)
 
     # process the dfs and extract its features
-    data_128hz = extract_features_per_hour(eda_df_128hz, hertz=128, window_size=0.5, verbose=True)
-    data_16hz = extract_features_per_hour(eda_df_16hz, hertz=16, window_size=0.5, verbose=True)
+    data_128hz = extract_features_per_hour(eda_df_128hz, hertz=128, window_size=0.5, verbose=False)
+    data_16hz = extract_features_per_hour(eda_df_16hz, hertz=16, window_size=0.5, verbose=False)
 
     # rejoin 128hz and 16hz features and labels
     eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)

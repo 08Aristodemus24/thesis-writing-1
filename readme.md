@@ -600,8 +600,19 @@ them
 
 calculating features from 1970-01-01 00:00:00 to 1970-01-01 00:00:00.500000 for index 0
 calculating features from 0 to 63 for index 0
+#### it takes 63 numbers excluding 0 to get from 0 to 63
 calculating features from 1970-01-01 00:59:59 to 1970-01-01 00:59:59.500000 for index 7198
 calculating features from 460672 to 460735 for index 7198
+#### 672,673,674,675,676,677,...,733,734,735 it takes 63 numbers excluding 460672 to get from 460672 to 460735
+
+460736 + 63 = 460798
+in theory we could still take indeces 460736 to 460736 + 63 which is 460799 which is supposed to be exactly the end index of the hour long data slice 
+
+#### so for index 7199 which will be zeroes 
+
+#### only strictly until before an hour
+
+##### this is our hour long data slices indeces exclusively, i.e. [0] until [460799] not including 460800 since this would be in the 1 hour mark and would be longer than an hour
 processed hour 0 - start: 0 | end: 460800
 
 calculating features from 1970-01-01 01:00:00 to 1970-01-01 01:00:00.500000 for index 0
