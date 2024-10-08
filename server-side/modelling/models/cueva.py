@@ -165,10 +165,10 @@ class LSTM_SVM(tf.keras.Model):
         # and regularize it
         with GradientTape() as tape:
             # pass a batch of X to model representing one forward pass
-            y_pred = self(X, training=True)
+            Y_pred = self(X, training=True)
 
             # compute loss value
-            sq_hinge_loss = self.compute_loss(y=Y, y_pred=y_pred)
+            sq_hinge_loss = self.compute_loss(y=Y, y_pred=Y_pred)
 
             # retrieve weights of Dense/SVC layer and calculate its L2-norm
             # excluding the bias coefficients of course
@@ -206,8 +206,11 @@ class LSTM_SVM(tf.keras.Model):
                 # we need to pass it through tf.sign() first as tf.sign() takes in these values
                 # and outputs -1 if x is < 0, 0 if x is 0, and 1 if x is > 0 which is exactly
                 # what an SVM is supposed to predict
-                pred_train_labels = tf.sign(y_pred)
-                pred_train_labels = tf.cast(pred_train_labels >= 1, "float")
+
+                pred_train_labels = tf.nn.sigmoid(Y_pred)
+                
+                # pred_train_labels = tf.sign(Y_pred)
+                # pred_train_labels = tf.cast(pred_train_labels >= 1, "float")
                 metric.update_state(Y, pred_train_labels)
 
         # SquaredHinge in compile calculates a loss
@@ -225,19 +228,20 @@ class LSTM_SVM(tf.keras.Model):
         X, Y = data
 
         # compute predictions given validation data
-        y_pred = self(X, training=False)
+        Y_pred = self(X, training=False)
 
         # updates the metrics tracking the loss
-        self.compute_loss(y=Y, y_pred=y_pred)
+        self.compute_loss(y=Y, y_pred=Y_pred)
 
         # update the metrics.
         for metric in self.metrics:
             if metric.name != "loss":
+                pred_test_labels = tf.nn.sigmoid(Y_pred)
                 # perform same transformation of linear values to -1, 0, and 1 to
                 # 0 and 1 values
-                pred_train_labels = tf.sign(y_pred)
-                pred_train_labels = tf.cast(pred_train_labels >= 1, "float")
-                metric.update_state(Y, pred_train_labels)
+                # pred_test_labels = tf.sign(Y_pred)
+                # pred_test_labels = tf.cast(pred_test_labels >= 1, "float")
+                metric.update_state(Y, pred_test_labels)
 
         # return a dict mapping metric names to current value.
         # note that it will include the loss (tracked in self.metrics).

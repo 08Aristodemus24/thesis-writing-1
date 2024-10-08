@@ -179,13 +179,15 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
             layers are unactivated like the svm
             """
             print("converting output of lstm-svm to binary labels...")
-            signed_train = tf.sign(pred_train_labels)
+            # signed_train_labels = tf.sign(pred_train_labels)
 
-            # using cast turns all negatives to -1, zeros to 0,
-            # and positives to 1
-            pred_train_labels = tf.cast(signed_train >= 1, "float")
-            signed_cross_labels = tf.sign(pred_cross_labels)
-            pred_cross_labels = tf.cast(signed_cross_labels >= 1, "float")
+            # # using cast turns all negatives to -1, zeros to 0,
+            # # and positives to 1
+            # pred_train_labels = tf.cast(signed_train_labels >= 1, "float")
+            # signed_cross_labels = tf.sign(pred_cross_labels)
+            # pred_cross_labels = tf.cast(signed_cross_labels >= 1, "float")
+            pred_train_labels = tf.nn.sigmoid(pred_train_labels)
+            pred_cross_labels = tf.nn.sigmoid(pred_cross_labels)
 
         elif estimator_name.lower() == "lstm-cnn":
             # because the output of lstm-cnn are probability values we need
@@ -205,6 +207,12 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         print(np.unique(pred_cross_labels))
 
         # compute performance metric values for each fold
+        # accuracy takes in solid 1s and 0s
+        # precision takes in solid 1s and 0s
+
+        # binary accuracy takes in probability outputs
+        # f1 score takes in probability outputs
+        
         fold_train_acc = accuracy_score(y_true=train_labels, y_pred=pred_train_labels)
         fold_cross_acc = accuracy_score(y_true=cross_labels, y_pred=pred_cross_labels)
         fold_train_prec = precision_score(y_true=train_labels, y_pred=pred_train_labels)
