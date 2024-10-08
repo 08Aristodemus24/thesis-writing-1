@@ -1,45 +1,12 @@
-Submitted on Fri Oct  4 16:36:56 PST 2024
+Submitted on Tue Oct  8 12:39:13 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 28226
+SLURM_JOB_ID          : 28738
 SLURM_JOB_NAME        : hossain_lr_tuning_job
 SLURM_JOB_NUM_NODES   : 1
 SLURM_JOB_NODELIST    : saliksik-cpu-22
 SLURM_NTASKS          : 70
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/28226
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/28738
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-/scratch1/michael.cueva/thesis-writing-1/server-side/modelling
-subjects features and labels and subject to id lookup loaded
-        raw_128hz_max  raw_128hz_min  ...  second_32thofa_sec_range  subject_id
-0            0.000222       0.000000  ...                  0.000222           0
-1            0.000222       0.000222  ...                  0.000000           0
-2            0.003330       0.000222  ...                  0.001554           0
-3            0.003774       0.000222  ...                  0.001776           0
-4            0.000222       0.000222  ...                  0.000000           0
-...               ...            ...  ...                       ...         ...
-405122       0.010434       0.009546  ...                  0.000444          32
-405123       0.010434       0.009990  ...                  0.000222          32
-405124       0.010878       0.008658  ...                  0.000444          32
-405125       0.010878       0.009102  ...                  0.000444          32
-405126       0.011322       0.009990  ...                  0.000444          32
-
-[405127 rows x 74 columns]
-          0  subject_id
-0       0.0           0
-1       0.0           0
-2       0.0           0
-3       0.0           0
-4       0.0           0
-...     ...         ...
-405122  0.0          32
-405123  0.0          32
-405124  0.0          32
-405125  0.0          32
-405126  0.0          32
-
-[405127 rows x 2 columns]
-file not found please run needed script first to produce file
-Finished on Fri Oct  4 16:37:09 PST 2024
-Total runtime (sec): 13.497493028640747

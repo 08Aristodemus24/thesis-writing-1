@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
 #SBATCH --partition=debug
-#SBATCH --qos=batch_default
+#SBATCH --qos=debug_default
 ##SBATCH --nodes=20
 #SBATCH --ntasks=70
 #SBATCH --job-name="hossain_lr_tuning_job"
