@@ -758,7 +758,7 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
     # increments by 0.5s
     timestamp_list = data_slice.index.tolist()[::samples_per_win_size]
     # timestamp list is goes from 0 to 63, 64 to 127, and so on
-    print(f'last timestamp: {data_slice.index[-1]}')
+    print(f'last timestamp: {timestamp_list[-1]}')
     
     # this includes one last timestamp:
     # the exclusion timestamp index
@@ -795,8 +795,8 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
         end_time_index = data.index.get_loc(data_segment.index.tolist()[-1])
 
         if i == 0 or i == 1 or i == (timestamp_list_len - 3) or i == (timestamp_list_len - 2):
-            print(f'calculating features from {start_time} to {end_time} for index {i}')
-            print(f'calculating features from {start_time_index} to {end_time_index} for index {i}')
+            print(f'calculating features from {start_time} to {end_time} exclusively for index {i}')
+            print(f'calculating features from {start_time_index} to {end_time_index} inclusively for index {i}')
             print(f'data segment: \n{data_segment}')
 
         # compute the features for each 0.5s segment and assign to
@@ -858,6 +858,8 @@ def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, w
     # will allow us to get a sense how many segments or rows of 0.5 seconds
     # can we get from this time series dataframe of our signals
     num_labels = math.ceil(n_rows / samples_per_win_size)
+    print(f'num_labels: {num_labels}')
+    
     hours = math.ceil(n_rows / samples_per_hour)
 
     features_per_hour = []
