@@ -324,6 +324,14 @@ def predict():
         subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label', verbose=True)
         print(subject_signals.shape)
         print(subject_labels.shape)
+
+        # assign model
+        model = models[model_name]['model']
+
+        # use model for predictions recall that the dl models output a sigmoid
+        # probability value
+
+
         
 
     # convert eda signal df to numerical features if ml model is to be used

@@ -406,9 +406,11 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         # 0:0 + 640 = 0:640
         # 64:64 + 640 = 64:704
         # 128:128 + 640 = 128:768
-        # 192:192 + 640 = 
+        # 192:192 + 640 = 192:832
         # ...
-        # 764352:764352 + 640
+        # 764352:764352 + 640 = 764352:764992
+        # if we exceed 764352 by adding 64 then we have 764416
+        # 764416:764416 + 640 = 764416:765056 and 765056 exceeds the index and rows of 765045 
         
         denominator_norm = (np.nanmax(x_signal[i:(i + window_size)]) - np.nanmin(x_signal[i:(i + window_size)])) 
         denominator_norm = denominator_norm + 1e-100 if denominator_norm == 0 else denominator_norm
@@ -437,10 +439,10 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         cond = np.nanmean(y_signal[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
         y_window_list.append(1 if cond else 0)
 
-        if (i == 0 or i == (stop)) and verbose:
+        if (i == 0 or (i + target_size_frames) >= stop) and verbose:
             print(f'i: {i}, i + window_size: {i + window_size}')
             print(f'i + window_size - target_size_frames: {i + window_size - target_size_frames}, i + window_size: {i + window_size}')
-            print(f"Iteration {i} of {stop - 1}")
+            print(f"Iteration {i} of {stop - 1}\n")
         
         # this will increment our i by the size of our target frames which in this 
         # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
