@@ -382,7 +382,8 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
     # but what is the point of subtracting 765045 by window size of 640 (5 * 128)?
     print(f'length of x_signals: {len(x_signal)}')
     print(f'window size: {window_size}')
-    while i <= len(x_signal) - window_size:
+    stop = len(x_signal) - window_size
+    while i <= stop:
         # iteration pattern is the following
         # 0 <= 765045 - 640 (764405)
         # 64 <= 765045 - 640
@@ -392,8 +393,9 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         # 320 <= 765045 - 640
         # ...
         # 764288 <= 765045 - 640
-        # 764352 <= 765045 - 640
-        # 764416 <= 765045 - 640 (764405)
+        # 764352 <= 765045 - 640 (764405) we only go until here as 764352 + 64
+        # (or another 0.5s segment would result in 764416 which is greater than 764405)  
+
         # maybe what this truly does is we get 5 seconds of a signal and since there are 128 signals per second
         # we would in total get 640 rows for 5 seconds of our signals
 
@@ -401,12 +403,13 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         # and as stated by llanes-jurado et al. they used min max scaling to scale the raw signals
         # mroeover nanmax and min is used in case of nan values in the windows which returns
         # minimum of an array or minimum along an axis, ignoring any NaNs
-        # 0:0 + 640
-        # 64:64 + 640
-        # 128:128 + 640
-        # 192:192 + 640
+        # 0:0 + 640 = 0:640
+        # 64:64 + 640 = 64:704
+        # 128:128 + 640 = 128:768
+        # 192:192 + 640 = 
         # ...
         # 764352:764352 + 640
+        
         denominator_norm = (np.nanmax(x_signal[i:(i + window_size)]) - np.nanmin(x_signal[i:(i + window_size)])) 
         denominator_norm = denominator_norm + 1e-100 if denominator_norm == 0 else denominator_norm
 
@@ -430,15 +433,19 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         # 764288 + 640 - 64:764288 + 640 = 764864:764928
         # 764352 + 640 - 64:764352 + 640 = 764928:764992
         # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
+        
         cond = np.nanmean(y_signal[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
         y_window_list.append(1 if cond else 0)
 
-        if i % 50000 == 0 and verbose:
-            print("Iteration", i, "of", len(x_signal) - window_size - 1, end="\r")
+        if (i == 0 or i == (stop)) and verbose:
+            print(f'i: {i}, i + window_size: {i + window_size}')
+            print(f'i + window_size - target_size_frames: {i + window_size - target_size_frames}, i + window_size: {i + window_size}')
+            print(f"Iteration {i} of {stop - 1}")
         
         # this will increment our i by the size of our target frames which in this 
         # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
         i += target_size_frames
+        
 
     # because x_window_list and y_window_list when converted to a numpy array will
     # be of dimensions (m, 640) and (m,) respectively we need to first and foremost

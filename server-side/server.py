@@ -321,9 +321,9 @@ def predict():
         # so lets say we have our signals we'd have to divide these segments into 
 
     else:
-        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
-        print(subject_signals)
-        print(subject_labels)
+        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label', verbose=True)
+        print(subject_signals.shape)
+        print(subject_labels.shape)
         
 
     # convert eda signal df to numerical features if ml model is to be used
