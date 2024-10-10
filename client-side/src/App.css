@@ -251,7 +251,7 @@
 
 .spreadsheet-graph .cartesian-plane{
   /* designd */
-  outline: 1px solid green;
+  /* outline: 1px solid green; */
 }
 
 .spreadsheet-graph .x-axis{

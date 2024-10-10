@@ -355,6 +355,7 @@ def predict():
 
     # once predictions have been extracted from respective models
     # pass to the correct_signals() function
+    correct_signals(Y_pred, subject_eda_data)
 
 
         

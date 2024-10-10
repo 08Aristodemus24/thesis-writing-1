@@ -765,7 +765,7 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
     exc_ts_index = data.index.get_loc(timestamp_list[-1])
     exc_ts = data.index[exc_ts_index:exc_ts_index + samples_per_win_size]
     # exc goes from '1970-01-01 00:59:59.500000' to '1970-01-01 00:59:59.992187500'
-    print(f'exclusion timestamp: {exc_ts} {exc_ts.shape}')
+    print(f'exclusion timestamp list: {exc_ts} {exc_ts.shape}')
 
     timestamp_list_len = len(timestamp_list)
     print(f'hour long timestamp list length: {timestamp_list_len}')

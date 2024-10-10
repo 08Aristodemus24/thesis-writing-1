@@ -184,7 +184,10 @@ def correct_signals(y_pred, df, freq_signal=128, th_t_postprocess=2.5, eda_signa
         # row in the feature data set 
         start = target_size_fr * label_i
         end = min(target_size_fr * (label_i + 1), n_rows)
-        print(f"index {label_i}: start {start} - end {end}")
+
+        if label_i == 0 or (label_i == y_pred.shape[0] - 1):    
+            print(f"index {label_i}: start {start} - end {end}")
+        
         future_labels_auto[start:end] += label
     
     # # ##############################
