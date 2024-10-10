@@ -273,8 +273,8 @@ def predict():
     if selector_config == "hossain" or selector_config == "taylor":
         # extract features of the test data
         subject_features, subject_labels = extract_features(subject_eda_data)
-        print(subject_features)
-        print(subject_labels)
+        print(subject_features.shape)
+        print(subject_labels.shape)
 
         # once features are extracted features selected during
         # tuning will be used in testing as done also during training
@@ -325,11 +325,36 @@ def predict():
         print(subject_signals.shape)
         print(subject_labels.shape)
 
+        # signals and labels are already numpy matrices
+        # assign to X and Y variable for readability
+        X = subject_signals
+        Y = subject_labels
+
         # assign model
         model = models[model_name]['model']
+        Y_pred = model.predict(X)
 
-        # use model for predictions recall that the dl models output a sigmoid
-        # probability value
+        # use model for predictions recall that the dl models 
+        # output a sigmoid probability value however for 
+        # lstm-svm because it's output is a series of untransformed
+        # logit values
+        if estimator_name.lower() == 'lstm-svm':
+            # signed_pred = tf.sign(y_pred)
+            # y_pred = tf.cast(signed_pred >= 1, "float")
+            # y_pred = np.reshape(y_pred, (-1,))
+            Y_pred = tf.nn.sigmoid(Y_pred)
+
+        # when our predictions is 0.2, 0.15, and below which is <= 0.2 then y_pred will be 0
+        # when our predictions is 1, 0.5, 0.4, 0.3, 0.21, and above which is > 0.2 then y_pred will be 1
+        # why we do this is because of the imbalance of our dataset, and we
+        # want to place a threshold of 20% since there our dataset only consists
+        # of 20% of positive classes
+        y_pred[y_pred <= 0.2] = 0
+        y_pred[y_pred > 0.2] = 1
+        y_pred[np.isnan(y_pred)] = 0
+
+    # once predictions have been extracted from respective models
+    # pass to the correct_signals() function
 
 
         
