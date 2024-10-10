@@ -515,6 +515,7 @@ Then do:
 roc_auc_score(y_test, y_proba[:,1])
 ```
 18. `sed -i 's/\r$//' <filename_of_script>`: to convert slurm script to a unix char standard file
+19. those long lines of epochs I see in the slurm script output are the DL tnsorflow models being used for prediction on the training set and cross validation set 
 
 
 ## artifact detection and correction:

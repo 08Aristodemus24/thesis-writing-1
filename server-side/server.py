@@ -19,7 +19,7 @@ import numpy as np
 # import and load model architectures as well as decoder
 from modelling.models.cueva import LSTM_SVM
 from modelling.models.llanes_jurado import LSTM_CNN
-# from modelling.utilities.preprocessors import decode_predictions, map_value_to_index, preprocess
+from modelling.utilities.preprocessors import correct_signals
 from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
 from modelling.utilities.feature_extractors import extract_features
 
@@ -349,9 +349,9 @@ def predict():
         # why we do this is because of the imbalance of our dataset, and we
         # want to place a threshold of 20% since there our dataset only consists
         # of 20% of positive classes
-        y_pred[y_pred <= 0.2] = 0
-        y_pred[y_pred > 0.2] = 1
-        y_pred[np.isnan(y_pred)] = 0
+        Y_pred[Y_pred <= 0.2] = 0
+        Y_pred[Y_pred > 0.2] = 1
+        Y_pred[np.isnan(Y_pred)] = 0
 
     # once predictions have been extracted from respective models
     # pass to the correct_signals() function

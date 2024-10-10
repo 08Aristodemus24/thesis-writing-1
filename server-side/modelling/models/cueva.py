@@ -87,7 +87,7 @@ class GaussianRBF(tf.keras.layers.Layer):
     
     def get_config(self):
         config = super(GaussianRBF, self).get_config()
-        config['units'] = self.n_classes
+        config['units'] = self.units
         config['gamma'] = self.gamma
 
 
