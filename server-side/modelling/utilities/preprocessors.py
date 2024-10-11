@@ -348,6 +348,7 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         # 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71
         # 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94]
         
+        # unused variable
         to_plot = to_clean_segment
 
         to_clean = res_df[signal_column].iloc[to_clean_segment.index.values]
@@ -366,15 +367,16 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         # 128 / 4 = 32
         th_end_space = int(freq_signal / 4)
         
-        # we pick out initial point
-        # using either 0 or 31
-        initl_pnt = to_clean.iloc[th_init_space]
+        # # we pick out initial point using either 0 or 31
+        # # which for some reason is a variable unused
+        # initl_pnt = to_clean.iloc[th_init_space]
 
-        # final point
-        # will always be -32 or depending on the frequency signals will be -(freq_signal / 4)
-        final_pnt = to_clean.iloc[-th_end_space]
+        # # final point which for some reason is unused
+        # # will always be -32 or depending on the frequency signals will be -(freq_signal / 4)
+        # final_pnt = to_clean.iloc[-th_end_space]
 
-        x_all_int = to_clean.index.values
+        # # also unused
+        # x_all_int = to_clean.index.values
 
         # we ought to use as x values are the indeces or the time value
         # but in this case we use just the index values
@@ -401,32 +403,40 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         # interpolation function like the one above in order to make new
         # points in between these points, such that these new points are
         # smoother 
-        # here x_int and y_int are the old points
+        # here x_int and y_int are the old points or the points that
+        # currently exist which need to be smoothed
         intermediam_correct_lineal = f(x_int)
-        plt.plot(x_int, )
+        plt.plot(x_int, y_int, 'o', x_int, y_int, 'b')
         plt.show()
+        plt.savefig(f'./figures & images/segment {begin_index} to {end_index}.png')
         
         init_correct = to_clean.iloc[:th_init_space] 
         final_correct = to_clean.iloc[-th_end_space:]
-            
+        
+        # x_to_spline and y_to_spline seem to be also points that
+        # server as replacement to the previous points x_int, and y_int
+        # my understanding with this is that why x_int and y_int are created 
+        # is that as these points are from the 128hz signals they can be down
+        # sampled further to create a shorter list of values i.e. x_int = []
         x_to_spline = [x_int[0]] + down_sample(x_int, target_freq=x_int.shape[0] / 8) + [x_int[-1]]
         y_to_spline = [y_int[0]] + down_sample(y_int, target_freq=y_int.shape[0] / 8) + [y_int[-1]]
-        
+        print(f'x_to_spline: {x_to_spline} - length: {len(x_to_spline)}')
+        print(f'y_to_spline: {y_to_spline} - length: {len(y_to_spline)}')
         
         # y_output = spline(x_to_spline, y_to_spline, x_int)
-    #     # spl = UnivariateSpline(x_to_spline, y_to_spline, k=x_int)
-    #     # y_output = spl(x_to_spline)
-    #     # """
-    #     # Interpolate a curve at new points using a spline fit
-    #     # args:	
-    #     #     xk, yk - array_like which is the x and y values that define the curve.
-    #     #     xnew - array_like which is the x values where spline should estimate the y values.
-    #     #     order - int, Default is 3.
-    #     #     kind - string i.e {‘smoothest’}
-    #     #     conds - Don’t know
-    #     # returns:	
-    #     #     spline which is an array of y values; the spline evaluated at the positions xnew.
-    #     # """
+        # # spl = UnivariateSpline(x_to_spline, y_to_spline, k=x_int)
+        # # y_output = spl(x_to_spline)
+        # # """
+        # # Interpolate a curve at new points using a spline fit
+        # # args:	
+        # #     xk, yk - array_like which is the x and y values that define the curve.
+        # #     xnew - array_like which is the x values where spline should estimate the y values.
+        # #     order - int, Default is 3.
+        # #     kind - string i.e {‘smoothest’}
+        # #     conds - Don’t know
+        # # returns:	
+        # #     spline which is an array of y values; the spline evaluated at the positions xnew.
+        # # """
         # mix_curve = np.mean([intermediam_correct_lineal, y_output], axis=0)
         
         # tuple_concat = (mix_curve, final_correct) if init_correct.shape[0] < 2 else (init_correct, mix_curve, final_correct)
