@@ -4,6 +4,7 @@ import numpy as np
 from scipy.interpolate import interp1d, splrep, UnivariateSpline#, spline
 from scipy.signal import butter, filtfilt, lfilter, firwin, hilbert, sosfiltfilt
 
+import matplotlib.pyplot as plt
 import tensorflow as tf
 
 def down_sample(signals: pd.DataFrame | np.ndarray | list, target_freq = 16):
@@ -237,8 +238,8 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     # and end_artf_pred will be [5, 11, 14, 18, 22]
     start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
     print('unmerged predicted artifacts: ')
-    print(f'start indeces of artifacts: {start_artf_pred}')
-    print(f'end indeces of artifacts: {end_artf_pred}')
+    print(f'start indeces of unmerged predicted artifacts: {start_artf_pred} \n length: {len(start_artf_pred)}')
+    print(f'end indeces of unmerged predicted artifacts: {end_artf_pred} \n length: {len(end_artf_pred)}\n')
     
     # length of start_artf_pred is 5 for instance
     # 5 - 1 is 4 so therefore we would only be looping from 0 to 3 and give
@@ -252,8 +253,8 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     # once merged we find again the begin indeces and end indeces of these artifacts
     start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
     print('merged predicted artifacts: ')
-    print(f'start indeces of artifacts: {start_artf_pred}')
-    print(f'end indeces of artifacts: {end_artf_pred}')
+    print(f'start indeces of merged predicted artifacts: {start_artf_pred} \n length: {len(start_artf_pred)}')
+    print(f'end indeces of merged predicted artifacts: {end_artf_pred} \n length: {len(end_artf_pred)}\n')
     
     res_df["post_proc_pred_art"] = pred_target_array
     
@@ -293,53 +294,126 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     # ### AUTOMATIC CORRECTION ### 
     # ############################
     
-    print("Beginning of the interpolation")
-    # start_artf, end_artf = find_begin_end(pred_target_array)
-    
-    # begin_bad_elements = start_artf
-    # end_bad_elements = end_artf
-    
-    # for ctr_it in range(len(end_bad_elements)):
-    #     # 128 / 4 = 32
-    #     begin_index = begin_bad_elements[ctr_it] - int(freq_signal / 4)
-            
-    #     if begin_index < 0:
-    #         begin_index = 0
-            
-    #     end_index = end_bad_elements[ctr_it] + int(freq_signal / 4)
-                      
-    #     to_clean_segment = res_df[time_column].iloc[begin_index:end_index]
-        
-    #     to_plot = to_clean_segment
-    #     to_clean = res_df[signal_column].iloc[to_clean_segment.index.values]
-        
-    #     th_init_space = 0 if begin_bad_elements[ctr_it] == 0 else int(freq_signal/4)-1
-        
-    #     th_end_space = int(freq_signal/4)
-        
-    #     initl_pnt = to_clean.iloc[th_init_space]
-    #     final_pnt = to_clean.iloc[-th_end_space]
+    print("commencing of the interpolation...")
 
-    #     x_all_int = to_clean.index.values
-    #     x_int = to_clean[th_init_space:-th_end_space].index.values
-    #     y_int = to_clean[th_init_space:-th_end_space].values
+    # find begin and end indeces of post processed predicted artifacts
+    # again
+    start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
+    begin_bad_elements, end_bad_elements = start_artf_pred, end_artf_pred
+    
+    for ctr_it in range(len(end_bad_elements)):
+        # 128 / 4 = 32
+        # start indeces of post processed/merged artifacts for pqbqpr subject is 0, 8768, 10496, ..., 902592
+        # start indeces of post processed/merged artifacts for pqbqpr subject is 63, 8831, 12351, ..., 902719
+        # this means that we have an artifact at signals [0] to [63], [8768] to [8831], and [902592] to [902719]
+        # we subtract these end indeces of the artifacts by the frequency signal of 128 divided by 4 which is 32
+        # but we will like with a number 0 potentially inevatibly subtract by 32 which will result in a negative value
+        # so if this is the case 0 - 32 = -32 then -32 is then just turned to 0 again
+        # but in this case the pattern during iteration for the end indeces would be:
+        # 0 - 32 = -32
+        # 8768 - 32 = 8736
+        # 10496 - 32 = 10464
+        # ...
+        # 902592 - 32 = 902560
+        # but my question is why do we even subtract by 32 these end indeces?
+        begin_index = begin_bad_elements[ctr_it] - int(freq_signal / 4)
+        # series of begin indeces would now be 0, 8736, 10464, ..., 902560
         
-    #     #########################
-    #     ### SPLINE CORRECTION ###
-    #     #########################
+        if begin_index < 0:
+            begin_index = 0
+        
 
-    #     # returns a callback
-    #     f = interp1d([x_int[0], x_int[-1]], [y_int[0], y_int[-1]], kind="linear")
+        # 63 + 32 = 95
+        # 8831 + 32 = 8863
+        # 12351 + 32 = 12383
+        # ...
+        # 902719 + 32 = 902751
+        # and now another question is why even add 32 to these 
+        end_index = end_bad_elements[ctr_it] + int(freq_signal / 4)
+        # series of end indeces would now be 95, 8863, 12383, 902751
+
+        # all in all after the index positions of the artifacts in the signals 
+        # will now be at [0] to [95], 
+        # [8736] to [8863], 
+        # [10464] to [12383], 
+        # ...
+        # [902560] to [902751]
         
-    #     intermediam_correct_lineal = f(x_int)
-    #     init_correct = to_clean.iloc[:th_init_space] 
-    #     final_correct = to_clean.iloc[-th_end_space:]
+        # we now get the time values based on these new begin and end indeces
+        to_clean_segment = res_df[time_column].iloc[begin_index:end_index]
+        print(f'time to clean: {to_clean_segment.to_list()}')
+        print(f'segment to clean index values: {to_clean_segment.index.values}')
+        # segment to clean index values: [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+        # 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+        # 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71
+        # 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94]
+        
+        to_plot = to_clean_segment
+
+        to_clean = res_df[signal_column].iloc[to_clean_segment.index.values]
+        print(f'signals to clean: {to_clean.to_list()}')
+        # [0.0, 0.0, 0.0, ..., 0.0002220002220002]
+        
+        # 0 if the beginning of an artifact has index 0 and if not 128 / 4 -> 32 -1 -> 31 is used
+        # th initial space is what this variable is called
+        # 0 == 0 is true so 0 is returned
+        # 8736 == 0 is false so 31 is returned
+        # 10464 == 0 is false so 31 is returned
+        # ...
+        # 902560 == 0 is false so 31 is returned
+        th_init_space = 0 if begin_bad_elements[ctr_it] == 0 else int(freq_signal / 4) - 1
+        
+        # 128 / 4 = 32
+        th_end_space = int(freq_signal / 4)
+        
+        # we pick out initial point
+        # using either 0 or 31
+        initl_pnt = to_clean.iloc[th_init_space]
+
+        # final point
+        # will always be -32 or depending on the frequency signals will be -(freq_signal / 4)
+        final_pnt = to_clean.iloc[-th_end_space]
+
+        x_all_int = to_clean.index.values
+
+        # we ought to use as x values are the indeces or the time value
+        # but in this case we use just the index values
+        # [0 or 31:-32]
+        x_int = to_clean[th_init_space:-th_end_space].index.values
+        print(f'x_int: {x_int} - length: {x_int.shape[0]}')
+
+        # as we know we ought to use as y values are the signals themselves
+        y_int = to_clean[th_init_space:-th_end_space].values
+        print(f'y_int: {y_int} - length: {y_int.shape[0]}')
+        
+        #########################
+        ### SPLINE CORRECTION ###
+        #########################
+
+        # returns a callback
+        # x and y are arrays of values used to approximate some 
+        # function f: y = f(x). This class returns a function whose
+        # call method uses interpolation to find the value of new points.
+        f = interp1d([x_int[0], x_int[-1]], [y_int[0], y_int[-1]], kind="linear")
+
+        # there seems to be the x and y points that exist
+        # where some or one of its points is used as input to an
+        # interpolation function like the one above in order to make new
+        # points in between these points, such that these new points are
+        # smoother 
+        # here x_int and y_int are the old points
+        intermediam_correct_lineal = f(x_int)
+        plt.plot(x_int, )
+        plt.show()
+        
+        init_correct = to_clean.iloc[:th_init_space] 
+        final_correct = to_clean.iloc[-th_end_space:]
             
-    #     x_to_spline = [x_int[0]] + down_sample(x_int, f = x_int.shape[0] / 8) + [x_int[-1]]
-    #     y_to_spline = [y_int[0]] + down_sample(y_int, f = y_int.shape[0] / 8) + [y_int[-1]]
+        x_to_spline = [x_int[0]] + down_sample(x_int, target_freq=x_int.shape[0] / 8) + [x_int[-1]]
+        y_to_spline = [y_int[0]] + down_sample(y_int, target_freq=y_int.shape[0] / 8) + [y_int[-1]]
         
         
-    #     y_output = spline(x_to_spline, y_to_spline, x_int)
+        # y_output = spline(x_to_spline, y_to_spline, x_int)
     #     # spl = UnivariateSpline(x_to_spline, y_to_spline, k=x_int)
     #     # y_output = spl(x_to_spline)
     #     # """
@@ -353,11 +427,12 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     #     # returns:	
     #     #     spline which is an array of y values; the spline evaluated at the positions xnew.
     #     # """
-    #     mix_curve = np.mean([intermediam_correct_lineal, y_output], axis=0)
+        # mix_curve = np.mean([intermediam_correct_lineal, y_output], axis=0)
         
-    #     tuple_concat = (mix_curve, final_correct) if init_correct.shape[0] < 2 else (init_correct, mix_curve, final_correct)
-    #     correct_linear = np.concatenate(tuple_concat, axis=0)
+        # tuple_concat = (mix_curve, final_correct) if init_correct.shape[0] < 2 else (init_correct, mix_curve, final_correct)
+        # correct_linear = np.concatenate(tuple_concat, axis=0)
         
-    #     res_df["new_auto_signal"].iloc[to_clean_segment.index.values] = moving_average(correct_linear, freq_signal / 8)
+        # # 128 / 8 as the window size is 16 or 0.25 seconds
+        # res_df["new_auto_signal"].iloc[to_clean_segment.index.values] = moving_average(correct_linear, freq_signal / 8)
 
     return res_df, dict_metrics

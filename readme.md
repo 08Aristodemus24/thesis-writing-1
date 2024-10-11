@@ -518,6 +518,32 @@ roc_auc_score(y_test, y_proba[:,1])
 18. `sed -i 's/\r$//' <filename_of_script>`: to convert slurm script to a unix char standard file
 19. those long lines of epochs I see in the slurm script output are the DL tnsorflow models being used for prediction on the training set and cross validation set 
 20. `numpy.core._exceptions._ArrayMemoryError: Unable to allocate 71.9 GiB for an array with shape (12277, 786318) and data type float64` especially if MinMaxScaler() or scaling is not applied on the data before it is passed in a numpy array
+21. a knot in creating splines to smooth data is this -----o------o------o----- where our "lifeline" has multiple knots tied in it in order to use perhaps as gauge in measuring something or how deep can a ships anchor can go.
+
+- A Spline is essentially a piecewise regression line
+- You can tailor your line to fit one area wel
+-Instead, we break up the observation into different “knots” and fit a different regression line on each segment divvied up by these knots or division points.
+- looking at the input for a spline, we are using a 1D list or array.
+heart rate for one patient and recorded it every second for 30 seconds. This creates 1 observation with 30 features, or the heart rate recorded at each of those 30 seconds
+- We will then fit a Spline to this one observation detailing our knots (t) and order (k), which will return a line of best fit that has its own coefficients
+- If our goal was simply to smooth the data and remove noise, we could:
+- Fit/train the spline on the observation
+- Extract the heart rate by feeding in the exact times we would like to predict the heart rate for (in this example, a list/array of range 0:30) Save this output as the new data for each of our 30 features
+- First, this is our function to evenly distribute the locations of our knots (and account for buffer knots depending on the degree chosen) as we go to set the basis for our splines.
+```
+def knot_points(n_knots, x, degree):
+    # create the knot locations
+    knots = np.linspace(x[0], x[-1], n_knots) 
+    
+    lo = min(x[0], knots[0]) #we have to add these min and values to   conform by adding preceding and proceeding values
+    hi = max(x[-1], knots[-1])
+    augmented_knots = np.append(np.append([lo] * degree, knots), [hi] * degree)
+    return augmented_knots
+
+loo = LeaveOneOut()
+```  
+
+here we base our knots based on the maximum and minimum value in our dataset or in this case our signals. And generate some number of random values in between this minimum and maximum values based on the number of knots or ties we have in our "lifeline" 
 
 
 ## artifact detection and correction:
