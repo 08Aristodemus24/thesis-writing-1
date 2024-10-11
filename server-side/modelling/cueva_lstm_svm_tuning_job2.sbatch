@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
 #SBATCH --partition=gpu_a100
-#SBATCH --qos=gpu-default_a100
+#SBATCH --qos=gpu-a100_default
 ##SBATCH --nodes=20
 #SBATCH --ntasks=10
-#SBATCH --gres=gpu:p40:1
+#SBATCH --gres=gpu:1
 #SBATCH --job-name="cueva_lstm_svm_tuning_job2"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
