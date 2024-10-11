@@ -39,10 +39,12 @@ models = {
     'cueva-lstm-svm': {
         # 'model':
         # 'hyper_params':
+        # 'scaler':
     },
     'jurado-lstm-cnn': {
         # 'model':
         # 'hyper_params':
+        # 'scaler':
     },
     'taylor-svm': {
         # 'model':
@@ -355,7 +357,7 @@ def predict():
 
     # once predictions have been extracted from respective models
     # pass to the correct_signals() function
-    correct_signals(Y_pred, subject_eda_data)
+    correct_signals(Y_pred, subject_eda_data, selector_config, estimator_name)
 
 
         

@@ -12,6 +12,8 @@ import re
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
+from sklearn.preprocessing import MinMaxScaler
+
 # import tensorflow as tf
 # from tensorflow.keras.preprocessing.image import ImageDataGenerator
 # from tensorflow.keras.preprocessing.text import tokenizer_from_json
@@ -109,10 +111,22 @@ def concur_load_data(feat_config: str="Taylor"):
         subject_names = list(set([re.sub(r".csv", "", file) for file in os.listdir(dir)]))
         subject_to_id = {subject: id for id, subject in enumerate(subject_names)}
 
+        # # iterative processing
+        # subjects_data = []
+        # for subject_name in subject_names:
+        #     subject_eda_data = pd.read_csv(f'{dir}{subject_name}.csv', sep=';')
+        #     subject_eda_data.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
+        #     subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
+
+        #     subjects_data.append((subject_signals, subject_labels))
+
+        # concurrent processing
         def helper(subject_name: str):
             subject_eda_data = pd.read_csv(f'{dir}{subject_name}.csv', sep=';')
             subject_eda_data.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
-            subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
+
+
+            subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col="label", scale=True)
 
             return (subject_signals, subject_labels)
         
@@ -121,8 +135,8 @@ def concur_load_data(feat_config: str="Taylor"):
             # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
             subjects_data = list(exe.map(helper, subject_names))
 
-            # find a way here to combine all 3d subject_signals and subject_labels
-            subjects_signals, subjects_labels = _combine_data(subjects_data)
+        # find a way here to combine all 3d subject_signals and subject_labels
+        subjects_signals, subjects_labels = _combine_data(subjects_data)
 
         print("subjects signals and labels and subject to id lookup loaded")
         return subjects_signals, subjects_labels, subject_to_id
@@ -352,7 +366,7 @@ def create_classified_df(train_conf_matrix, val_conf_matrix, test_conf_matrix, t
     return classified_df
 
 
-def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=128, verbose=False):
+def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=128, scale=False, verbose=False):
     """
     charge_raw_data" preprocesses the input signal cutting the signal in pieces of 5 seconds.
     In the case that a target is introduced i.e. y_col != None, the target is cut the last 0.5
@@ -411,14 +425,19 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         # 764352:764352 + 640 = 764352:764992
         # if we exceed 764352 by adding 64 then we have 764416
         # 764416:764416 + 640 = 764416:765056 and 765056 exceeds the index and rows of 765045 
-        
-        denominator_norm = (np.nanmax(x_signal[i:(i + window_size)]) - np.nanmin(x_signal[i:(i + window_size)])) 
-        denominator_norm = denominator_norm + 1e-100 if denominator_norm == 0 else denominator_norm
 
-        # this is full min max scaling formula with the denominator using
-        # the difference of the min and max of a window
-        # to address also potential zero division concerns
-        x_signal_norm = (x_signal[i:(i + window_size)] - np.nanmin(x_signal[i:(i + window_size)])) / denominator_norm
+        # if scale is true then min max scaling is applied
+        if scale == True:
+            denominator_norm = (np.nanmax(x_signal[i:(i + window_size)]) - np.nanmin(x_signal[i:(i + window_size)]))
+            denominator_norm = denominator_norm + 1e-100 if denominator_norm == 0 else denominator_norm
+
+            # this is full min max scaling formula with the denominator using
+            # the difference of the min and max of a window
+            # to address also potential zero division concerns
+            x_signal_norm = (x_signal[i:(i + window_size)] - np.nanmin(x_signal[i:(i + window_size)])) / denominator_norm
+        else:
+            # this would be appropriate if there was a larger ram
+            x_signal_norm = x_signal[i:(i + window_size)]
 
         # we then append these normed signals to a list
         x_window_list.append(x_signal_norm)
@@ -464,3 +483,18 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
     subject_labels = np.reshape(Y, (Y.shape[0], -1))
 
     return (subject_signals, subject_labels)
+
+def split_data(subjects_signals: list, subjects_labels: list, test_ratio: int):
+
+    n_subjects = len(subjects_signals)
+    train_size = int(n_subjects * (1 - test_ratio))
+    
+    # split data into training and cross validation
+    train_signals = subjects_signals[:train_size]
+    train_labels = subjects_labels[:train_size]
+    cross_signals = subjects_signals[train_size:]
+    cross_labels = subjects_labels[train_size:]
+
+    return train_signals, train_labels, cross_signals, cross_labels
+
+

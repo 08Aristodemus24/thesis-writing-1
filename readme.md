@@ -2,6 +2,7 @@
 * `python tuning_dl.py -m lstm-cnn -pl jurado -lr 5e-5 --mode tuning`
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode tuning`
 * `python tuning_ml.py -m lr -pl hossain --n_rows_to_sample 5000 --mode tuning`
+* `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_0.1 units_10`: command for preliminary modelling of proposed model 
 * `scp -r -i C:/Users/LARRY/.ssh/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/" michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/data/`
 
 # This repository contains all generalized code snippets and templates relating to model experimentation, training, evaluation, testing, server-side loading, client-side requests, usage documentation, loaders, evaluators, visualizers, and preprocessor utilities, and the model architectures, figures, and final folder
@@ -516,6 +517,7 @@ roc_auc_score(y_test, y_proba[:,1])
 ```
 18. `sed -i 's/\r$//' <filename_of_script>`: to convert slurm script to a unix char standard file
 19. those long lines of epochs I see in the slurm script output are the DL tnsorflow models being used for prediction on the training set and cross validation set 
+20. `numpy.core._exceptions._ArrayMemoryError: Unable to allocate 71.9 GiB for an array with shape (12277, 786318) and data type float64` especially if MinMaxScaler() or scaling is not applied on the data before it is passed in a numpy array
 
 
 ## artifact detection and correction:
@@ -599,7 +601,7 @@ them
 * <s>test llanes-jurado model on notebook and see if dataset will work</s>
 * review how automatic_EDA_correction() function by llanes-jurado works in order to start using the predicted data as basis to correct the eda signals
 
-pqbqpr_expert2.csv
+* pqbqpr_expert2.csv
 calculating features from 1970-01-01 00:00:00 to 1970-01-01 00:00:00.500000 for index 0
 calculating features from 0 to 63 for index 0
 #### it takes 63 numbers excluding 0 to get from 0 to 63
@@ -687,6 +689,18 @@ def get_auc_score(y_true, y_prob):
         
     return np.trapz(tpr_array, fpr_array)
 ```
+
+* there still needs to be a way to prevent data leakage in loading data for the DL models because a sort of normalization function,
+- I pass validation data percentage of 0.3 to the training of the model
+- so new pipelien would be to read the read the signals as usual without the min max scaler anymore
+- separately join the training signals, and the cross validation signals
+- min max scale training signals, transform cross validation signals based on min max scaler scaled on training signals
+- save min max scaler scaled ontraining signals for later use in evaluation
+
+* get stress detection data
+- decompose eda signals in stress detection data to phasic and tonic component
+- train dl or ml model on phasic component of the raw eda signals
+- normallize or not normalize?? If we decide to normalize train data 
 
 ## SVM mechanism
 * <s>I need to learn how SVM can be implemented in tensorflow</s>

@@ -12,9 +12,9 @@ from tensorflow.keras.losses import Dice, SquaredHinge
 from tensorflow.keras.metrics import BinaryCrossentropy as bce_metric, BinaryAccuracy, Precision, Recall, F1Score, AUC
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.preprocessing import MinMaxScaler
 
-from utilities.loaders import concur_load_data, save_meta_data
+from utilities.loaders import concur_load_data, save_meta_data, split_data, save_model
 from models.llanes_jurado import LSTM_CNN
 from models.cueva import LSTM_SVM
 
@@ -46,6 +46,11 @@ def leave_one_subject_out(subjects_signals: list[np.ndarray], subjects_labels: l
     # dimension of each element is (m, window_size, 1)
     train_signals = np.concatenate(copied_signals, axis=0)
     train_labels = np.concatenate(copied_labels, axis=0)
+
+    # # this would be appropriate if there was a larger ram
+    # scaler = MinMaxScaler()
+    # train_signals = scaler.fit_transform(train_signals)
+    # cross_signals = scaler.transform(cross_labels)
 
     return train_signals, train_labels, cross_signals, cross_labels
 
@@ -376,11 +381,31 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
         estimator - 
         hyper_param_config - 
     """
+    # split signal data into training and cross validation
+    # as cross validation will be needed in case of early stopping
+    # i.e. if validation metrics do not improve anymore as training
+    # progresses 
+    train_signals, train_labels, cross_signals, cross_labels = split_data(subjects_signals, subjects_labels, test_ratio=0.3)
+    print(f'train_signals length: {len(train_signals)}')
+    print(f'train_labels length: {len(train_labels)}')
+    print(f'cross_signals length: {len(cross_signals)}')
+    print(f'cross_labels length: {len(cross_labels)}')
 
-    # concatenate list of numpy arrays into a single 
-    # combined training dataset
-    X = np.concatenate(subjects_signals, axis=0)
-    Y = np.concatenate(subjects_labels, axis=0)
+    # concatenate both train and cross validation lists of
+    # signal and label numpy arrays into a single 
+    # combined training and cross validation dataset
+    X_trains = np.concatenate(train_signals, axis=0)
+    Y_trains = np.concatenate(train_labels, axis=0)
+    X_cross = np.concatenate(cross_signals, axis=0) 
+    Y_cross = np.concatenate(cross_labels, axis=0)
+
+    # # this would be appropriate if there was a larger ram
+    # # min max scale training data and scale cross validation
+    # # data based on scaler scaled on training data
+    # scaler = MinMaxScaler()
+    # X_trains = scaler.fit_transform(X_trains)
+    # X_cross = scaler.transform(X_cross)
+    # save_model(scaler, f'./saved/misc/{selector_config}_{estimator_name}_scaler.pkl')
 
     # create model with specific hyper param configurations
     model = estimator(**hyper_param_config)
@@ -412,14 +437,14 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     # begin training final model, without validation data
     # as all data combining training and validation will all be used
     # in order to increase model generalization on test data
-    history = model.fit(X, Y, 
+    history = model.fit(X_trains, Y_trains, 
     epochs=training_epochs,
     batch_size=batch_size, 
     callbacks=callbacks,
 
     # we set the validation split to all possible signal values not 
     # one subject so model can pull knowledge from more training subjects 
-    validation_split=0.3,
+    validation_data=(X_cross, Y_cross),
     verbose=1,)
 
 def create_hyper_param_config(hyper_param_list: list[str]):
@@ -470,6 +495,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # read and load data
+    # will be a list of 3D numpy arrays
     subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
 
     # # create and load test data
