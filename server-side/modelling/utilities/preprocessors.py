@@ -113,7 +113,7 @@ def decompose_signal(raw_signal, samp_freq: int=128, method: str="highpass"):
 
         return tonic_component, phasic_component
 
-def correct_signals(y_pred, df, selector_config, estimator_name, freq_signal=128, th_t_postprocess=2.5, eda_signal="raw_signal", time_column="time"):
+def correct_signals(y_pred, df, selector_config, estimator_name, target_size_freq=64, freq_signal=128, th_t_postprocess=2.5, signal_column="raw_signal", time_column="time"):
     """
     args:
         y_pred - is the numpy array or pandas series containing
@@ -127,26 +127,33 @@ def correct_signals(y_pred, df, selector_config, estimator_name, freq_signal=128
         
         df - is the dataframe containing the raw signals
 
-        model - the trained artifact detection model
+        selector_config  - 
+
+        estimator_name - 
+
+        target_size_freq - sampling frequency or how many rows per seconds
+        must be taken into account for the label
 
         freq_signal - sampling frequency of the raw signals
 
-        th_t_postprocess -
+        th_t_postprocess - represents the maximum time used to link two
+        artifacts which temporal distance is below or equal that time
 
-        eda_signal - column in the dataframe in which to correct
+        signal_column - column in the dataframe in which to correct
         
     """
+    # copy contents of dataframe to ensure no modifications
+    # are made in original dataframe
     res_df = df.copy()
-
-    target_size_fr = 64
 
     # the raw_signals that are less than 0 which will be likely be negative values 
     # will be rendered true and those raw signal rows with true booleans will just be
     # transformed to 0
-    res_df.loc[res_df[eda_signal] < 0, eda_signal] = 0
+    res_df.loc[res_df[signal_column] < 0, signal_column] = 0
     
-    res_df["new_auto_signal"] = res_df[eda_signal].iloc[:]
-    rawdata_spline_correct = res_df[eda_signal].iloc[:]
+    res_df["new_auto_signal"] = res_df[signal_column].iloc[:]
+    
+    rawdata_spline_correct = res_df[signal_column].iloc[:]
 
     
 
@@ -182,103 +189,111 @@ def correct_signals(y_pred, df, selector_config, estimator_name, freq_signal=128
         # signals in rows [9800096] - [980117] although not entirely 64 rows
         # indicating a 0.5s segment are still used in calculating the [15314]
         # row in the feature data set 
-        start = target_size_fr * label_i
-        end = min(target_size_fr * (label_i + 1), n_rows) 
+        start = target_size_freq * label_i
+        end = min(target_size_freq * (label_i + 1), n_rows) 
 
         if label_i == 0 or (label_i == y_pred.shape[0] - 1):    
             print(f"index {label_i}: start {start} - end {end}")
         
         future_labels_auto[start:end] += label
     
-    # # ##############################
-    # # ### TARGET POST-PROCESSING ###
-    # # ##############################
+    # ##############################
+    # ### TARGET POST-PROCESSING ###
+    # ##############################
 
-    # """this"""
-    # pred_target_array = res_df[eda_signal].iloc[:].copy()
+    """this seems to have no use as pred_target_array
+    is just assigned to another variable again"""
+    pred_target_array = res_df[signal_column].iloc[:].copy()
     
-    # # future labels will contain 1s and 0s and those greater than 0 will always be 1
-    # # and those rows must be set to 1
-    # future_labels_auto[future_labels_auto > 0] = 1
+    # future labels will contain 1s and 0s and those greater than 0 will always be 1
+    # and those rows must be set to 1
+    future_labels_auto[future_labels_auto > 0] = 1
 
-    # """and this seems redundant"""
-    # pred_target_array = future_labels_auto
+    """and this seems redundant"""
+    pred_target_array = future_labels_auto
 
-    # res_df["pred_art"] = pred_target_array
+    res_df["pred_art"] = pred_target_array
 
-    # # pred_target_array overall is an array of 1s and 0s
-    # # where it is passed to find_begin_end() which uses a function which_element() that in a boolean numpy array or a dataframe
-    # # not a list since [1, 0, 1, 0, 0] == 1 for instance
-    # # would just return false
-    # # For instance if we had now signals that are labeled as
-    # # artifacts or non artifacts...
-    # # >>> signal = np.array([0, 0, 1, 1, 1, 0, 0, 1, 1])
-    # # >>> signal == 1
-    # # array([False, False, True, True, True, False, False, True, True])
-    # # when this is passed through which_element() this will
-    # # return [2, 3, 4, 7, 8]
-    # # pos_artf_true = which_element(x_p == 1)
+    # pred_target_array overall is an array of 1s and 0s
+    # where it is passed to find_begin_end() which uses a function which_element() that in a boolean numpy array or a dataframe
+    # not a list since [1, 0, 1, 0, 0] == 1 for instance
+    # would just return false
+    # For instance if we had now signals that are labeled as
+    # artifacts or non artifacts...
+    # >>> signal = np.array([0, 0, 1, 1, 1, 0, 0, 1, 1])
+    # >>> signal == 1
+    # array([False, False, True, True, True, False, False, True, True])
+    # when this is passed through which_element() this will
+    # return [2, 3, 4, 7, 8]
+    # pos_artf_true = which_element(x_p == 1)
 
-    # # overall find_begin_end() returns to lists, the first representing the 
-    # # beginning indices of all artifacts in a subjects signals 
-    # # e.g. if a subjects signals that have been predicted for each 0.5s segment to
-    # # have [0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1] which total to 
-    # # 2 seconds all in all of this subjects signals, the starting indices of these subjects
-    # # signals artifacts will be collected as well as the end indices
-    # # in this example start_artf_pred will be [3, 9, 13, 17, 21]
-    # # and end_artf_pred will be [5, 11, 14, 18, 22]
-    # start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
+    # overall find_begin_end() returns to lists, the first representing the 
+    # beginning indices of all artifacts in a subjects signals 
+    # e.g. if a subjects signals that have been predicted for each 0.5s segment to
+    # have [0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1] which total to 
+    # 2 seconds all in all of this subjects signals, the starting indices of these subjects
+    # signals artifacts will be collected as well as the end indices
+    # in this example start_artf_pred will be [3, 9, 13, 17, 21]
+    # and end_artf_pred will be [5, 11, 14, 18, 22]
+    start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
+    print('unmerged predicted artifacts: ')
+    print(f'start indeces of artifacts: {start_artf_pred}')
+    print(f'end indeces of artifacts: {end_artf_pred}')
     
-    # # length of start_artf_pred is 5 for instance
-    # # 5 - 1 is 4 so therefore we would only be looping from 0 to 3 and give
-    # # allowance for the last index 4 as we will be using an index of i + 1
-    # # which takes into account a potential out of range error
-    # for i in range(len(start_artf_pred) - 1):
+    # length of start_artf_pred is 5 for instance
+    # 5 - 1 is 4 so therefore we would only be looping from 0 to 3 and give
+    # allowance for the last index 4 as we will be using an index of i + 1
+    # which takes into account a potential out of range error
+    for i in range(len(start_artf_pred) - 1):
+        # links and merges artifacts in the signals that are close together
+        if np.abs(start_artf_pred[i + 1] - end_artf_pred[i]) / freq_signal <= th_t_postprocess:
+            pred_target_array[end_artf_pred[i]:start_artf_pred[i + 1]] = 1
+    
+    # once merged we find again the begin indeces and end indeces of these artifacts
+    start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
+    print('merged predicted artifacts: ')
+    print(f'start indeces of artifacts: {start_artf_pred}')
+    print(f'end indeces of artifacts: {end_artf_pred}')
+    
+    res_df["post_proc_pred_art"] = pred_target_array
+    
+    # #################################
+    # ### Compute artifacts metrics ###
+    # #################################
+    
+    dict_metrics = {}
+    
+    # Time until first artifact.
+    dict_metrics["time_first_artifact"] = start_artf_pred[0] / freq_signal
+    
+    # Mean time between two artifacts.
+    t_btw_artf = (np.array(start_artf_pred)[1:] - np.array(end_artf_pred)[:-1]) / freq_signal
+    dict_metrics["time_between_artifact"] = np.mean(t_btw_artf)
+    
+    # Mean duration of the detected artifacts.
+    dur_time_artf_subj_train = (np.array(end_artf_pred) - np.array(start_artf_pred)) / freq_signal
+    dict_metrics["mean_artifact_duration"] = np.mean(dur_time_artf_subj_train)
+    
+    # Minimum duration time of an artifact.
+    dict_metrics["minimum_artifact_duration"] = np.min(dur_time_artf_subj_train)
+    
+    # Percentage of artifacts in the signal.
+    perc_of_artf = 100 * np.sum(pred_target_array) / res_df.shape[0]
+    dict_metrics["percentage_of_artifacts"] = perc_of_artf
+    
+    # Total number of artifacts in the signal.
+    n_artf_obtain = len(start_artf_pred)
+    dict_metrics["number_of_artifacts"] = n_artf_obtain
 
-    #     if np.abs(start_artf_pred[i + 1] - end_artf_pred[i]) / freq_signal <= th_t_postprocess:
-    #         pred_target_array[end_artf_pred[i]:start_artf_pred[i + 1]] = 1
+    # print("Number of artefacts predicted post-processed", n_artf_obtain)
     
-    # start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
     
-    # res_df["post_proc_pred_art"] = pred_target_array
-    
-    # # #################################
-    # # ### Compute artifacts metrics ###
-    # # #################################
-    
-    # dict_metrics = {}
-    
-    # # Time until first artifact.
-    # dict_metrics["time_first_artifact"] = start_artf_pred[0] / freq_signal
-    
-    # # Mean time between two artifacts.
-    # t_btw_artf = (np.array(start_artf_pred)[1:] - np.array(end_artf_pred)[:-1] ) / freq_signal
-    # dict_metrics["time_between_artifact"] = np.mean(t_btw_artf)
-    
-    # # Mean duration of the detected artifacts.
-    # dur_time_artf_subj_train = (np.array(end_artf_pred) - np.array(start_artf_pred)) / freq_signal
-    # dict_metrics["mean_artifact_duration"] = np.mean(dur_time_artf_subj_train)
-    
-    # # Minimum duration time of an artifact.
-    # dict_metrics["minimum_artifact_duration"] = np.min(dur_time_artf_subj_train)
-    
-    # # Percentage of artifacts in the signal.
-    # perc_of_artf = 100 * np.sum( pred_target_array ) / res_df.shape[0]
-    # dict_metrics["percentage_of_artifacts"] = perc_of_artf
-    
-    # # Total number of artifacts in the signal.
-    # n_artf_obtain = len(start_artf_pred)
-    # dict_metrics["number_of_artifacts"] = n_artf_obtain
-
-    # # print( "Number of artefacts predicted post-processed", n_artf_obtain )
-    
-    # # print("Beginning of the interpolation")
     
     # ############################
     # ### AUTOMATIC CORRECTION ### 
     # ############################
     
-    
+    print("Beginning of the interpolation")
     # start_artf, end_artf = find_begin_end(pred_target_array)
     
     # begin_bad_elements = start_artf
@@ -296,7 +311,7 @@ def correct_signals(y_pred, df, selector_config, estimator_name, freq_signal=128
     #     to_clean_segment = res_df[time_column].iloc[begin_index:end_index]
         
     #     to_plot = to_clean_segment
-    #     to_clean = res_df[eda_signal].iloc[to_clean_segment.index.values]
+    #     to_clean = res_df[signal_column].iloc[to_clean_segment.index.values]
         
     #     th_init_space = 0 if begin_bad_elements[ctr_it] == 0 else int(freq_signal/4)-1
         
@@ -345,4 +360,4 @@ def correct_signals(y_pred, df, selector_config, estimator_name, freq_signal=128
         
     #     res_df["new_auto_signal"].iloc[to_clean_segment.index.values] = moving_average(correct_linear, freq_signal / 8)
 
-    # return res_df, dict_metrics
+    return res_df, dict_metrics
