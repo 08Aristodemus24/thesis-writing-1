@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
-#SBATCH --partition=batch
-#SBATCH --qos=batch_default
+#SBATCH --partition=serial
+#SBATCH --qos=serial_default
 ##SBATCH --nodes=20
 #SBATCH --ntasks=70
 #SBATCH --job-name="taylor_lr_tuning_job"
