@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
-#SBATCH --partition=gpu
-#SBATCH --qos=gpu-p40_default
+#SBATCH --partition=gpu_a100
+#SBATCH --qos=gpu-default_a100
 ##SBATCH --nodes=20
 #SBATCH --ntasks=10
 #SBATCH --gres=gpu:p40:1
