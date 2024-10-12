@@ -160,6 +160,8 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         # split data by leaving one subject out for testing
         # and the rest for training
         train_signals, train_labels, cross_signals, cross_labels = leave_one_subject_out(subjects_signals, subjects_labels, subject_id)
+        train_labels[train_labels == 0] = -1 if estimator_name.lower() == "lstm-svm" else 0
+        cross_labels[cross_labels == 0] = -1 if estimator_name.lower() == "lstm-svm" else 0
 
         # create/recreate model with specific hyper param configurations
         # in every hyper param config we must define/redefine an optimizer 
@@ -178,40 +180,26 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         validation_data=(cross_signals, cross_labels),
         verbose=1,)
 
-        # compare true cross and train labels to pred cross and train labels
-        pred_train_labels = model.predict(train_signals)
-        pred_cross_labels = model.predict(cross_signals)
+        # # compare true cross and train labels to pred cross and train labels
+        # pred_train = model.predict(train_signals)
+        # pred_cross = model.predict(cross_signals)
 
-        if estimator_name.lower() == "lstm-svm":
-            """still can't accomodate for sigmoid output layers
-            because we do this sign and casting only if the dense
-            layers are unactivated like the svm
-            """
-            print("converting output of lstm-svm to binary labels...")
-            # signed_train_labels = tf.sign(pred_train_labels)
+        # if estimator_name.lower() == "lstm-svm":
+        #     """still can't accomodate for sigmoid output layers
+        #     because we do this sign and casting only if the dense
+        #     layers are unactivated like the svm
+        #     """
+        #     print("converting output of lstm-svm to binary labels...")
+        #     # signed_train_labels = tf.sign(pred_train_labels)
 
-            # # using cast turns all negatives to -1, zeros to 0,
-            # # and positives to 1
-            # pred_train_labels = tf.cast(signed_train_labels >= 1, "float")
-            # signed_cross_labels = tf.sign(pred_cross_labels)
-            # pred_cross_labels = tf.cast(signed_cross_labels >= 1, "float")
-            pred_train_labels = tf.nn.sigmoid(pred_train_labels)
-            pred_cross_labels = tf.nn.sigmoid(pred_cross_labels)
-
-        # elif estimator_name.lower() == "lstm-cnn":
-        #     # because the output of lstm-cnn are probability values we need
-        #     # to convert them to binary labels i.e. all those that are >= 0.5
-        #     # are considered positive labels and those < 0.5 are considered negative
-        #     # labels, but as mentioned in jurado's paper because of the imbalance
-        #     # we need our threshold to be 0.2 since only 20% of the dataset are
-        #     # positive classes
-        #     print("converting output of lstm-cnn to binary labels...")
-        #     pred_train_labels[pred_train_labels >= 0.2] = 1
-        #     pred_train_labels[pred_train_labels < 0.2] = 0
-        #     pred_cross_labels[pred_cross_labels >= 0.2] = 1
-        #     pred_cross_labels[pred_cross_labels < 0.2] = 0
-
-        # compute performance metric values for each fold
+        #     # # using cast turns all negatives to -1, zeros to 0,
+        #     # # and positives to 1
+        #     # pred_train_labels = tf.cast(signed_train_labels >= 1, "float")
+        #     # signed_cross_labels = tf.sign(pred_cross_labels)
+        #     # pred_cross_labels = tf.cast(signed_cross_labels >= 1, "float")
+        #     pred_train_probs = tf.nn.sigmoid(pred_train)
+        #     pred_cross_probs = tf.nn.sigmoid(pred_cross)
+        
         # accuracy takes in solid 1s and 0s
         # precision takes in solid 1s and 0s
         # recall takes in solid 1s and 0s
@@ -220,9 +208,6 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         # binary accuracy takes in probability outputs
         # f1 score takes in probability outputs
         # auc takes in probability outputs
-
-        print(np.unique(pred_train_labels))
-        print(np.unique(pred_cross_labels))
 
         # now both models are able to output probability values
         # what I want is to also save DSC and SquaredHinge losses
@@ -387,6 +372,7 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     # i.e. if validation metrics do not improve anymore as training
     # progresses 
     train_signals, train_labels, cross_signals, cross_labels = split_data(subjects_signals, subjects_labels, test_ratio=0.2)
+    
     print(f'train_signals length: {len(train_signals)}')
     print(f'train_labels length: {len(train_labels)}')
     print(f'cross_signals length: {len(cross_signals)}')
@@ -399,6 +385,12 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     Y_trains = np.concatenate(train_labels, axis=0)
     X_cross = np.concatenate(cross_signals, axis=0) 
     Y_cross = np.concatenate(cross_labels, axis=0)
+
+    # transform train and cross ys to -1 if lstm-svm is chosen
+    Y_trains[Y_trains == 0] = -1 if estimator_name.lower() == "lstm-svm" else 0
+    Y_cross[Y_cross == 0] = -1 if estimator_name.lower() == "lstm-svm" else 0
+    print(f'train_labels unique: {np.unique(Y_trains)}')
+    print(f'cross_labels unique: {np.unique(Y_cross)}')
 
     # # this would be appropriate if there was a larger ram
     # # min max scale training data and scale cross validation
@@ -419,17 +411,23 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     # define checkpoint and early stopping callback to save
     # best weights at each epoch and to stop if there is no improvement
     # of validation loss for 10 consecutive epochs
-    weights_path = f"./saved/weights/{selector_config}_{estimator_name}" + "_{epoch:02d}_{auc:.4f}.weights.h5"
+    path = f"./saved/weights/{selector_config}_{estimator_name}"
+    info = "_{epoch:02d}_{val_auc:.4f}.weights.h5" if estimator_name.lower() == "lstm-svm" else "_{epoch:02d}_{val_auc_1:.4f}.weights.h5"
+    weights_path = path + info
+
+    # create callbacks
     checkpoint = ModelCheckpoint(
         weights_path,
         monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1',
         verbose=1,
-        save_best_only=True,
+        # save_best_only=True,
         save_weights_only=True,
         mode='max')
     stopper = EarlyStopping(
         monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', 
         patience=threshold_epochs)
+    
+    # append callbacks
     callbacks = [checkpoint, stopper]
 
     # save hyper params and other attributes of model 
@@ -496,18 +494,18 @@ if __name__ == "__main__":
     parser.add_argument("--hyper_param_list", type=str, default="window_size_640", nargs="+", help="list of hyper parameters to be used as configuration during training")
     args = parser.parse_args()
 
-    # read and load data
-    # will be a list of 3D numpy arrays
-    subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
+    # # read and load data
+    # # will be a list of 3D numpy arrays
+    # subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
 
-    # # create and load test data
-    # m = 1000
-    # window_size = 320
-    # n_f = 1
-    # n_subjects = 5
-    # subjects_signals = [np.random.randn(m, window_size, 1) for _ in range(n_subjects)]
-    # subjects_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
-    # subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
+    # create and load test data
+    m = 1000
+    window_size = 320
+    n_f = 1
+    n_subjects = 5
+    subjects_signals = [np.random.randn(m, window_size, 1) for _ in range(n_subjects)]
+    subjects_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
+    subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
 
     # model hyper params
     models = {
@@ -540,7 +538,7 @@ if __name__ == "__main__":
             },
             'opt': RMSprop,
             'loss': Dice(),
-            'metrics': [bce_metric(), BinaryAccuracy(), Precision(), Recall(), F1Score(), AUC()]
+            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
         }
     }
 

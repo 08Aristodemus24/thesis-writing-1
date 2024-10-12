@@ -1,7 +1,7 @@
 import datetime
 import pandas as pd
 import numpy as np
-from scipy.interpolate import interp1d, splrep, UnivariateSpline, BSpline
+from scipy.interpolate import interp1d, splrep, UnivariateSpline, BSpline, splev
 from scipy.signal import butter, filtfilt, lfilter, firwin, hilbert, sosfiltfilt
 
 import matplotlib.pyplot as plt
@@ -74,24 +74,22 @@ def find_begin_end(x_p):
 
     return start_pos_artf_true, end_pos_artf_true
 
-def moving_average(data: np.ndarray | pd.DataFrame | pd.Series, window_size: int | float):
-    """
-    args:
-        data - vector which will be modified
-        window_size - window size is in seconds
-    """
+def moving_average(array, window_size=7):
+    # calculates moving average of the corrected segments
+    final_list = array[:int(window_size / 2)].tolist()
+    start = int(window_size / 2)
+    end = len(array) - int(window_size / 2)
+    for i in range(start, end):
+        start_i = i - int(window_size / 2)
+        end_i = i + int(window_size / 2)
 
-    16 // 2, 16 // 2 - 1 or (8, 16)
-    pad_width = (window_size // 2, window_size // 2 - 1)
-
-    first_val = data[0]
-    last_val = data[-1]
-    const_values = (first_val, last_val)
-
-    data = np.pad(data, pad_width=pad_width, mode="constant", constant_values=const_values)
-    ma = np.convolve(data, np.ones(window_size) / window_size, mode="valid")
-
-    return ma
+        # calculate mean of window
+        value = np.mean(array[start_i:end_i])
+        final_list += [value]
+        
+    final_list += array[-int(window_size / 2):].tolist()
+    
+    return np.array(final_list)
 
 def decompose_signal(raw_signal, samp_freq: int=128, method: str="highpass"):
     """
@@ -154,7 +152,7 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     # transformed to 0
     res_df.loc[res_df[signal_column] < 0, signal_column] = 0
     
-    res_df["new_auto_signal"] = res_df[signal_column].iloc[:]
+    res_df["new_signal"] = res_df[signal_column].iloc[:]
     
     rawdata_spline_correct = res_df[signal_column].iloc[:]
 
@@ -459,7 +457,9 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         # t: ndarray, shape (n+k+1,) - knots
         # c: ndarray, shape (>=n, …) - spline coefficients
         # k: int - B-spline degree
-        spline = BSpline(x_to_spline, y_to_spline, k=3)
+        # spline = BSpline(x_to_spline, y_to_spline, k=3)
+        tck = splrep(x_to_spline, y_to_spline)
+        
 
         """
         # # Create a B-spline object
@@ -467,7 +467,8 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         # c = [y_int[0], y_int[1], y_int[-2], y_int[-1]]  # Assuming cubic spline
         # k = 3  # Cubic spline
         """
-        y_output = spline(x_int)
+        # y_output = spline(x_int)
+        y_output = splev(x_int, tck, der=0)
         axes[2].scatter(x_int, y_output, c="#236cb0", marker="^")
         axes[2].plot(x_int, y_output, c="#3de343", linestyle="--")
         
@@ -481,8 +482,9 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         print(f'corrected linear shape: {correct_linear.shape}')
         
         
-        # # 128 / 8 as the window size is 16 or 0.25 seconds
-        # res_df["new_auto_signal"].iloc[to_clean_segment.index.values] = moving_average(correct_linear, freq_signal / 8)
+        # 128 / 8 as the window size is 16 or 0.25 seconds
+        corrected_segment = moving_average(correct_linear, freq_signal / 8)
+        res_df["new_signal"].iloc[to_clean_segment.index.values] = corrected_segment
 
         plt.show()
         plt.savefig(f'./figures & images/segment splined {begin_index} to {end_index}.jpg')
