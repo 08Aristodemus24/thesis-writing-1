@@ -1,0 +1,12 @@
+Submitted on Sat Oct 12 01:16:06 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 28734
+SLURM_JOB_NAME        : taylor_rf_tuning_job2
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-23
+SLURM_NTASKS          : 70
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/28734
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
