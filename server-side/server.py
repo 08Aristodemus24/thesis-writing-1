@@ -23,6 +23,8 @@ from modelling.utilities.preprocessors import correct_signals
 from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
 from modelling.utilities.feature_extractors import extract_features
 
+from tensorflow.keras.metrics import BinaryAccuracy, F1Score, AUC, BinaryCrossentropy as bce_metric, Precision, Recall
+
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 # # configure location of build file and the static html template file
@@ -87,12 +89,12 @@ def load_miscs():
     global models
 
     print('loading miscellaneous...')
-    # # this is for loading miscellaneous variables for 
-    # # deep learning models such as hyper parameters
-    # lstm_svm_hp = load_meta_data('./modelling/saved/misc/lstm_svm_meta_data.json')
-    # lstm_cnn_hp = load_meta_data('./modelling/saved/misc/lstm_cnn_meta_data.json')
+    # this is for loading miscellaneous variables for 
+    # deep learning models such as hyper parameters
+    lstm_svm_hp = load_meta_data('./modelling/saved/misc/cueva_lstm-svm_meta_data.json')
+    # lstm_cnn_hp = load_meta_data('./modelling/saved/misc/jurado_lstm-cnn_meta_data.json')
 
-    # models['cueva-lstm-svm']['hyper_params'] = lstm_svm_hp
+    models['cueva-lstm-svm']['hyper_params'] = lstm_svm_hp
     # models['jurado-lstm-cnn']['hyper_params'] = lstm_cnn_hp
 
     # # this is for loading miscellaneous variables for
@@ -146,11 +148,11 @@ def load_models():
     
     print('loading models...')
     # jurado_lstm_cnn = LSTM_CNN(**models['jurado-lstm-cnn']['hyper_params'])
-    # cueva_lstm_svm = LSTM_SVM(**models['cueva-lstm-svm']['hyper_params'])
+    cueva_lstm_svm = LSTM_SVM(**models['cueva-lstm-svm']['hyper_params'])
 
     # # pre load saved weights for deep learning models
     # jurado_lstm_cnn.load_weights('./modelling/saved/weights/lstm_cnn_jurado_07_0.5200.weights.h5')
-    # cueva_lstm_svm.load_weights('./modelling/saved/weights/lstm_svm_87_0.5690.weights.h5')
+    cueva_lstm_svm.load_weights('./modelling/saved/weights/cueva_lstm-svm_28_0.7896.weights.h5')
 
     # # pre load saved machine learning models
     # taylor_lr = load_model('./modelling/saved/mmodelsisc/taylor_lr_clf.pkl')
@@ -162,7 +164,7 @@ def load_models():
 
     # populate dictionary with loaded models
     # models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
-    # models['cueva-lstm-svm']['model'] = cueva_lstm_svm
+    models['cueva-lstm-svm']['model'] = cueva_lstm_svm
     # models['taylor-lr']['model'] = taylor_lr
     # models['taylor-svm']['model'] = taylor_svm
     # models['taylor-rf']['model'] = taylor_rf
@@ -301,17 +303,18 @@ def predict():
         print(f"true Y: {Y}")
         print(f"unique values and counts: {np.unique(Y, return_counts=True)}")
 
-        # compute performance metric values for each fold
-        fold_test_acc = accuracy_score(y_true=Y, y_pred=Y_pred)
-        fold_test_prec = precision_score(y_true=Y, y_pred=Y_pred)
-        fold_test_rec = recall_score(y_true=Y, y_pred=Y_pred)
-        fold_test_f1 = f1_score(y_true=Y, y_pred=Y_pred)
-        fold_test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred)
-        print(f"test acc: {fold_test_acc} \
-              \ntest prec: {fold_test_prec} \
-              \ntest rec: {fold_test_rec} \
-              \ntest f1: {fold_test_f1} \
-              \ntest roc_auc: {fold_test_roc_auc}")
+        # compute performance metric values for test subject
+        test_acc = accuracy_score(y_true=Y, y_pred=Y_pred)
+        test_prec = precision_score(y_true=Y, y_pred=Y_pred)
+        test_rec = recall_score(y_true=Y, y_pred=Y_pred)
+        test_f1 = f1_score(y_true=Y, y_pred=Y_pred)
+        test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred)
+
+        print(f"test acc: {test_acc} \
+              \ntest prec: {test_prec} \
+              \ntest rec: {test_rec} \
+              \ntest f1: {test_f1} \
+              \ntest roc_auc: {test_roc_auc}")
         
 
         # next task here is once predictions are out I need tsome way to map the 
@@ -350,14 +353,35 @@ def predict():
         # when our predictions is 1, 0.5, 0.4, 0.3, 0.21, and above which is > 0.2 then y_pred will be 1
         # why we do this is because of the imbalance of our dataset, and we
         # want to place a threshold of 20% since there our dataset only consists
-        # of 20% of positive classes
-        Y_pred[Y_pred <= 0.2] = 0
-        Y_pred[Y_pred > 0.2] = 1
-        Y_pred[np.isnan(Y_pred)] = 0
+        # of 20% of positive classes. Note this conversion is to be used in precision and recall metrics
+        Y_pred_whole = np.zeros(shape=(Y_pred.shape[0], 1))
+        Y_pred_whole[Y_pred < 0.5] = 0
+        Y_pred_whole[Y_pred >= 0.5] = 1
+        # Y_pred_whole[np.isnan(Y_pred)] = 0
 
-    # once predictions have been extracted from respective models
-    # pass to the correct_signals() function
-    correct_signals(Y_pred, subject_eda_data, selector_config, estimator_name)
+        print(f"predicted Y: {Y_pred_whole}")
+        print(f"unique values and counts: {np.unique(Y_pred_whole, return_counts=True)}")
+        print(f"true Y: {Y}")
+        print(f"unique values and counts: {np.unique(Y, return_counts=True)}")
+
+        test_acc = BinaryAccuracy(Y, Y_pred)().numpy()
+        test_prec = Precision(Y, Y_pred_whole)().numpy()
+        test_rec = Recall(Y, Y_pred_whole)().numpy()
+        test_f1 = F1Score(Y, Y_pred)().numpy()
+        test_roc_auc = AUC(Y, Y_pred)().numpy()
+
+        # compute performance metric values for test subject
+        print(f"test acc: {test_acc} \
+              \ntest prec: {test_prec} \
+              \ntest rec: {test_rec} \
+              \ntest f1: {test_f1} \
+              \ntest roc_auc: {test_roc_auc}")
+
+        
+
+    # # once predictions have been extracted from respective models
+    # # pass to the correct_signals() function
+    # correct_signals(Y_pred , subject_eda_data, selector_config, estimator_name)
 
 
         

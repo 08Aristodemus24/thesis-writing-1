@@ -1,1 +1,1 @@
-{"window_size": 640, "n_a": 16, "drop_prob": 0.05, "C": 0.1, "units": 10}
+{"window_size": 640, "n_a": 16, "drop_prob": 0.05, "C": 0.7, "gamma": 0.5, "units": 10}

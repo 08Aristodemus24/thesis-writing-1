@@ -1,10 +1,11 @@
 import datetime
 import pandas as pd
 import numpy as np
-from scipy.interpolate import interp1d, splrep, UnivariateSpline#, spline
+from scipy.interpolate import interp1d, splrep, UnivariateSpline, BSpline
 from scipy.signal import butter, filtfilt, lfilter, firwin, hilbert, sosfiltfilt
 
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import tensorflow as tf
 
 def down_sample(signals: pd.DataFrame | np.ndarray | list, target_freq = 16):
@@ -80,6 +81,7 @@ def moving_average(data: np.ndarray | pd.DataFrame | pd.Series, window_size: int
         window_size - window size is in seconds
     """
 
+    16 // 2, 16 // 2 - 1 or (8, 16)
     pad_width = (window_size // 2, window_size // 2 - 1)
 
     first_val = data[0]
@@ -300,8 +302,15 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     # again
     start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
     begin_bad_elements, end_bad_elements = start_artf_pred, end_artf_pred
-    
+
+    # loop thorugh the begin adn end indeces
     for ctr_it in range(len(end_bad_elements)):
+        # create two figures
+        fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+        axes = axes.flat
+        fig.tight_layout(pad=1)
+        
+
         # 128 / 4 = 32
         # start indeces of post processed/merged artifacts for pqbqpr subject is 0, 8768, 10496, ..., 902592
         # start indeces of post processed/merged artifacts for pqbqpr subject is 63, 8831, 12351, ..., 902719
@@ -406,43 +415,76 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         # here x_int and y_int are the old points or the points that
         # currently exist which need to be smoothed
         intermediam_correct_lineal = f(x_int)
-        plt.plot(x_int, y_int, 'o', x_int, y_int, 'b')
-        plt.show()
-        plt.savefig(f'./figures & images/segment {begin_index} to {end_index}.png')
-        
-        init_correct = to_clean.iloc[:th_init_space] 
+         
+        init_correct = to_clean.iloc[:th_init_space]
         final_correct = to_clean.iloc[-th_end_space:]
         
         # x_to_spline and y_to_spline seem to be also points that
         # server as replacement to the previous points x_int, and y_int
         # my understanding with this is that why x_int and y_int are created 
         # is that as these points are from the 128hz signals they can be down
-        # sampled further to create a shorter list of values i.e. x_int = []
+        # sampled further to create a shorter list of values i.e. 
+        # x_int = [89023 89024 89025 ... 89086], y_int = [2.58095238 2.57216117 2.57655678 ... 2.79194139]
+        # to x_to_spline = [89023 89026.5 89034.5 89042.5 89050.5 89058.5 89066.5 89074.5 89082.5 89086]
+        # of length 10 and y_to_spline = [2.58095238 2.577289377289378 2.5860805860805858 ... 2.79194139]
+        # also of length 10
         x_to_spline = [x_int[0]] + down_sample(x_int, target_freq=x_int.shape[0] / 8) + [x_int[-1]]
         y_to_spline = [y_int[0]] + down_sample(y_int, target_freq=y_int.shape[0] / 8) + [y_int[-1]]
         print(f'x_to_spline: {x_to_spline} - length: {len(x_to_spline)}')
         print(f'y_to_spline: {y_to_spline} - length: {len(y_to_spline)}')
+        plt.plot(x_to_spline, y_to_spline, 'o', x_to_spline, y_to_spline, 'b')
+
+        axes[0].scatter(x_int, y_int, c="#eb34b7", marker='o')
+        axes[0].plot(x_int, y_int, c="#7c31de", linestyle="-")
+        axes[1].scatter(x_to_spline, y_to_spline, c="#eb34b7", marker='o')
+        axes[1].plot(x_to_spline, y_to_spline, c="#7c31de", linestyle="-")
         
+        # scipy.interpolate.spline(*args, **kwds)
+        # spline is deprecated! spline is deprecated in scipy 0.19.0, use Bspline class instead.
+        # Interpolate a curve at new points using a spline fit
+        # Parameters:	
+        # xk, yk: array_like - The x and y values that define the curve.
+        # xnew: array_like - The x values where spline should estimate the y values.
+        # order: int - Default is 3.
+        # kind: string - One of {‘smoothest’}
+
+        # Returns:	
+        # spline: ndarray - An array of y values; the spline evaluated at the positions xnew.
         # y_output = spline(x_to_spline, y_to_spline, x_int)
-        # # spl = UnivariateSpline(x_to_spline, y_to_spline, k=x_int)
-        # # y_output = spl(x_to_spline)
-        # # """
-        # # Interpolate a curve at new points using a spline fit
-        # # args:	
-        # #     xk, yk - array_like which is the x and y values that define the curve.
-        # #     xnew - array_like which is the x values where spline should estimate the y values.
-        # #     order - int, Default is 3.
-        # #     kind - string i.e {‘smoothest’}
-        # #     conds - Don’t know
-        # # returns:	
-        # #     spline which is an array of y values; the spline evaluated at the positions xnew.
-        # # """
-        # mix_curve = np.mean([intermediam_correct_lineal, y_output], axis=0)
+
+        # class BSpline(t, c, k, extrapolate=True, axis=0)[source]
+        # Univariate spline in the B-spline basis.
+        # where are B-spline basis functions of degree k and knots t.
+        # Parameters:
+        # t: ndarray, shape (n+k+1,) - knots
+        # c: ndarray, shape (>=n, …) - spline coefficients
+        # k: int - B-spline degree
+        spline = BSpline(x_to_spline, y_to_spline, k=3)
+
+        """
+        # # Create a B-spline object
+        # t = np.linspace(x_int[0], x_int[-1], num=4)  # Assuming 4 knots for a cubic spline
+        # c = [y_int[0], y_int[1], y_int[-2], y_int[-1]]  # Assuming cubic spline
+        # k = 3  # Cubic spline
+        """
+        y_output = spline(x_int)
+        axes[2].scatter(x_int, y_output, c="#236cb0", marker="^")
+        axes[2].plot(x_int, y_output, c="#3de343", linestyle="--")
         
-        # tuple_concat = (mix_curve, final_correct) if init_correct.shape[0] < 2 else (init_correct, mix_curve, final_correct)
-        # correct_linear = np.concatenate(tuple_concat, axis=0)
+        # mixes the average values between the line that uses a linear graph
+        # and a line that uses a cubic graph or a degree of 3 as used above
+        mix_curve = np.mean([y_output], axis=0)
+        
+        tuple_concat = (mix_curve, final_correct) if init_correct.shape[0] < 2 else (init_correct, mix_curve, final_correct)
+        correct_linear = np.concatenate(tuple_concat, axis=0)
+        print(f'corrected linear: {correct_linear}')
+        print(f'corrected linear shape: {correct_linear.shape}')
+        
         
         # # 128 / 8 as the window size is 16 or 0.25 seconds
         # res_df["new_auto_signal"].iloc[to_clean_segment.index.values] = moving_average(correct_linear, freq_signal / 8)
+
+        plt.show()
+        plt.savefig(f'./figures & images/segment splined {begin_index} to {end_index}.jpg')
 
     return res_df, dict_metrics

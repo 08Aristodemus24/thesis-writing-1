@@ -7,7 +7,7 @@ import ast
 import re
 
 import tensorflow as tf
-from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.optimizers import RMSprop, Adam
 from tensorflow.keras.losses import Dice, SquaredHinge
 from tensorflow.keras.metrics import BinaryCrossentropy as bce_metric, BinaryAccuracy, Precision, Recall, F1Score, AUC
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -165,7 +165,8 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         # in every hyper param config we must define/redefine an optimizer 
         model = estimator(**hyper_param_config)
         optimizer = opt(learning_rate=alpha)
-        model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
+        compile_args = {"optimizer": optimizer, "loss": loss, "metrics": metrics} if len(metrics) > 0  else {"optimizer": optimizer, "loss": loss} 
+        model.compile(**compile_args)
         # model(np.concatenate(subjects_signals, axis=0), training=False)
         # model.summary()
 
@@ -385,7 +386,7 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     # as cross validation will be needed in case of early stopping
     # i.e. if validation metrics do not improve anymore as training
     # progresses 
-    train_signals, train_labels, cross_signals, cross_labels = split_data(subjects_signals, subjects_labels, test_ratio=0.3)
+    train_signals, train_labels, cross_signals, cross_labels = split_data(subjects_signals, subjects_labels, test_ratio=0.2)
     print(f'train_signals length: {len(train_signals)}')
     print(f'train_labels length: {len(train_labels)}')
     print(f'cross_signals length: {len(cross_signals)}')
@@ -412,7 +413,8 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
 
     # in every hyper param config we must define/redefine an optimizer 
     optimizer = opt(learning_rate=alpha)
-    model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
+    compile_args = {"optimizer": optimizer, "loss": loss, "metrics": metrics} if len(metrics) > 0  else {"optimizer": optimizer, "loss": loss} 
+    model.compile(**compile_args)
 
     # define checkpoint and early stopping callback to save
     # best weights at each epoch and to stop if there is no improvement
@@ -515,17 +517,17 @@ if __name__ == "__main__":
                 'window_size': [5 * 128], 
                 'n_a': [16, 32], 
                 'drop_prob': [0.05, 0.1, 0.75], 
-                'C': [1, 10, 100, 1000], 
-                'gamma': [0.001, 0.01, 0.1, 1], 
+                'C': [0.7, 1, 10], 
+                'gamma': [0.01, 0.1, 0.5, 1], 
                 'units': [10]
             },
-            'opt': RMSprop,
+            'opt': Adam,
             'loss': SquaredHinge(),
 
             # following metrics would not work since all these require z to be activated by the sigmoid activation function
             # and naturally comparing Y_true which are 1's and 0's to unactivated values like 1.23, 0.28, 1.2, etc. will result
             # in 0 metric values being produced from Precision, Recall, etc.
-            'metrics': [bce_metric(), BinaryAccuracy(), Precision(), Recall(), F1Score(), AUC()]
+            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
         },
         'lstm-cnn': {
             'model': LSTM_CNN,

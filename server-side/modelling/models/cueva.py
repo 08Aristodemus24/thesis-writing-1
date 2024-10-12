@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow import GradientTape
 from tensorflow.keras.losses import SquaredHinge
-
+from tensorflow.keras.metrics import BinaryCrossentropy as bce_metric, BinaryAccuracy, Precision, Recall, AUC, F1Score
 from tensorflow.keras.layers import (
     Activation,
     Dropout,
@@ -17,6 +17,9 @@ from tensorflow.keras.layers import (
     Reshape,
     Conv1D,
     MaxPooling1D)
+from tensorflow.keras.regularizers import L2
+
+import numpy as np
 
 # @tf.keras.utils.register_keras_serializable()
 # class SVC(tf.keras.layers.Layer):
@@ -115,10 +118,12 @@ class LSTM_SVM(tf.keras.Model):
             
         # SVM layer
         self.grbf_layer = GaussianRBF(units=units, gamma=gamma, name='gaussian-rbf-layer')
-        self.svc_layer = Dense(units=1, activation='linear', name='svc-layer')
+        self.svc_layer = Dense(units=1, activation='linear', name='svc-layer', kernel_regularizer=L2(self.C))
 
-        # # loss
-        # self.loss_tracker = SquaredHinge(name='squared hinge')
+        # extra metrics
+        self.prec_metric = Precision(name="precision")
+        self.rec_metric = Recall(name="recall")
+
 
     def call(self, inputs, training=False):
         # input shape will be a (m, window_size, n_f) (m, Tx, nf) which
@@ -170,54 +175,66 @@ class LSTM_SVM(tf.keras.Model):
             # compute loss value
             sq_hinge_loss = self.compute_loss(y=Y, y_pred=Y_pred)
 
-            # retrieve weights of Dense/SVC layer and calculate its L2-norm
-            # excluding the bias coefficients of course
-            non_biases = self.trainable_variables[-2]
-            # print(non_biases)
-            reg_term = 0.5 * tf.reduce_sum(tf.square(non_biases))
-            reg_sq_hinge_loss = reg_term + (self.C * sq_hinge_loss)
+            # # retrieve weights of Dense/SVC layer and calculate its L2-norm
+            # # excluding the bias coefficients of course
+            # non_biases = self.trainable_variables[-2]
+            # # print(non_biases)
+            # reg_term = 0.5 * tf.reduce_sum(tf.square(non_biases))
+            # reg_sq_hinge_loss = reg_term + (self.C * sq_hinge_loss)
 
             # note also that because we calculate a different loss in
             # the train step then by definition calculating the loss given
             # in our compile method would produce a different result since
-            # its loss is not regularized 
+            # its loss is not regularized
 
         # Compute gradients
         coefficients = self.trainable_variables
-        gradients = tape.gradient(reg_sq_hinge_loss, coefficients)
+        gradients = tape.gradient(sq_hinge_loss, coefficients)
 
         # Update weights
         self.optimizer.apply_gradients(zip(gradients, coefficients))
 
+        # convert logits/unactivated linear ouptuts to 
+        # sigmoid probability values 
+        pred_train_probs = tf.nn.sigmoid(Y_pred)
+        print(pred_train_probs)
+
+        # convert probs to solid 1s and 0s for prec and rec metrics
+        pred_train_whole = tf.cast(pred_train_probs >= 0.2, tf.int64)
+        print(pred_train_whole)
+        # pred_train_whole = np.zeros(shape=(pred_train_probs.shape[0], 1))
+        # pred_train_whole[pred_train_probs >= 0.2] = 1
+        # pred_train_whole[pred_train_probs < 0.2] = 0
+        # pred_train_whole[np.isnan(pred_train_probs)] = 0
+
         # update metrics (includes the metric that tracks the loss)
-        print(self.metrics)
+        print(f'metrics: {self.metrics}')
         for metric in self.metrics:
-            print(type(metric))
-            print(metric.name)
+            print(f'type of metric: {type(metric)}')
+            print(f'metric name: {metric.name}')
 
             if metric.name == "loss":
                 # instead of SquaredHinge in .compile() automatically
                 # calculating our loss for us which doesn't include regularization
                 # we pass our manually calculated loss which includes regularization
                 # in the loss function inside our self.metrics dictionary
-                metric.update_state(reg_sq_hinge_loss)
+                metric.update_state(sq_hinge_loss)
             else:
                 # before passing predicted train labels which are unactivated linear outputs
                 # we need to pass it through tf.sign() first as tf.sign() takes in these values
                 # and outputs -1 if x is < 0, 0 if x is 0, and 1 if x is > 0 which is exactly
                 # what an SVM is supposed to predict
-
-                pred_train_labels = tf.nn.sigmoid(Y_pred)
+                
                 
                 # pred_train_labels = tf.sign(Y_pred)
                 # pred_train_labels = tf.cast(pred_train_labels >= 1, "float")
-                metric.update_state(Y, pred_train_labels)
+                metric.update_state(Y, pred_train_probs)
 
-        # SquaredHinge in compile calculates a loss
-        # but we also calculate SquaredHinge in this train_step() function
+        self.prec_metric.update_state(Y, pred_train_whole)
+        self.rec_metric.update_state(Y, pred_train_whole)
 
         # return a dict mapping metric names to current value
-        return {metric.name: metric.result() for metric in self.metrics}
+        return {metric.name: metric.result() for metric in self.metrics + [self.prec_metric, self.rec_metric]}
     
     # note we do not chnage the inner test_step() mechanism
     # unlike we did train_step() with regularization this is because
@@ -231,18 +248,36 @@ class LSTM_SVM(tf.keras.Model):
         Y_pred = self(X, training=False)
 
         # updates the metrics tracking the loss
-        self.compute_loss(y=Y, y_pred=Y_pred)
+        val_sq_hinge_loss = self.compute_loss(y=Y, y_pred=Y_pred)
+
+        # convert logits/unactivated linear ouptuts to 
+        # sigmoid probability values 
+        pred_test_probs = tf.nn.sigmoid(Y_pred)
+
+        # convert probs to solid 1s and 0s for prec and rec metrics
+        pred_test_whole = tf.cast(pred_test_probs >= 0.2, tf.int64)
+        print(pred_test_whole)
+        # pred_test_whole = np.zeros(shape=(pred_test_probs.shape[0], 1))
+        # pred_test_whole[pred_test_probs >= 0.2] = 1
+        # pred_test_whole[pred_test_probs < 0.2] = 0
+        # pred_test_whole[np.isnan(pred_test_probs)] = 0
 
         # update the metrics.
         for metric in self.metrics:
             if metric.name != "loss":
-                pred_test_labels = tf.nn.sigmoid(Y_pred)
+                
                 # perform same transformation of linear values to -1, 0, and 1 to
                 # 0 and 1 values
                 # pred_test_labels = tf.sign(Y_pred)
                 # pred_test_labels = tf.cast(pred_test_labels >= 1, "float")
-                metric.update_state(Y, pred_test_labels)
+                metric.update_state(Y, pred_test_probs)
 
+            else:
+                metric.update_state(val_sq_hinge_loss)
+        
+        self.prec_metric.update_state(Y, pred_test_whole)
+        self.rec_metric.update_state(Y, pred_test_whole)
+            
         # return a dict mapping metric names to current value.
         # note that it will include the loss (tracked in self.metrics).
-        return {metric.name: metric.result() for metric in self.metrics}
+        return {metric.name: metric.result() for metric in self.metrics + [self.prec_metric, self.rec_metric]}

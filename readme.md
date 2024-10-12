@@ -2,7 +2,9 @@
 * `python tuning_dl.py -m lstm-cnn -pl jurado -lr 5e-5 --mode tuning`
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode tuning`
 * `python tuning_ml.py -m lr -pl hossain --n_rows_to_sample 5000 --mode tuning`
-* `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_0.1 units_10`: command for preliminary modelling of proposed model 
+* `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_10 gamma_0.5 units_10`: command for preliminary modelling of proposed model 
+* `python tuning_dl.py -m lstm-svm -pl cueva -lr 75e-4 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_1 gamma_0.1 units_10`
+* `python tuning_dl.py -m lstm-svm -pl cueva -lr 75e-4 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_0.7 gamma_0.5 units_10`
 * `scp -r -i C:/Users/LARRY/.ssh/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/" michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/data/`
 
 # This repository contains all generalized code snippets and templates relating to model experimentation, training, evaluation, testing, server-side loading, client-side requests, usage documentation, loaders, evaluators, visualizers, and preprocessor utilities, and the model architectures, figures, and final folder
@@ -133,6 +135,9 @@ https://www.digitalocean.com/community/tutorials/svg-svg-viewbox
 
 12. https://www.neurology.org/doi/pdfdirect/10.1212/WNL.39.6.868
 hybrid, long, short, term, memory, support, vector, machine, for, detecting recognizing, artifacts, in electrodermal activity data or galvanic skin response data signals, for stress detection recognition
+
+13. why val loss of 0 may be appearing in custom tensorflow model in the test_step() method
+
 
 
 
