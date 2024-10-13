@@ -337,6 +337,9 @@ def predict():
 
         # assign model
         model = models[model_name]['model']
+
+        # depending on dl model Y_pred will either be unactivated logits 
+        # or sigmoid probabilities
         Y_pred = model.predict(X)
 
         # use model for predictions recall that the dl models 
@@ -344,9 +347,7 @@ def predict():
         # lstm-svm because it's output is a series of untransformed
         # logit values
         if estimator_name.lower() == 'lstm-svm':
-            # signed_pred = tf.sign(y_pred)
-            # y_pred = tf.cast(signed_pred >= 1, "float")
-            # y_pred = np.reshape(y_pred, (-1,))
+            # convert unactivated logits to sigmoid probabilities
             Y_pred = tf.nn.sigmoid(Y_pred)
 
         # when our predictions is 0.2, 0.15, and below which is <= 0.2 then y_pred will be 0
@@ -354,10 +355,7 @@ def predict():
         # why we do this is because of the imbalance of our dataset, and we
         # want to place a threshold of 20% since there our dataset only consists
         # of 20% of positive classes. Note this conversion is to be used in precision and recall metrics
-        Y_pred_whole = np.zeros(shape=(Y_pred.shape[0], 1))
-        Y_pred_whole[Y_pred < 0.5] = 0
-        Y_pred_whole[Y_pred >= 0.5] = 1
-        # Y_pred_whole[np.isnan(Y_pred)] = 0
+        Y_pred_whole = tf.cast(Y_pred >= 0.2, tf.int64)
 
         print(f"predicted Y: {Y_pred_whole}")
         print(f"unique values and counts: {np.unique(Y_pred_whole, return_counts=True)}")
@@ -365,47 +363,21 @@ def predict():
         print(f"unique values and counts: {np.unique(Y, return_counts=True)}")
 
         test_acc = BinaryAccuracy(Y, Y_pred)().numpy()
-        test_prec = Precision(Y, Y_pred_whole)().numpy()
-        test_rec = Recall(Y, Y_pred_whole)().numpy()
         test_f1 = F1Score(Y, Y_pred)().numpy()
         test_roc_auc = AUC(Y, Y_pred)().numpy()
+        test_prec = Precision(Y, Y_pred_whole)().numpy()
+        test_rec = Recall(Y, Y_pred_whole)().numpy()
 
         # compute performance metric values for test subject
         print(f"test acc: {test_acc} \
-              \ntest prec: {test_prec} \
-              \ntest rec: {test_rec} \
               \ntest f1: {test_f1} \
-              \ntest roc_auc: {test_roc_auc}")
+              \ntest roc_auc: {test_roc_auc} \
+              \ntest prec: {test_prec} \
+              \ntest rec: {test_rec}")    
 
-        
-
-    # # once predictions have been extracted from respective models
-    # # pass to the correct_signals() function
-    # correct_signals(Y_pred , subject_eda_data, selector_config, estimator_name)
-
-
-        
-
-    # convert eda signal df to numerical features if ml model is to be used
-    # but if dl model then leave the signal df as it is and pass it to trained
-    # model
-    # charge signal first via charge_raw_data() and extract features from signal
-    # via extract_features()
-
-    # we will also have to select only the features as selected during tuning
-
-    # # preprocessing/encoding image stream into a matrix
-    # encoded_img = encode_image(image.stream)
-    # rescaled_img = standardize_image(encoded_img)
-    # print(rescaled_img.max())
-    # print(rescaled_img.shape)
-
-    # # predictor
-    
-    # # reshape the image since the model takes in an (m, 256, 256, 3)
-    # # input, or in this case a single (1, 256, 256, 3) input
-    # img_shape = rescaled_img.shape
-    # reshaped_img = np.reshape(rescaled_img, newshape=(1, img_shape[0], img_shape[1], img_shape[2]))
+    # once predictions have been extracted from respective models
+    # pass to the correct_signals() function
+    correct_signals(Y_pred , subject_eda_data, selector_config, estimator_name)
     
     # # predictor
     # logits = models[0].predict(reshaped_img)
