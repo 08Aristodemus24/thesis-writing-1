@@ -549,6 +549,12 @@ loo = LeaveOneOut()
 ```  
 
 here we base our knots based on the maximum and minimum value in our dataset or in this case our signals. And generate some number of random values in between this minimum and maximum values based on the number of knots or ties we have in our "lifeline" 
+22. important article of SVM implementation in tensorflow 
+https://github.com/keras-team/keras/issues/2588
+https://github.com/keras-team/keras/issues/12960
+https://keras.io/getting_started/faq/#how-can-i-obtain-the-output-of-an-intermediate-layer-feature-extraction
+
+basically what they're trying to say here is in a single script wee ought to train a tensorflow model as a side task and as a byproduct of its training we extract an intermediate layer for its features and use it as input to the second phase of training in the script which will be the feeding of these layer features as input to the SVM 
 
 
 ## artifact detection and correction:

@@ -8,7 +8,7 @@ import re
 
 import tensorflow as tf
 from tensorflow.keras.optimizers import RMSprop, Adam
-from tensorflow.keras.losses import Dice, SquaredHinge
+from tensorflow.keras.losses import Dice, SquaredHinge, Hinge
 from tensorflow.keras.metrics import BinaryCrossentropy as bce_metric, BinaryAccuracy, Precision, Recall, F1Score, AUC
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
@@ -16,7 +16,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from utilities.loaders import concur_load_data, save_meta_data, split_data, save_model
 from models.llanes_jurado import LSTM_CNN
-from models.cueva import LSTM_SVM
+from models.cueva import LSTM_SVM, LSTM
 
 from argparse import ArgumentParser
 
@@ -509,24 +509,24 @@ if __name__ == "__main__":
 
     # model hyper params
     models = {
-        'lstm-svm': {
-            'model': LSTM_SVM, 
-            'hyper_params': {
-                'window_size': [5 * 128], 
-                'n_a': [16, 32], 
-                'drop_prob': [0.05, 0.1, 0.75], 
-                'C': [0.7, 1, 10], 
-                'gamma': [0.01, 0.1, 0.5, 1], 
-                'units': [10]
-            },
-            'opt': Adam,
-            'loss': SquaredHinge(),
+        # 'lstm-svm': {
+        #     'model': LSTM_SVM, 
+        #     'hyper_params': {
+        #         'window_size': [5 * 128], 
+        #         'n_a': [16, 32], 
+        #         'drop_prob': [0.05, 0.1, 0.75], 
+        #         'C': [0.7, 1, 10], 
+        #         'gamma': [0.01, 0.1, 0.5, 1], 
+        #         'units': [10]
+        #     },
+        #     'opt': Adam,
+        #     'loss': SquaredHinge(),
 
-            # following metrics would not work since all these require z to be activated by the sigmoid activation function
-            # and naturally comparing Y_true which are 1's and 0's to unactivated values like 1.23, 0.28, 1.2, etc. will result
-            # in 0 metric values being produced from Precision, Recall, etc.
-            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
-        },
+        #     # following metrics would not work since all these require z to be activated by the sigmoid activation function
+        #     # and naturally comparing Y_true which are 1's and 0's to unactivated values like 1.23, 0.28, 1.2, etc. will result
+        #     # in 0 metric values being produced from Precision, Recall, etc.
+        #     'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
+        # },
         'lstm-cnn': {
             'model': LSTM_CNN,
             'hyper_params': {
@@ -537,6 +537,17 @@ if __name__ == "__main__":
                 'kernel_size': [5]
             },
             'opt': RMSprop,
+            'loss': Dice(),
+            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
+        },
+        'lstm': {
+            'model': LSTM,
+            'hyper_params': {
+                'window_size': [5 * 128], 
+                'n_a': [16, 32], 
+                'drop_prob': [0.05, 0.1, 0.75], 
+            },
+            'opt': Adam, 
             'loss': Dice(),
             'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
         }
