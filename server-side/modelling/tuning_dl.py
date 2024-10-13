@@ -515,24 +515,24 @@ if __name__ == "__main__":
 
     # model hyper params
     models = {
-        # 'lstm-svm': {
-        #     'model': LSTM_SVM, 
-        #     'hyper_params': {
-        #         'window_size': [5 * 128], 
-        #         'n_a': [16, 32], 
-        #         'drop_prob': [0.05, 0.1, 0.75], 
-        #         'C': [0.7, 1, 10], 
-        #         'gamma': [0.01, 0.1, 0.5, 1], 
-        #         'units': [10]
-        #     },
-        #     'opt': Adam,
-        #     'loss': SquaredHinge(),
+        'lstm-svm': {
+            'model': LSTM_SVM, 
+            'hyper_params': {
+                'window_size': [5 * 128], 
+                'n_a': [16, 32], 
+                'drop_prob': [0.05, 0.1, 0.75], 
+                'C': [0.7, 1, 10], 
+                'gamma': [0.01, 0.1, 0.5, 1], 
+                'units': [10]
+            },
+            'opt': Adam,
+            'loss': Hinge(),
 
-        #     # following metrics would not work since all these require z to be activated by the sigmoid activation function
-        #     # and naturally comparing Y_true which are 1's and 0's to unactivated values like 1.23, 0.28, 1.2, etc. will result
-        #     # in 0 metric values being produced from Precision, Recall, etc.
-        #     'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
-        # },
+            # following metrics would not work since all these require z to be activated by the sigmoid activation function
+            # and naturally comparing Y_true which are 1's and 0's to unactivated values like 1.23, 0.28, 1.2, etc. will result
+            # in 0 metric values being produced from Precision, Recall, etc.
+            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
+        },
         'lstm-cnn': {
             'model': LSTM_CNN,
             'hyper_params': {

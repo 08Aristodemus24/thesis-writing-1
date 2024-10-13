@@ -22,39 +22,6 @@ from tensorflow.keras.regularizers import L2
 
 import numpy as np
 
-# @tf.keras.utils.register_keras_serializable()
-# class SVC(tf.keras.layers.Layer):
-#     def __init__(self, units=1, **kwargs):
-#         super(SVC, self).__init__(**kwargs)
-#         self.units = units
-    
-#     def build(self, input_shape):
-#         # input shape will be based on the transformed output of LSTM resulting 
-#         # from the rbf layer which shape goes from (m, n_a) to (m, n_clusters)
-#         n_a = input_shape[-1]
-
-#         # initialize coefficients of SVM based on input shape
-#         self.theta = self.add_weight(name='theta', shape=(n_a, self.units), initializer='random_normal', trainable=True)
-#         self.beta = self.add_weight(name='beta', shape=(self.units,), initializer='zeros', trainable=True)
-
-#     def compute_output_shape(self, input_shape):
-#         # first element of input shape represents the number
-#         # of training examples
-#         m = input_shape[0]
-#         return (m, self.units)
-
-#     def call(self, inputs):
-#         # perform linear operation with now transformed inputs
-#         z = tf.matmul(inputs, self.theta) + self.beta
-
-#         return z
-
-#     def get_config(self):
-#         config = super(SVC, self).get_config()
-#         config['units'] = self.units
-
-#         return config
-
 
 
 @tf.keras.utils.register_keras_serializable()
@@ -119,7 +86,7 @@ class LSTM_SVM(tf.keras.Model):
         self.lstm_drop_2 = Dropout(drop_prob, name='drop-layer-2')
             
         # SVM layer
-        self.grbf_layer = GaussianRBF(units=units, gamma=gamma, name='gaussian-rbf-layer')
+        # self.grbf_layer = GaussianRBF(units=units, gamma=gamma, name='gaussian-rbf-layer')
         self.svc_layer = Dense(units=1, activation='linear', name='svc-layer', kernel_regularizer=L2(self.C))
 
         # extra metrics
@@ -144,10 +111,10 @@ class LSTM_SVM(tf.keras.Model):
         lstm_dropped_2 = self.lstm_drop_2(lstm_normed_2, training=training)
 
         # SVM layer
-        reduced = self.grbf_layer(lstm_dropped_2)
-        out = self.svc_layer(reduced)
+        # reduced = self.grbf_layer(lstm_dropped_2)
+        # out = self.svc_layer(reduced)
 
-        # out = self.svc_layer(lstm_dropped_2)
+        out = self.svc_layer(lstm_dropped_2)
 
         return out
 
