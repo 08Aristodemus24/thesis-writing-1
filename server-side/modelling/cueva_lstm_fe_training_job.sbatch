@@ -50,7 +50,7 @@ module load anaconda/3-2023.07-2
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
-python tuning_dl.py -m lstm-fe -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_32 drop_prob_0.2
+python tuning_dl.py -m lstm-fe -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_32 drop_prob_0.3 lamb_da_0.1
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then
