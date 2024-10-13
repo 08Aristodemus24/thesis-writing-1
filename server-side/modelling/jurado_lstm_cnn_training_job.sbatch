@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
-#SBATCH --partition=gpu_a100
-#SBATCH --qos=gpu-a100_default
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu-p40_default
 ##SBATCH --nodes=20
 #SBATCH --ntasks=10
-#SBATCH --gres=gpu:1
-#SBATCH --job-name="cueva_lstm_svm_tuning_job2"
+#SBATCH --gres=gpu:p40:1
+#SBATCH --job-name="jurado_lstm_cnn_training_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
 ##SBATCH --mail-user=<email_add>  ## optional
@@ -50,7 +50,7 @@ module load anaconda/3-2023.07-2
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
-python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode tuning
+python tuning_dl.py -m lstm-cnn -pl jurado -lr 5e-5 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then
