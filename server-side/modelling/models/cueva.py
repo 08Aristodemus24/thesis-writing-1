@@ -281,19 +281,12 @@ class LSTM_SVM(tf.keras.Model):
     
 
 
-def LSTM_FE(window_size=5 * 128, n_a=16, drop_prob=0.05, **kwargs):
+def LSTM_FE(window_size=5 * 128, n_a=16, drop_prob=0.3, lamb_da=0.1, **kwargs):\
+    # instantiate sequential model
+    model = Sequential()
+
     # input shape will be (m, 640, 1)
-    inputs = Input(shape=(window_size, 1))
-
-    # LSTM layers
-    lstm_layer_1 = LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=True, name='lstm-layer-1')
-    lstm_drop_1 = Dropout(drop_prob, name='drop-layer-1')
-
-    # whole LSTM has shape (m, 5 * 128, n_a), last hidden state has (m, n_a)
-    lstm_layer_2 = LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=False, name='lstm-layer-2')
-        
-    # dense layer
-    dense_layer = Dense(units=1, activation=tf.nn.sigmoid, name='dense-layer')
+    model.add(Input(shape=(window_size, 1)))
 
     # input shape will be a (m, window_size, n_f) (m, Tx, nf) which
     # based on our data we know we can reshape into since we have will
@@ -302,14 +295,23 @@ def LSTM_FE(window_size=5 * 128, n_a=16, drop_prob=0.05, **kwargs):
     # there will be no feature engineering required
 
     # LSTM layers
-    lstm_out_1 = lstm_layer_1(inputs)
-    lstm_dropped_1 = lstm_drop_1(lstm_out_1)
+    model.add(LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=True, name='lstm-layer-1'))
+    model.add(Dropout(drop_prob, name='lstm-drop-1'))
 
-    lstm_out_2 = lstm_layer_2(lstm_dropped_1)
+    # whole LSTM has shape (m, 5 * 128, n_a), last hidden state has (m, n_a)
+    model.add(LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=False, name='lstm-layer-2'))
+    model.add(Dropout(drop_prob, name='lstm-drop-2'))
+        
+    # dense layer
+    model.add(Dense(units=10, name='dense-layer-1'))
+    model.add(BatchNormalization(name='dense-norm-1'))
+    model.add(Activation(activation=tf.nn.relu, name='act-layer-1'))
+    model.add(Dropout(drop_prob, name='dense-drop-1'))
 
-    # Dense layer
-    out = dense_layer(lstm_out_2)
+    model.add(Dense(units=3, name='dense-layer-2'))
+    model.add(BatchNormalization(name='dense-norm-2'))
+    model.add(Activation(activation=tf.nn.relu, name='act-layer-2'))
 
-    model = Model(inputs=inputs, outputs=out)
-    
+    model.add(Dense(units=1, activation=tf.nn.sigmoid, name='out-layer', kernel_regularizer=L2(lamb_da)))
+
     return model

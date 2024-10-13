@@ -135,7 +135,10 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
     
     # define early stopping callback to stop if there is no improvement
     # of validation loss for 30 consecutive epochs
-    stopper = EarlyStopping(monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', patience=threshold_epochs)
+    stopper = EarlyStopping(
+        # monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', 
+        monitor='val_auc' if estimator_name.lower() == "lstm-cnn" else 'val_auc_1', 
+        patience=threshold_epochs)
     callbacks = [stopper]
 
     # initialize empty lists to collect all metric values per fold
@@ -169,8 +172,6 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         optimizer = opt(learning_rate=alpha)
         compile_args = {"optimizer": optimizer, "loss": loss, "metrics": metrics} if len(metrics) > 0  else {"optimizer": optimizer, "loss": loss} 
         model.compile(**compile_args)
-        # model(np.concatenate(subjects_signals, axis=0), training=False)
-        # model.summary()
 
         # begin training model
         history = model.fit(train_signals, train_labels, 
@@ -216,14 +217,16 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         fold_cross_loss = history.history['val_loss'][-1]
         fold_train_acc = history.history['binary_accuracy'][-1]
         fold_cross_acc = history.history['val_binary_accuracy'][-1]
-        fold_train_prec = history.history['precision' if estimator_name.lower() == "lstm-svm" else "precision_1"][-1]
-        fold_cross_prec = history.history['val_precision' if estimator_name.lower() == "lstm-svm" else "val_precision_1"][-1]
-        fold_train_rec = history.history['recall' if estimator_name.lower() == "lstm-svm" else "recall_1"][-1]
-        fold_cross_rec = history.history['val_recall' if estimator_name.lower() == "lstm-svm" else "val_recall_1"][-1]
+        fold_train_prec = history.history['precision'][-1]
+        fold_cross_prec = history.history['val_precision'][-1]
+        fold_train_rec = history.history['recall'][-1]
+        fold_cross_rec = history.history['val_recall'][-1]
         fold_train_f1 = history.history['f1_score'][-1]
         fold_cross_f1 = history.history['val_f1_score'][-1]
-        fold_train_roc_auc = history.history['auc' if estimator_name.lower() == "lstm-svm" else "auc_1"][-1]
-        fold_cross_roc_auc = history.history['val_auc' if estimator_name.lower() == "lstm-svm" else "val_auc_1"][-1]
+        # auc_1 and val_auc_1 occur in local machine in both lstm_fe and lstm_cnn but in 
+        # remote there is only auc_1 and val_auc_1 in lstm_fe and not lstm_cnn
+        fold_train_roc_auc = history.history['auc' if estimator_name.lower() == "lstm-cnn" else "auc_1"][-1]
+        fold_cross_roc_auc = history.history['val_auc' if estimator_name.lower() == "lstm-cnn" else "val_auc_1"][-1]
         
         # save append each metric value to each respective list
         folds_train_loss.append(fold_train_loss)
@@ -412,19 +415,22 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     # best weights at each epoch and to stop if there is no improvement
     # of validation loss for 10 consecutive epochs
     path = f"./saved/weights/{selector_config}_{estimator_name}"
-    info = "_{epoch:02d}_{val_auc:.4f}.weights.h5" if estimator_name.lower() == "lstm-svm" else "_{epoch:02d}_{val_auc_1:.4f}.weights.h5"
+    # info = "_{epoch:02d}_{val_auc:.4f}.weights.h5" if estimator_name.lower() == "lstm-svm" else "_{epoch:02d}_{val_auc_1:.4f}.weights.h5"
+    info = "_{epoch:02d}_{val_auc:.4f}.weights.h5" if estimator_name.lower() == "lstm-cnn" else "_{epoch:02d}_{val_auc_1:.4f}.weights.h5"
     weights_path = path + info
 
     # create callbacks
     checkpoint = ModelCheckpoint(
         weights_path,
-        monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1',
+        # monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1',
+        monitor='val_auc' if estimator_name.lower() == "lstm-cnn" else "val_auc_1",
         verbose=1,
         # save_best_only=True,
         save_weights_only=True,
         mode='max')
     stopper = EarlyStopping(
-        monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', 
+        # monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', 
+        monitor='val_auc' if estimator_name.lower() == "lstm-cnn" else "val_auc_1",
         patience=threshold_epochs)
     
     # append callbacks
@@ -546,6 +552,7 @@ if __name__ == "__main__":
                 'window_size': [5 * 128], 
                 'n_a': [16, 32], 
                 'drop_prob': [0.05, 0.1, 0.75], 
+                'lamb_da': [0.1]
             },
             'opt': Adam, 
             'loss': Dice(),
