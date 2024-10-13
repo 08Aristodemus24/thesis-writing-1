@@ -16,7 +16,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from utilities.loaders import concur_load_data, save_meta_data, split_data, save_model
 from models.llanes_jurado import LSTM_CNN
-from models.cueva import LSTM_SVM, LSTM
+from models.cueva import LSTM_SVM, LSTM_FE
 
 from argparse import ArgumentParser
 
@@ -540,8 +540,8 @@ if __name__ == "__main__":
             'loss': Dice(),
             'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
         },
-        'lstm': {
-            'model': LSTM,
+        'lstm-fe': {
+            'model': LSTM_FE,
             'hyper_params': {
                 'window_size': [5 * 128], 
                 'n_a': [16, 32], 

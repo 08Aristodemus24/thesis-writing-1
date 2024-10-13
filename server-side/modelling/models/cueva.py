@@ -281,23 +281,21 @@ class LSTM_SVM(tf.keras.Model):
     
 
 
-class LSTM(tf.keras.Model):
+class LSTM_FE(tf.keras.Model):
     def __init__(self, window_size=5 * 128, n_a=16, drop_prob=0.05, **kwargs):
-        super(LSTM_SVM, self).__init__(**kwargs)
+        super(LSTM_FE, self).__init__(**kwargs)
         self.window_size = window_size
         self.n_a = n_a
         self.drop_prob = drop_prob
 
         # LSTM layers
         self.lstm_layer_1 = LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=True, name='lstm-layer-1')
-        self.lstm_norm_1 = BatchNormalization(name='batch-norm-1')
         self.lstm_drop_1 = Dropout(drop_prob, name='drop-layer-1')
 
         # whole LSTM has shape (m, 5 * 128, n_a), last hidden state has (m, n_a)
         self.lstm_layer_2 = LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=False, name='lstm-layer-2')
-        self.lstm_norm_2 = BatchNormalization(name='batch-norm-2')
-        self.lstm_drop_2 = Dropout(drop_prob, name='drop-layer-2')
             
+        # dense layer
         self.dense_layer = Dense(units=1, activation=tf.nn.sigmoid, name='dense-layer')
 
         # extra metrics
@@ -314,20 +312,17 @@ class LSTM(tf.keras.Model):
 
         # LSTM layers
         lstm_out_1 = self.lstm_layer_1(inputs, training=training)
-        lstm_normed_1 = self.lstm_norm_1(lstm_out_1, training=training)
-        lstm_dropped_1 = self.lstm_drop_1(lstm_normed_1, training=training)
+        lstm_dropped_1 = self.lstm_drop_1(lstm_out_1, training=training)
 
         lstm_out_2 = self.lstm_layer_2(lstm_dropped_1, training=training)
-        lstm_normed_2 = self.lstm_norm_2(lstm_out_2, training=training)
-        lstm_dropped_2 = self.lstm_drop_2(lstm_normed_2, training=training)
 
         # Dense layer
-        out = self.dense_layer(lstm_dropped_2, training=training)
+        out = self.dense_layer(lstm_out_2, training=training)
 
         return out
 
     def get_config(self):
-        config = super(LSTM_SVM, self).get_config()
+        config = super(LSTM_FE, self).get_config()
         config['window_size'] = self.window_size
         config['n_a'] = self.n_a
         config['drop_prob'] = self.drop_prob

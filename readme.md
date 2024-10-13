@@ -5,6 +5,8 @@
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_10 gamma_0.5 units_10`: command for preliminary modelling of proposed model 
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 75e-4 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_1 gamma_0.1 units_10`
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 75e-4 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_0.7 gamma_0.5 units_10`
+* `python tuning_dl.py -m lstm-fe -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05`
+
 * `scp -r -i C:/Users/LARRY/.ssh/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/" michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/data/`
 
 # This repository contains all generalized code snippets and templates relating to model experimentation, training, evaluation, testing, server-side loading, client-side requests, usage documentation, loaders, evaluators, visualizers, and preprocessor utilities, and the model architectures, figures, and final folder
@@ -555,6 +557,9 @@ https://github.com/keras-team/keras/issues/12960
 https://keras.io/getting_started/faq/#how-can-i-obtain-the-output-of-an-intermediate-layer-feature-extraction
 
 basically what they're trying to say here is in a single script wee ought to train a tensorflow model as a side task and as a byproduct of its training we extract an intermediate layer for its features and use it as input to the second phase of training in the script which will be the feeding of these layer features as input to the SVM 
+
+23. saving output of lstm feature extractor as .npy file 
+https://note.nkmk.me/en/python-numpy-load-save-savez-npy-npz/#save-an-array-to-an-npy-file-npsave
 
 
 ## artifact detection and correction:
