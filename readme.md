@@ -558,8 +558,10 @@ https://keras.io/getting_started/faq/#how-can-i-obtain-the-output-of-an-intermed
 
 basically what they're trying to say here is in a single script wee ought to train a tensorflow model as a side task and as a byproduct of its training we extract an intermediate layer for its features and use it as input to the second phase of training in the script which will be the feeding of these layer features as input to the SVM 
 
-23. saving output of lstm feature extractor as .npy file 
+23. saving output of lstm feature extractor as .npy file     
 https://note.nkmk.me/en/python-numpy-load-save-savez-npy-npz/#save-an-array-to-an-npy-file-npsave
+
+24. It sounds like you're encountering an issue with a custom TensorFlow model where the inputs and outputs attributes are not available. This can happen when you create a model using subclassing instead of the functional API. In subclassed models, TensorFlow does not automatically track the inputs and outputs attributes.
 
 
 ## artifact detection and correction:

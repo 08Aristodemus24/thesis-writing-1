@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow import GradientTape
-from tensorflow.keras import Sequential 
+from tensorflow.keras import Sequential, Input, Model 
 from tensorflow.keras.losses import SquaredHinge
 from tensorflow.keras.metrics import BinaryCrossentropy as bce_metric, BinaryAccuracy, Precision, Recall, AUC, F1Score
 from tensorflow.keras.layers import (
@@ -281,133 +281,35 @@ class LSTM_SVM(tf.keras.Model):
     
 
 
-class LSTM_FE(tf.keras.Model):
-    def __init__(self, window_size=5 * 128, n_a=16, drop_prob=0.05, **kwargs):
-        super(LSTM_FE, self).__init__(**kwargs)
-        self.window_size = window_size
-        self.n_a = n_a
-        self.drop_prob = drop_prob
+def LSTM_FE(window_size=5 * 128, n_a=16, drop_prob=0.05, **kwargs):
+    # input shape will be (m, 640, 1)
+    inputs = Input(shape=(window_size, 1))
 
-        # LSTM layers
-        self.lstm_layer_1 = LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=True, name='lstm-layer-1')
-        self.lstm_drop_1 = Dropout(drop_prob, name='drop-layer-1')
+    # LSTM layers
+    lstm_layer_1 = LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=True, name='lstm-layer-1')
+    lstm_drop_1 = Dropout(drop_prob, name='drop-layer-1')
 
-        # whole LSTM has shape (m, 5 * 128, n_a), last hidden state has (m, n_a)
-        self.lstm_layer_2 = LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=False, name='lstm-layer-2')
-            
-        # dense layer
-        self.dense_layer = Dense(units=1, activation=tf.nn.sigmoid, name='dense-layer')
-
-        # extra metrics
-        self.prec_metric = Precision(name="precision")
-        self.rec_metric = Recall(name="recall")
-
-
-    def call(self, inputs, training=False):
-        # input shape will be a (m, window_size, n_f) (m, Tx, nf) which
-        # based on our data we know we can reshape into since we have will
-        # have a window size of 5 * 128 according to Llanes-Jurado et al. (2023)
-        # so m, 5 * 128, 1 where 1 will only be our number of features since 
-        # there will be no feature engineering required
-
-        # LSTM layers
-        lstm_out_1 = self.lstm_layer_1(inputs, training=training)
-        lstm_dropped_1 = self.lstm_drop_1(lstm_out_1, training=training)
-
-        lstm_out_2 = self.lstm_layer_2(lstm_dropped_1, training=training)
-
-        # Dense layer
-        out = self.dense_layer(lstm_out_2, training=training)
-
-        return out
-
-    def get_config(self):
-        config = super(LSTM_FE, self).get_config()
-        config['window_size'] = self.window_size
-        config['n_a'] = self.n_a
-        config['drop_prob'] = self.drop_prob
-
-        return config
-    
-    def train_step(self, data):
-        # what if I customize calculation fo loss here in order to add regularization 
-        # and optimize the model based on the regularized loss
-
-        # unpack data first 
-        X, Y = data
-
-        with GradientTape() as tape:
-            # pass a batch of X to model representing one forward pass
-            # recall that prediction will be a sigmoid probability
-            Y_pred = self(X, training=True)
-
-            # compute loss value by using original Y labels
-            # and by using sigmoid probabilities as required by dice loss
-            dice_loss = self.compute_loss(y=Y, y_pred=Y_pred)
-
-        # Compute gradients
-        coefficients = self.trainable_variables
-        gradients = tape.gradient(dice_loss, coefficients)
-
-        # Update weights
-        self.optimizer.apply_gradients(zip(gradients, coefficients))
-
-        # convert probs to solid 1s and 0s for prec and rec metrics
-        pred_train_whole = tf.cast(Y_pred >= 0.2, tf.int64)
-        print(pred_train_whole)
-
-        # update metrics (includes the metric that tracks the loss)
-        print(f'metrics: {self.metrics}')
-        for metric in self.metrics:
-            print(f'type of metric: {type(metric)}')
-            print(f'metric name: {metric.name}')
-
-            if metric.name == "loss":
-                # instead of SquaredHinge in .compile() automatically
-                # calculating our loss for us which doesn't include regularization
-                # we pass our manually calculated loss which includes regularization
-                # in the loss function inside our self.metrics dictionary
-                metric.update_state(dice_loss)
-            else:
-                # binary crossentropy, accuracy, f1 score, and auc will
-                # need sigmoid probabilities as the predictions
-                metric.update_state(Y, Y_pred)
-
-        # on the other hand precision and recall metrics need solid 1s
-        # and 0s converted from the sigmoid probabilities
-        self.prec_metric.update_state(Y, pred_train_whole)
-        self.rec_metric.update_state(Y, pred_train_whole)
-
-        # return a dict mapping metric names to current value
-        return {metric.name: metric.result() for metric in self.metrics + [self.prec_metric, self.rec_metric]}
-    
-    # note we do not chnage the inner test_step() mechanism
-    # unlike we did train_step() with regularization this is because
-    # as we recall we should only apply regularization during training
-    # and not in testing
-    def test_step(self, data):
-        # unpack the data
-        X, Y = data
-
-        # compute predictions given validation data
-        Y_pred = self(X, training=False)
-
-        # updates the metrics tracking the loss
-        val_dice_loss = self.compute_loss(y=Y, y_pred=Y_pred)
-
-        # convert probs to solid 1s and 0s for prec and rec metrics
-        pred_test_whole = tf.cast(Y_pred >= 0.2, tf.int64)
-
-        # update the metrics.
-        for metric in self.metrics:
-            if metric.name != "loss":
-                metric.update_state(Y, Y_pred)
-            else:
-                metric.update_state(val_dice_loss)
+    # whole LSTM has shape (m, 5 * 128, n_a), last hidden state has (m, n_a)
+    lstm_layer_2 = LSTM(units=n_a, activation=tf.nn.tanh, return_sequences=False, name='lstm-layer-2')
         
-        self.prec_metric.update_state(Y, pred_test_whole)
-        self.rec_metric.update_state(Y, pred_test_whole)
-            
-        # return a dict mapping metric names to current value.
-        # note that it will include the loss (tracked in self.metrics).
-        return {metric.name: metric.result() for metric in self.metrics + [self.prec_metric, self.rec_metric]}
+    # dense layer
+    dense_layer = Dense(units=1, activation=tf.nn.sigmoid, name='dense-layer')
+
+    # input shape will be a (m, window_size, n_f) (m, Tx, nf) which
+    # based on our data we know we can reshape into since we have will
+    # have a window size of 5 * 128 according to Llanes-Jurado et al. (2023)
+    # so m, 5 * 128, 1 where 1 will only be our number of features since 
+    # there will be no feature engineering required
+
+    # LSTM layers
+    lstm_out_1 = lstm_layer_1(inputs)
+    lstm_dropped_1 = lstm_drop_1(lstm_out_1)
+
+    lstm_out_2 = lstm_layer_2(lstm_dropped_1)
+
+    # Dense layer
+    out = dense_layer(lstm_out_2)
+
+    model = Model(inputs=inputs, outputs=out)
+    
+    return model
