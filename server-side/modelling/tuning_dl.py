@@ -494,18 +494,18 @@ if __name__ == "__main__":
     parser.add_argument("--hyper_param_list", type=str, default="window_size_640", nargs="+", help="list of hyper parameters to be used as configuration during training")
     args = parser.parse_args()
 
-    # # read and load data
-    # # will be a list of 3D numpy arrays
-    # subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
+    # read and load data
+    # will be a list of 3D numpy arrays
+    subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
 
-    # create and load test data
-    m = 1000
-    window_size = 320
-    n_f = 1
-    n_subjects = 5
-    subjects_signals = [np.random.randn(m, window_size, 1) for _ in range(n_subjects)]
-    subjects_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
-    subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
+    # # create and load test data
+    # m = 1000
+    # window_size = 320
+    # n_f = 1
+    # n_subjects = 5
+    # subjects_signals = [np.random.randn(m, window_size, 1) for _ in range(n_subjects)]
+    # subjects_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
+    # subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
 
     # model hyper params
     models = {
