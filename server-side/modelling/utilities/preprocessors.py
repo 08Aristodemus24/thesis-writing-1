@@ -487,6 +487,6 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         res_df["new_signal"].iloc[to_clean_segment.index.values] = corrected_segment
 
         plt.show()
-        plt.savefig(f'./figures & images/segment splined {begin_index} to {end_index}.jpg')
+        # plt.savefig(f'./figures & images/segment splined {begin_index} to {end_index}.jpg')
 
     return res_df, dict_metrics
