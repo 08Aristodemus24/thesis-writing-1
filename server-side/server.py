@@ -41,12 +41,10 @@ models = {
     'cueva-lstm-svm': {
         # 'model':
         # 'hyper_params':
-        # 'scaler':
     },
     'jurado-lstm-cnn': {
         # 'model':
         # 'hyper_params':
-        # 'scaler':
     },
     'taylor-svm': {
         # 'model':
@@ -91,14 +89,14 @@ def load_miscs():
     print('loading miscellaneous...')
     # this is for loading miscellaneous variables for 
     # deep learning models such as hyper parameters
-    lstm_svm_hp = load_meta_data('./modelling/saved/misc/cueva_lstm-svm_meta_data.json')
-    # lstm_cnn_hp = load_meta_data('./modelling/saved/misc/jurado_lstm-cnn_meta_data.json')
+    # lstm_svm_hp = load_meta_data('./modelling/saved/misc/cueva_lstm-svm_meta_data.json')
+    lstm_cnn_hp = load_meta_data('./modelling/saved/misc/jurado_lstm-cnn_meta_data.json')
 
-    models['cueva-lstm-svm']['hyper_params'] = lstm_svm_hp
-    # models['jurado-lstm-cnn']['hyper_params'] = lstm_cnn_hp
+    # models['cueva-lstm-svm']['hyper_params'] = lstm_svm_hp
+    models['jurado-lstm-cnn']['hyper_params'] = lstm_cnn_hp
 
-    # # this is for loading miscellaneous variables for
-    # # machine learning models such as the reduced feature set
+    # this is for loading miscellaneous variables for
+    # machine learning models such as the reduced feature set
     # taylor_lr_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_lr_feature_set.txt')
     # taylor_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_svm_feature_set.txt')
     # taylor_rf_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_rf_feature_set.txt')
@@ -147,12 +145,12 @@ def load_models():
     global models
     
     print('loading models...')
-    # jurado_lstm_cnn = LSTM_CNN(**models['jurado-lstm-cnn']['hyper_params'])
-    cueva_lstm_svm = LSTM_SVM(**models['cueva-lstm-svm']['hyper_params'])
+    jurado_lstm_cnn = LSTM_CNN(**models['jurado-lstm-cnn']['hyper_params'])
+    # cueva_lstm_svm = LSTM_SVM(**models['cueva-lstm-svm']['hyper_params'])
 
     # # pre load saved weights for deep learning models
-    # jurado_lstm_cnn.load_weights('./modelling/saved/weights/lstm_cnn_jurado_07_0.5200.weights.h5')
-    cueva_lstm_svm.load_weights('./modelling/saved/weights/cueva_lstm-svm_28_0.7896.weights.h5')
+    jurado_lstm_cnn.load_weights('./modelling/saved/weights/EDABE_LSTM_1DCNN_Model.h5')
+    # cueva_lstm_svm.load_weights('./modelling/saved/weights/cueva_lstm-svm_28_0.7896.weights.h5')
 
     # # pre load saved machine learning models
     # taylor_lr = load_model('./modelling/saved/mmodelsisc/taylor_lr_clf.pkl')
@@ -163,8 +161,8 @@ def load_models():
     # hossain_gbt = load_model('./modelling/saved/models/hossain_gbt_clf.pkl')
 
     # populate dictionary with loaded models
-    # models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
-    models['cueva-lstm-svm']['model'] = cueva_lstm_svm
+    models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
+    # models['cueva-lstm-svm']['model'] = cueva_lstm_svm
     # models['taylor-lr']['model'] = taylor_lr
     # models['taylor-svm']['model'] = taylor_svm
     # models['taylor-rf']['model'] = taylor_rf
@@ -326,9 +324,10 @@ def predict():
         # so lets say we have our signals we'd have to divide these segments into 
 
     else:
-        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label', verbose=True)
-        print(subject_signals.shape)
-        print(subject_labels.shape)
+        # pass
+        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label', scale=True, verbose=True)
+        print(f'signals {subject_signals}, shape: {subject_signals.shape}')
+        print(f'labels {subject_labels}, shape: {subject_labels.shape}')
 
         # signals and labels are already numpy matrices
         # assign to X and Y variable for readability
@@ -341,6 +340,7 @@ def predict():
         # depending on dl model Y_pred will either be unactivated logits 
         # or sigmoid probabilities
         Y_pred = model.predict(X)
+        print(Y_pred)
 
         # use model for predictions recall that the dl models 
         # output a sigmoid probability value however for 
@@ -362,30 +362,24 @@ def predict():
         print(f"true Y: {Y}")
         print(f"unique values and counts: {np.unique(Y, return_counts=True)}")
 
-        test_acc = BinaryAccuracy(Y, Y_pred)().numpy()
-        test_f1 = F1Score(Y, Y_pred)().numpy()
-        test_roc_auc = AUC(Y, Y_pred)().numpy()
-        test_prec = Precision(Y, Y_pred_whole)().numpy()
-        test_rec = Recall(Y, Y_pred_whole)().numpy()
+        print(type(Y))
+        print(type(Y_pred))
+        # test_acc = BinaryAccuracy(Y, Y_pred.numpy())().numpy()
+        # test_f1 = F1Score(Y, Y_pred)().numpy()
+        # test_roc_auc = AUC(Y, Y_pred)().numpy()
+        # test_prec = Precision(Y, Y_pred_whole)().numpy()
+        # test_rec = Recall(Y, Y_pred_whole)().numpy()
 
-        # compute performance metric values for test subject
-        print(f"test acc: {test_acc} \
-              \ntest f1: {test_f1} \
-              \ntest roc_auc: {test_roc_auc} \
-              \ntest prec: {test_prec} \
-              \ntest rec: {test_rec}")    
+        # # compute performance metric values for test subject
+        # print(f"test acc: {test_acc} \
+        #       \ntest f1: {test_f1} \
+        #       \ntest roc_auc: {test_roc_auc} \
+        #       \ntest prec: {test_prec} \
+        #       \ntest rec: {test_rec}")
 
     # once predictions have been extracted from respective models
     # pass to the correct_signals() function
-    correct_signals(Y_pred , subject_eda_data, selector_config, estimator_name)
+    res_test_df, dict_metrics = correct_signals(Y_pred_whole, subject_eda_data, selector_config, estimator_name)
+    print(f'dict_metrics: {dict_metrics}')
     
-    # # predictor
-    # logits = models[0].predict(reshaped_img)
-
-    # # decoding stage
-    # Y_preds = activate_logits(logits)
-    # Y_preds = decode_one_hot(Y_preds)
-    # final_preds = re_encode_sparse_labels(Y_preds, new_labels=['Amoeba', 'Euglena', 'Hydra', 'Paramecium', 'Rod_bacteria', 'Spherical_bacteria', 'Spiral_bacteria', 'Yeast'])
-    # print(final_preds)
-    
-    # return jsonify({'prediction': final_preds.tolist()})
+    return jsonify({'corrected_df': res_test_df.to_dict("records")})

@@ -237,9 +237,9 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     # in this example start_artf_pred will be [3, 9, 13, 17, 21]
     # and end_artf_pred will be [5, 11, 14, 18, 22]
     start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
-    print('unmerged predicted artifacts: ')
-    print(f'start indeces of unmerged predicted artifacts: {start_artf_pred} \n length: {len(start_artf_pred)}')
-    print(f'end indeces of unmerged predicted artifacts: {end_artf_pred} \n length: {len(end_artf_pred)}\n')
+    # print('unmerged predicted artifacts: ')
+    # print(f'start indeces of unmerged predicted artifacts: {start_artf_pred} \n length: {len(start_artf_pred)}')
+    # print(f'end indeces of unmerged predicted artifacts: {end_artf_pred} \n length: {len(end_artf_pred)}\n')
     
     # length of start_artf_pred is 5 for instance
     # 5 - 1 is 4 so therefore we would only be looping from 0 to 3 and give
@@ -252,9 +252,9 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     
     # once merged we find again the begin indeces and end indeces of these artifacts
     start_artf_pred, end_artf_pred = find_begin_end(pred_target_array)
-    print('merged predicted artifacts: ')
-    print(f'start indeces of merged predicted artifacts: {start_artf_pred} \n length: {len(start_artf_pred)}')
-    print(f'end indeces of merged predicted artifacts: {end_artf_pred} \n length: {len(end_artf_pred)}\n')
+    # print('merged predicted artifacts: ')
+    # print(f'start indeces of merged predicted artifacts: {start_artf_pred} \n length: {len(start_artf_pred)}')
+    # print(f'end indeces of merged predicted artifacts: {end_artf_pred} \n length: {len(end_artf_pred)}\n')
     
     res_df["post_proc_pred_art"] = pred_target_array
     
@@ -294,7 +294,7 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
     # ### AUTOMATIC CORRECTION ### 
     # ############################
     
-    print("commencing of the interpolation...")
+    print("commencing interpolation...")
 
     # find begin and end indeces of post processed predicted artifacts
     # again
@@ -348,8 +348,8 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         
         # we now get the time values based on these new begin and end indeces
         to_clean_segment = res_df[time_column].iloc[begin_index:end_index]
-        print(f'time to clean: {to_clean_segment.to_list()}')
-        print(f'segment to clean index values: {to_clean_segment.index.values}')
+        # print(f'time to clean: {to_clean_segment.to_list()}')
+        # print(f'segment to clean index values: {to_clean_segment.index.values}')
         # segment to clean index values: [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
         # 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
         # 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71
@@ -359,7 +359,7 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         to_plot = to_clean_segment
 
         to_clean = res_df[signal_column].iloc[to_clean_segment.index.values]
-        print(f'signals to clean: {to_clean.to_list()}')
+        # print(f'signals to clean: {to_clean.to_list()}')
         # [0.0, 0.0, 0.0, ..., 0.0002220002220002]
         
         # 0 if the beginning of an artifact has index 0 and if not 128 / 4 -> 32 -1 -> 31 is used
@@ -389,11 +389,11 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         # but in this case we use just the index values
         # [0 or 31:-32]
         x_int = to_clean[th_init_space:-th_end_space].index.values
-        print(f'x_int: {x_int} - length: {x_int.shape[0]}')
+        # print(f'x_int: {x_int} - length: {x_int.shape[0]}')
 
         # as we know we ought to use as y values are the signals themselves
         y_int = to_clean[th_init_space:-th_end_space].values
-        print(f'y_int: {y_int} - length: {y_int.shape[0]}')
+        # print(f'y_int: {y_int} - length: {y_int.shape[0]}')
         
         #########################
         ### SPLINE CORRECTION ###
@@ -430,7 +430,6 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         y_to_spline = [y_int[0]] + down_sample(y_int, target_freq=y_int.shape[0] / 8) + [y_int[-1]]
         print(f'x_to_spline: {x_to_spline} - length: {len(x_to_spline)}')
         print(f'y_to_spline: {y_to_spline} - length: {len(y_to_spline)}')
-        plt.plot(x_to_spline, y_to_spline, 'o', x_to_spline, y_to_spline, 'b')
 
         axes[0].scatter(x_int, y_int, c="#eb34b7", marker='o')
         axes[0].plot(x_int, y_int, c="#7c31de", linestyle="-")
@@ -478,15 +477,15 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         
         tuple_concat = (mix_curve, final_correct) if init_correct.shape[0] < 2 else (init_correct, mix_curve, final_correct)
         correct_linear = np.concatenate(tuple_concat, axis=0)
-        print(f'corrected linear: {correct_linear}')
-        print(f'corrected linear shape: {correct_linear.shape}')
+        # print(f'corrected linear: {correct_linear}')
+        # print(f'corrected linear shape: {correct_linear.shape}')
         
         
         # 128 / 8 as the window size is 16 or 0.25 seconds
         corrected_segment = moving_average(correct_linear, freq_signal / 8)
         res_df["new_signal"].iloc[to_clean_segment.index.values] = corrected_segment
 
-        plt.show()
+        # plt.show()
         # plt.savefig(f'./figures & images/segment splined {begin_index} to {end_index}.jpg')
 
     return res_df, dict_metrics

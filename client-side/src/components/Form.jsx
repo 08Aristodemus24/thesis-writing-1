@@ -17,7 +17,8 @@ export default function Form(){
     let [modelNames, setModelNames] = useState([]);
 
     let [sprSheetFile, setSprSheetFile] = useState(null);
-    let [sprSheet, setSprSheet] = useState([]);
+    let [initSprSheet, setInitSprSheet] = useState([]);
+    let [finalSprSheet, setFinalSprSheet] = useState([]);
 
     let [showRaw, setShowRaw] = useState(false);
     let [showCorrect, setShowCorrect] = useState(false);
@@ -55,7 +56,7 @@ export default function Form(){
             // once data is validated submitted and then extracted
             // reset form components form element
             setModelName(modelNames.length != 0 ? modelNames[0] : "");
-            // setSprSheet([]);
+            setInitSprSheet([]);
             setShowRaw(false);
             setShowCorrect(false);
             setShowArt(false);
@@ -71,7 +72,9 @@ export default function Form(){
                 'method': 'POST',
                 'body': form_data,
             });
+            const data = await resp.json();
             setResponse(resp);
+            setFinalSprSheet(data['corrected_df']);
 
             // if response.status is 200 then that means contact information
             // has been successfully sent to the email.js api
@@ -100,7 +103,8 @@ export default function Form(){
             modelNames, setModelNames,
             modelName, setModelName,
             sprSheetFile, setSprSheetFile,
-            sprSheet, setSprSheet,
+            initSprSheet, setInitSprSheet,
+            finalSprSheet, setFinalSprSheet,
             showRaw, setShowRaw,
             showCorrect, setShowCorrect,
             showArt, setShowArt,

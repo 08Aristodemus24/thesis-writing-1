@@ -654,7 +654,7 @@ them
 * <s>test llanes-jurado model on notebook and see if dataset will work</s>
 * review how automatic_EDA_correction() function by llanes-jurado works in order to start using the predicted data as basis to correct the eda signals
 
-* pqbqpr_expert2.csv
+* <s>pqbqpr_expert2.csv</s>
 calculating features from 1970-01-01 00:00:00 to 1970-01-01 00:00:00.500000 for index 0
 calculating features from 0 to 63 for index 0
 #### it takes 63 numbers excluding 0 to get from 0 to 63
@@ -710,7 +710,7 @@ last timestamp of exclusion timestamp list for first 1 hour slice: DatetimeIndex
 last timestamp of exclusion timestamp list for second 1 hour slice:
  '1970-01-01 01:39:36.906250' or '5976.90625' and when we do check oxused_expert2.csv's last row which has this timestamp when 
 
-* calculating roc auc score from predicted and true labels
+* <s>calculating roc auc score from predicted and true labels</s>
 
 ```
 def get_auc_score(y_true, y_prob):
@@ -743,12 +743,39 @@ def get_auc_score(y_true, y_prob):
     return np.trapz(tpr_array, fpr_array)
 ```
 
-* there still needs to be a way to prevent data leakage in loading data for the DL models because a sort of normalization function,
+* <s>there still needs to be a way to prevent data leakage in loading data for the DL models because a sort of normalization function,</s>
 - I pass validation data percentage of 0.3 to the training of the model
 - so new pipelien would be to read the read the signals as usual without the min max scaler anymore
 - separately join the training signals, and the cross validation signals
 - min max scale training signals, transform cross validation signals based on min max scaler scaled on training signals
 - save min max scaler scaled ontraining signals for later use in evaluation
+**this is closed as the only reason why min max scaling is applied for the signals is not because normalization is needed but because loading data by itself without scaling will take up too much ram for the machine to tolerate**
+
+* as far as I know I have the ff. models to tune and train
+- hossain_lr
+    - done with tuning and training
+- hossain_gbt
+    - will push through with tuning but with RFC
+- hossain_svm
+    - will not push through with tuning anymore, will go straight to training
+    - train with gamma and C parameters 0.5 and 0.1
+- taylor_lr
+    - will push through with tuning but with RFC
+- taylor_rf
+    - will push through with tuning but with RFC
+- taylor_svm
+    - will not push through with tuning anymore, will go straight to training
+    - train with gamma and C parameters 0.5 and 0.1
+- jurado_lstm_cnn
+    - already have weights that have been tuned and trained 
+- cueva_lstm_svm
+    - need lstm feature extractor trained
+    - need svm connection trained also on feature extractor will not tune anymore and go straight into training
+    - gamma and C params 0.5 and 0.1
+
+and at the end of this once models are trained they will be evaluated on the testing data
+and whatever scores the trained models get will be recorded, hindi na yung galing sa hyper param
+tuning or summarization.ipynb
 
 * get stress detection data
 - decompose eda signals in stress detection data to phasic and tonic component
