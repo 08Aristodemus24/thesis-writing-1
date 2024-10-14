@@ -14,7 +14,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 from sklearn.preprocessing import MinMaxScaler
 
-from utilities.loaders import concur_load_data, save_meta_data, split_data, save_model
+from utilities.loaders import concur_load_data, save_meta_data, split_data
 from models.llanes_jurado import LSTM_CNN
 from models.cueva import LSTM_SVM, LSTM_FE
 
@@ -496,7 +496,7 @@ if __name__ == "__main__":
 
     # read and load data
     # will be a list of 3D numpy arrays
-    subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
+    subjects_signals, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pipeline)
 
     # # create and load test data
     # m = 1000
@@ -532,7 +532,7 @@ if __name__ == "__main__":
             'hyper_params': {
                 'window_size': [5 * 128], 
                 'n_a': [16, 32],
-                'drop_prob': [0.05, 0.1, 0.75],
+                'drop_prob': [0.05, 0.75],
                 'filter_size': [32],
                 'kernel_size': [5]
             },

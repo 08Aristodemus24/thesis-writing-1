@@ -6,8 +6,8 @@ import numpy as np
 import ast
 import re
 
-from sklearn.feature_selection import SequentialFeatureSelector, RFE
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.feature_selection import RFE
+from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
@@ -446,7 +446,7 @@ if __name__ == "__main__":
 
     # read and load data
     print(os.getcwd())
-    subjects_features, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pl)
+    subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl)
     print(subjects_features)
     print(subjects_labels)
 

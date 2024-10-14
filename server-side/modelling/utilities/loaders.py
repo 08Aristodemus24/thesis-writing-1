@@ -33,11 +33,12 @@ def download_dataset(url):
         zip_ref.extractall('./data')
 
 def _combine_data(subjects_data):
-    subjects_inputs, subjects_labels = zip(*subjects_data)
+    subjects_inputs, subjects_labels, subjects_name = zip(*subjects_data)
 
     # convert tuples to list
     subjects_inputs = list(subjects_inputs)
     subjects_labels = list(subjects_labels)
+    subjects_names = list(subjects_name)
 
     # if subjects_inputs and subjects_labels elementes are dataframe
     # objects then it would be better to concatenate them, but if they
@@ -48,9 +49,9 @@ def _combine_data(subjects_data):
         subjects_features = pd.concat(subjects_inputs, axis=0, ignore_index=True)
         subjects_labels = pd.concat(subjects_labels, axis=0, ignore_index=True)
 
-        return subjects_features, subjects_labels
+        return subjects_features, subjects_labels, subjects_names
     
-    return subjects_inputs, subjects_labels
+    return subjects_inputs, subjects_labels, subjects_names
 
 
 
@@ -89,19 +90,19 @@ def concur_load_data(feat_config: str="Taylor"):
             subject_labels['subject_id'] = subject_to_id[subject_name]
 
 
-            return (subject_features, subject_labels)
+            return (subject_features, subject_labels, subject_name)
 
         with ThreadPoolExecutor() as exe:
             # return from this will be a list of all subjects
             # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
             subjects_data = list(exe.map(helper, subject_names))
-            subjects_features, subjects_labels = _combine_data(subjects_data)
+            subjects_features, subjects_labels, subjects_names = _combine_data(subjects_data)
 
             # select all features associated with feat_config, include also subject_id
             subjects_features = subjects_features[feat_set + ['subject_id']]
 
-        print("subjects features and labels and subject to id lookup loaded")
-        return subjects_features, subjects_labels, subject_to_id
+        print("subjects features, labels, names and subject to id lookup loaded")
+        return subjects_features, subjects_labels, subjects_names, subject_to_id
 
     elif feat_config.capitalize() == "Jurado" or feat_config.capitalize() == "Cueva":
         # set directory to find raw subject signals based on data split
@@ -111,15 +112,6 @@ def concur_load_data(feat_config: str="Taylor"):
         subject_names = list(set([re.sub(r".csv", "", file) for file in os.listdir(dir)]))
         subject_to_id = {subject: id for id, subject in enumerate(subject_names)}
 
-        # # iterative processing
-        # subjects_data = []
-        # for subject_name in subject_names:
-        #     subject_eda_data = pd.read_csv(f'{dir}{subject_name}.csv', sep=';')
-        #     subject_eda_data.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
-        #     subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label')
-
-        #     subjects_data.append((subject_signals, subject_labels))
-
         # concurrent processing
         def helper(subject_name: str):
             subject_eda_data = pd.read_csv(f'{dir}{subject_name}.csv', sep=';')
@@ -128,7 +120,7 @@ def concur_load_data(feat_config: str="Taylor"):
 
             subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col="label", scale=True)
 
-            return (subject_signals, subject_labels)
+            return (subject_signals, subject_labels, subject_name)
         
         with ThreadPoolExecutor() as exe:
             # return from this will be a list of all subjects
@@ -136,10 +128,36 @@ def concur_load_data(feat_config: str="Taylor"):
             subjects_data = list(exe.map(helper, subject_names))
 
         # find a way here to combine all 3d subject_signals and subject_labels
-        subjects_signals, subjects_labels = _combine_data(subjects_data)
+        subjects_signals, subjects_labels, subjects_names = _combine_data(subjects_data)
 
-        print("subjects signals and labels and subject to id lookup loaded")
-        return subjects_signals, subjects_labels, subject_to_id
+        print("subjects signals, labels, names and subject to id lookup loaded")
+        return subjects_signals, subjects_labels, subjects_names, subject_to_id
+    
+    else:
+        # set directory to find raw subject signals based on data split
+        dir = f'./data/Hybrid Artifact Detection Data/train/'
+
+        # list all .csv features and .csv labels in directory
+        subject_names = list(set([re.sub(r"_lstm_features.npy|_lstm_labels.npy", "", file) for file in os.listdir(dir)]))
+        subject_to_id = {subject: id for id, subject in enumerate(subject_names)}
+
+        # concurrent processing
+        def helper(subject_name: str):
+            subject_lstm_features = np.load(f'{dir}{subject_name}_lstm_features.npy')
+            subject_lstm_labels = np.load(f'{dir}{subject_name}_lstm_label.npy')
+
+            return (subject_lstm_features, subject_lstm_labels, subject_name)
+        
+        with ThreadPoolExecutor() as exe:
+            # return from this will be a list of all subjects
+            # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
+            subjects_data = list(exe.map(helper, subject_names))
+
+        # find a way here to combine all 3d subject_signals and subject_labels
+        subjects_signals, subjects_labels, subjects_names = _combine_data(subjects_data)
+
+        print("subjects lstm features, labels, names and subject to id lookup loaded")
+        return subjects_signals, subjects_labels, subjects_names, subject_to_id
 
 def load_results(filename: str):
     # read .json file and maybe convert it to a readable dataframe

@@ -6,12 +6,7 @@ import numpy as np
 import ast
 import re
 
-import tensorflow as tf
-from tensorflow.keras.optimizers import RMSprop, Adam
-from tensorflow.keras.losses import Dice, SquaredHinge, Hinge
-from tensorflow.keras.metrics import BinaryCrossentropy as bce_metric, BinaryAccuracy, Precision, Recall, F1Score, AUC
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVC
 
@@ -236,7 +231,6 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame,
     subjects_labels: pd.DataFrame,
     subject_to_id: dict,
     selector_config: str,
-    n_features_to_select: int,
     n_rows_to_sample: int | None,
     estimator_name: str,
     estimator,
@@ -301,32 +295,9 @@ def train_final_estimator(subjects_features: pd.DataFrame,
     estimator,
     hyper_param_config: dict):
 
-    # remove subject id column, convert to numpy array the dataframes
-    # then reduce features based on selected features by RFE
-
-    # if reduced feature set does not yet exist then tuning_ml.py must
-    # be run first in tuning mode in order to obtain reduced feature set
-    if load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt') == False:
-        return
-    
-    # if features have already been saved load it
-    selected_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt')
-
-    # select only features based on selector_config argument
-    subjects_features = subjects_features[selected_feats]
-    subjects_labels = subjects_labels.drop(columns=['subject_id'])
-    print(subjects_features.columns)
-    print(subjects_labels.columns)
-
-    # remove subject_id column of both dataframes then
-    # convert to numpy arrays
-    X = subjects_features.to_numpy()
-    Y = subjects_labels.to_numpy().ravel()
-
-    if selector_config == "hossain":
-        scaler = StandardScaler()
-        X = scaler.fit_transform(X)
-        save_model(scaler, f'./saved/misc/{selector_config}_{estimator_name}_scaler.pkl')
+    # assign to x and y vars for readability
+    X = subjects_features
+    Y = subjects_labels
 
     # create model with specific hyper param configurations
     # and fit to whole training and validation dataset
@@ -386,7 +357,7 @@ if __name__ == "__main__":
 
     # read and load data
     print(os.getcwd())
-    subjects_features, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pl)
+    subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl)
     print(subjects_features)
     print(subjects_labels)
 
@@ -410,7 +381,6 @@ if __name__ == "__main__":
             subjects_labels, 
             subject_to_id, 
             selector_config=args.pl,
-            n_features_to_select=args.n_features_to_select, 
             n_rows_to_sample=args.n_rows_to_sample,
             estimator_name=args.m,
             estimator=models[args.m]['model'],
