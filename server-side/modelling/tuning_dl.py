@@ -136,8 +136,7 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
     # define early stopping callback to stop if there is no improvement
     # of validation loss for 30 consecutive epochs
     stopper = EarlyStopping(
-        # monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', 
-        monitor='val_auc' if estimator_name.lower() == "lstm-cnn" else 'val_auc_1', 
+        monitor='val_auc',
         patience=threshold_epochs)
     callbacks = [stopper]
 
@@ -170,7 +169,7 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         # in every hyper param config we must define/redefine an optimizer 
         model = estimator(**hyper_param_config)
         optimizer = opt(learning_rate=alpha)
-        compile_args = {"optimizer": optimizer, "loss": loss, "metrics": metrics} if len(metrics) > 0  else {"optimizer": optimizer, "loss": loss} 
+        compile_args = {"optimizer": optimizer, "loss": loss, "metrics": metrics}# if len(metrics) > 0  else {"optimizer": optimizer, "loss": loss} 
         model.compile(**compile_args)
 
         # begin training model
@@ -223,10 +222,8 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
         fold_cross_rec = history.history['val_recall'][-1]
         fold_train_f1 = history.history['f1_score'][-1]
         fold_cross_f1 = history.history['val_f1_score'][-1]
-        # auc_1 and val_auc_1 occur in local machine in both lstm_fe and lstm_cnn but in 
-        # remote there is only auc_1 and val_auc_1 in lstm_fe and not lstm_cnn
-        fold_train_roc_auc = history.history['auc' if estimator_name.lower() == "lstm-cnn" else "auc_1"][-1]
-        fold_cross_roc_auc = history.history['val_auc' if estimator_name.lower() == "lstm-cnn" else "val_auc_1"][-1]
+        fold_train_roc_auc = history.history['auc'][-1]
+        fold_cross_roc_auc = history.history['val_auc'][-1]
         
         # save append each metric value to each respective list
         folds_train_loss.append(fold_train_loss)
@@ -408,29 +405,26 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
 
     # in every hyper param config we must define/redefine an optimizer 
     optimizer = opt(learning_rate=alpha)
-    compile_args = {"optimizer": optimizer, "loss": loss, "metrics": metrics} if len(metrics) > 0  else {"optimizer": optimizer, "loss": loss} 
+    compile_args = {"optimizer": optimizer, "loss": loss, "metrics": metrics}# if len(metrics) > 0  else {"optimizer": optimizer, "loss": loss} 
     model.compile(**compile_args)
 
     # define checkpoint and early stopping callback to save
     # best weights at each epoch and to stop if there is no improvement
     # of validation loss for 10 consecutive epochs
     path = f"./saved/weights/{selector_config}_{estimator_name}"
-    # info = "_{epoch:02d}_{val_auc:.4f}.weights.h5" if estimator_name.lower() == "lstm-svm" else "_{epoch:02d}_{val_auc_1:.4f}.weights.h5"
-    info = "_{epoch:02d}_{val_auc:.4f}.weights.h5" if estimator_name.lower() == "lstm-cnn" else "_{epoch:02d}_{val_auc_1:.4f}.weights.h5"
+    info = "_{epoch:02d}_{val_auc:.4f}.weights.h5"
     weights_path = path + info
 
     # create callbacks
     checkpoint = ModelCheckpoint(
         weights_path,
-        # monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1',
-        monitor='val_auc' if estimator_name.lower() == "lstm-cnn" else "val_auc_1",
+        monitor='val_auc',
         verbose=1,
         # save_best_only=True,
         save_weights_only=True,
         mode='max')
     stopper = EarlyStopping(
-        # monitor='val_auc' if estimator_name.lower() == "lstm-svm" else 'val_auc_1', 
-        monitor='val_auc' if estimator_name.lower() == "lstm-cnn" else "val_auc_1",
+        monitor='val_auc',
         patience=threshold_epochs)
     
     # append callbacks
@@ -500,18 +494,18 @@ if __name__ == "__main__":
     parser.add_argument("--hyper_param_list", type=str, default="window_size_640", nargs="+", help="list of hyper parameters to be used as configuration during training")
     args = parser.parse_args()
 
-    # read and load data
-    # will be a list of 3D numpy arrays
-    subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
+    # # read and load data
+    # # will be a list of 3D numpy arrays
+    # subjects_signals, subjects_labels, subject_to_id = concur_load_data(feat_config=args.pipeline)
 
-    # # create and load test data
-    # m = 1000
-    # window_size = 320
-    # n_f = 1
-    # n_subjects = 5
-    # subjects_signals = [np.random.randn(m, window_size, 1) for _ in range(n_subjects)]
-    # subjects_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
-    # subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
+    # create and load test data
+    m = 1000
+    window_size = 320
+    n_f = 1
+    n_subjects = 5
+    subjects_signals = [np.random.randn(m, window_size, 1) for _ in range(n_subjects)]
+    subjects_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
+    subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
 
     # model hyper params
     models = {
@@ -531,7 +525,7 @@ if __name__ == "__main__":
             # following metrics would not work since all these require z to be activated by the sigmoid activation function
             # and naturally comparing Y_true which are 1's and 0's to unactivated values like 1.23, 0.28, 1.2, etc. will result
             # in 0 metric values being produced from Precision, Recall, etc.
-            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
+            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC(name='auc')]
         },
         'lstm-cnn': {
             'model': LSTM_CNN,
@@ -544,7 +538,7 @@ if __name__ == "__main__":
             },
             'opt': RMSprop,
             'loss': Dice(),
-            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC()]
+            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC(name='auc')]
         },
         'lstm-fe': {
             'model': LSTM_FE,
@@ -556,7 +550,7 @@ if __name__ == "__main__":
             },
             'opt': Adam, 
             'loss': Dice(),
-            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC(), Precision(), Recall()]
+            'metrics': [bce_metric(), BinaryAccuracy(), F1Score(), AUC(name='auc'), Precision(), Recall()]
         }
     }
 
