@@ -572,6 +572,8 @@ https://note.nkmk.me/en/python-numpy-load-save-savez-npy-npz/#save-an-array-to-a
 
 24. It sounds like you're encountering an issue with a custom TensorFlow model where the inputs and outputs attributes are not available. This can happen when you create a model using subclassing instead of the functional API. In subclassed models, TensorFlow does not automatically track the inputs and outputs attributes.
 
+25. sometimes outputs of jupyter notebooks can be so big that committing these changes may result in file being too large error and require you to use git large, or pulling these changes may end up in remote hang error
+
 
 ## artifact detection and correction:
 * <s>clone and review repo of Taylor et al.</s>
