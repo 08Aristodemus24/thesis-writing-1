@@ -313,6 +313,8 @@ wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh: downlo
 
 `scp -r -i C:/Users/LARRY/.ssh/<grup member>/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/" <group member coare userr name>@202.90.149.55:/home/<group member coare userr name>/scratch1/thesis-writing-1/server-side/modelling/`
 
+`scp -r -i C:/Users/LARRY/.ssh/id_rsa michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/saved/ C:/Users/LARRY/documents/scripts/thesis-writing-1/server-side/`: from remote to local
+
 9. calculating L2 norm or eculidean distance in the gaussian kernel of SVM
 
 ```
