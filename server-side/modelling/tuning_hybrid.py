@@ -1,6 +1,5 @@
 from sklearnex.svm import SVC
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-from sklearn.preprocessing import MinMaxScaler
+# from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 # from sklearn.svm import SVC, LinearSVC
 
 import itertools
@@ -170,61 +169,61 @@ def loso_cross_validation(subjects_lstm_features: pd.DataFrame | np.ndarray,
         pred_cross_probs = model.predict_proba(cross_lstm_features)
 
         # compute performance metric values for each fold
-        fold_train_acc = accuracy_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
-        fold_cross_acc = accuracy_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
-        fold_train_prec = precision_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
-        fold_cross_prec = precision_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
-        fold_train_rec = recall_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
-        fold_cross_rec = recall_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
-        fold_train_f1 = f1_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
-        fold_cross_f1 = f1_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
-        fold_train_roc_auc = roc_auc_score(y_true=train_lstm_labels, y_score=pred_train_labels)
-        fold_cross_roc_auc = roc_auc_score(y_true=cross_lstm_labels, y_score=pred_cross_labels)
-        fold_train_roc_auc_prob = roc_auc_score(y_true=train_lstm_labels, y_score=pred_train_probs[:, 1])
-        fold_cross_roc_auc_prob = roc_auc_score(y_true=cross_lstm_labels, y_score=pred_cross_probs[:, 1])
+    #     fold_train_acc = accuracy_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
+    #     fold_cross_acc = accuracy_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
+    #     fold_train_prec = precision_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
+    #     fold_cross_prec = precision_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
+    #     fold_train_rec = recall_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
+    #     fold_cross_rec = recall_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
+    #     fold_train_f1 = f1_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
+    #     fold_cross_f1 = f1_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
+    #     fold_train_roc_auc = roc_auc_score(y_true=train_lstm_labels, y_score=pred_train_labels)
+    #     fold_cross_roc_auc = roc_auc_score(y_true=cross_lstm_labels, y_score=pred_cross_labels)
+    #     fold_train_roc_auc_prob = roc_auc_score(y_true=train_lstm_labels, y_score=pred_train_probs[:, 1])
+    #     fold_cross_roc_auc_prob = roc_auc_score(y_true=cross_lstm_labels, y_score=pred_cross_probs[:, 1])
         
-        # save append each metric value to each respective list
-        folds_train_acc.append(fold_train_acc)
-        folds_cross_acc.append(fold_cross_acc)
-        folds_train_prec.append(fold_train_prec)
-        folds_cross_prec.append(fold_cross_prec)
-        folds_train_rec.append(fold_train_rec)
-        folds_cross_rec.append(fold_cross_rec)
-        folds_train_f1.append(fold_train_f1)
-        folds_cross_f1.append(fold_cross_f1)
-        folds_train_roc_auc.append(fold_train_roc_auc)
-        folds_cross_roc_auc.append(fold_cross_roc_auc)
-        folds_train_roc_auc_prob.append(fold_train_roc_auc_prob)
-        folds_cross_roc_auc_prob.append(fold_cross_roc_auc_prob)
+    #     # save append each metric value to each respective list
+    #     folds_train_acc.append(fold_train_acc)
+    #     folds_cross_acc.append(fold_cross_acc)
+    #     folds_train_prec.append(fold_train_prec)
+    #     folds_cross_prec.append(fold_cross_prec)
+    #     folds_train_rec.append(fold_train_rec)
+    #     folds_cross_rec.append(fold_cross_rec)
+    #     folds_train_f1.append(fold_train_f1)
+    #     folds_cross_f1.append(fold_cross_f1)
+    #     folds_train_roc_auc.append(fold_train_roc_auc)
+    #     folds_cross_roc_auc.append(fold_cross_roc_auc)
+    #     folds_train_roc_auc_prob.append(fold_train_roc_auc_prob)
+    #     folds_cross_roc_auc_prob.append(fold_cross_roc_auc_prob)
 
-        print(f"fold: {subject_id} with hyper params: {hyper_param_config} \
-              \ntrain acc: {fold_train_acc} cross acc: {fold_cross_acc} \
-              \ntrain prec: {fold_train_prec} cross prec: {fold_cross_prec} \
-              \ntrain rec: {fold_train_rec} cross rec: {fold_cross_rec} \
-              \ntrain f1: {fold_train_f1} cross f1: {fold_cross_f1} \
-              \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc} \
-              \ntrain roc_auc_prob: {fold_train_roc_auc_prob} cross roc_auc_prob: {fold_cross_roc_auc_prob}")
+    #     print(f"fold: {subject_id} with hyper params: {hyper_param_config} \
+    #           \ntrain acc: {fold_train_acc} cross acc: {fold_cross_acc} \
+    #           \ntrain prec: {fold_train_prec} cross prec: {fold_cross_prec} \
+    #           \ntrain rec: {fold_train_rec} cross rec: {fold_cross_rec} \
+    #           \ntrain f1: {fold_train_f1} cross f1: {fold_cross_f1} \
+    #           \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc} \
+    #           \ntrain roc_auc_prob: {fold_train_roc_auc_prob} cross roc_auc_prob: {fold_cross_roc_auc_prob}")
 
-    # once all fold train and cross metric values collected update read
-    # dictionary with specific hyper param config as key and its recorded
-    # metric values as value
-    results[f'{estimator_name}'][hyper_param_config_key] = {
-        'folds_train_acc':  folds_train_acc,
-        'folds_cross_acc': folds_cross_acc,
-        'folds_train_prec': folds_train_prec,
-        'folds_cross_prec': folds_cross_prec,
-        'folds_train_rec': folds_train_rec,
-        'folds_cross_rec': folds_cross_rec,
-        'folds_train_f1': folds_train_f1,
-        'folds_cross_f1': folds_cross_f1,
-        'folds_train_roc_auc': folds_train_roc_auc,
-        'folds_cross_roc_auc': folds_cross_roc_auc,
-        'folds_train_roc_auc_prob': folds_train_roc_auc_prob,
-        'folds_cross_roc_auc_prob': folds_cross_roc_auc_prob
-    }
+    # # once all fold train and cross metric values collected update read
+    # # dictionary with specific hyper param config as key and its recorded
+    # # metric values as value
+    # results[f'{estimator_name}'][hyper_param_config_key] = {
+    #     'folds_train_acc':  folds_train_acc,
+    #     'folds_cross_acc': folds_cross_acc,
+    #     'folds_train_prec': folds_train_prec,
+    #     'folds_cross_prec': folds_cross_prec,
+    #     'folds_train_rec': folds_train_rec,
+    #     'folds_cross_rec': folds_cross_rec,
+    #     'folds_train_f1': folds_train_f1,
+    #     'folds_cross_f1': folds_cross_f1,
+    #     'folds_train_roc_auc': folds_train_roc_auc,
+    #     'folds_cross_roc_auc': folds_cross_roc_auc,
+    #     'folds_train_roc_auc_prob': folds_train_roc_auc_prob,
+    #     'folds_cross_roc_auc_prob': folds_cross_roc_auc_prob
+    # }
 
-    with open(f'results/{selector_config}_{estimator_name}_results.json', 'w') as file:
-        json.dump(results, file)
+    # with open(f'results/{selector_config}_{estimator_name}_results.json', 'w') as file:
+    #     json.dump(results, file)
 
 def grid_search_loso_cv(subjects_lstm_features: pd.DataFrame | np.ndarray,
     subjects_lstm_labels: pd.DataFrame | np.ndarray,
