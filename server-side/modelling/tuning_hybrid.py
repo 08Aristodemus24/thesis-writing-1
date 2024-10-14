@@ -1,5 +1,7 @@
-from sklearnex import patch_sklearn
-patch_sklearn(["SVC"])
+from sklearnex.svm import SVC
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.preprocessing import MinMaxScaler
+# from sklearn.svm import SVC, LinearSVC
 
 import itertools
 import json
@@ -8,11 +10,6 @@ import pandas as pd
 import numpy as np
 import ast
 import re
-
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.svm import SVC, LinearSVC
-
 
 from utilities.loaders import concur_load_data, save_meta_data, split_data, save_model
 

@@ -1,5 +1,11 @@
-from sklearnex import patch_sklearn
-patch_sklearn(["SVC", "RandomForestClassifier", "GradientBoostingClassifier", "LogisticRegression"])
+from sklearnex.svm import SVC
+from sklearnex.linear_model import LogisticRegression
+# from sklearn.svm import SVC, LinearSVC
+# from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.feature_selection import RFE
+from sklearn.preprocessing import StandardScaler
 
 import os
 import pandas as pd
@@ -8,13 +14,6 @@ import json
 import numpy as np
 import ast
 import re
-
-from sklearn.feature_selection import RFE
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC, LinearSVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 from utilities.loaders import concur_load_data, save_lookup_array, load_lookup_array, save_model
 
