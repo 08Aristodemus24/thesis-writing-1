@@ -1,3 +1,6 @@
+from sklearnex import patch_sklearn
+patch_sklearn(["SVC", "RandomForestClassifier", "GradientBoostingClassifier", "LogisticRegression"])
+
 import os
 import pandas as pd
 import itertools
@@ -8,7 +11,7 @@ import re
 
 from sklearn.feature_selection import RFE
 from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
@@ -56,8 +59,7 @@ def select_features(subjects_features: pd.DataFrame,
 
     # select best features first by means of backward
     # feature selection based on support vector classifiers
-    model = SVC(kernel='linear') if selector_config == "taylor" else RandomForestClassifier()
-    # selector = SequentialFeatureSelector(model, n_features_to_select=n_features_to_select, direction='backward', scoring='roc_auc')
+    model = RandomForestClassifier()
     selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
     
     # remove subject_id column then convert to numpy array
@@ -461,6 +463,8 @@ if __name__ == "__main__":
             # used in Taylor et al. (2015) and Hossain et al. (2022)
             'model': SVC, 
             'hyper_params': {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.01, 0.1, 1]}
+            # 'model': LinearSVC, 
+            # 'hyper_params': {'C': [1, 10, 100, 1000]}
         },
         'rf': {
             # used in Taylor et al. (2015)

@@ -11,6 +11,9 @@
 * `python tuning_dl.py -m lstm-fe -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_32 drop_prob_0.3 lamb_da_0.1`
 * `python tuning_dl.py -m lstm-cnn -pl jurado -lr 5e-5 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05`
 
+* `python tuning_hybrid.py -m svm -pl cueva2 --n_rows_to_sample 5000 --mode tuning`
+* `python tuning_hybrid.py -m svm -pl cueva2 --mode tuning`
+
 * `scp -r -i C:/Users/LARRY/.ssh/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/" michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/data/`
 
 # This repository contains all generalized code snippets and templates relating to model experimentation, training, evaluation, testing, server-side loading, client-side requests, usage documentation, loaders, evaluators, visualizers, and preprocessor utilities, and the model architectures, figures, and final folder

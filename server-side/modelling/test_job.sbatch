@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
-#SBATCH --partition=batch
-#SBATCH --qos=batch_default
+#SBATCH --partition=debug
+#SBATCH --qos=debug_default
 #SBATCH --nodes=10
 #SBATCH --ntasks=10
 #SBATCH --job-name="test_job"
@@ -49,6 +49,7 @@ module load anaconda/3-2023.07-2
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
+python check_gpu.py
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then

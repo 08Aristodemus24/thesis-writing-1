@@ -1,3 +1,6 @@
+from sklearnex import patch_sklearn
+patch_sklearn(["SVC"])
+
 import itertools
 import json
 import os
@@ -8,27 +11,30 @@ import re
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
+
 
 from utilities.loaders import concur_load_data, save_meta_data, split_data, save_model
 
 from argparse import ArgumentParser
 
-def sample_ids(subjects_features, n_rows_to_sample):
+
+
+def sample_ids(subjects_lstm_features, n_rows_to_sample):
     """
     args:
         n_rows_to_sample - 
     """
 
-    n_rows_to_sample = n_rows_to_sample if n_rows_to_sample != None else subjects_features.shape[0]
-    sampled_ids = np.random.choice(subjects_features.shape[0], size=n_rows_to_sample)
+    n_rows_to_sample = n_rows_to_sample if n_rows_to_sample != None else subjects_lstm_features.shape[0]
+    sampled_ids = np.random.choice(subjects_lstm_features.shape[0], size=n_rows_to_sample)
 
     return sampled_ids
 
-def leave_one_subject_out(subjects_signals: list[np.ndarray], subjects_labels: list[np.ndarray], subject_id: int):
+def leave_one_subject_out(subjects_lstm_features: list[np.ndarray], subjects_lstm_labels: list[np.ndarray], subject_id: int):
     """
     args:
-        signals - 
+        lstm_features - 
         labels - 
         subject_id - id of the subject to leave out from the set 
         of subjects features and set of subjects labels
@@ -37,27 +43,22 @@ def leave_one_subject_out(subjects_signals: list[np.ndarray], subjects_labels: l
     # make copy first of list then use it to pop, so as to not
     # mutate original list, pop the element with the index that
     # matches the subject id
-    copied_signals = subjects_signals[:]
-    copied_labels = subjects_labels[:]
-    cross_signals = copied_signals.pop(subject_id)
-    cross_labels = copied_labels.pop(subject_id)
+    copied_lstm_features = subjects_lstm_features[:]
+    copied_lstm_labels = subjects_lstm_labels[:]
+    cross_lstm_features = copied_lstm_features.pop(subject_id)
+    cross_lstm_labels = copied_lstm_labels.pop(subject_id).ravel()
 
-    # after popping the copied signals and labels would have now
+    # after popping the copied lstm_features and labels would have now
     # turned into our train data and our popped elements from our copied
-    # signals and labels would now be our cross validation data, and because
-    # unlike our cross_signals and cross_labels directly being np.ndarrays
-    # now after popping, we have to concatenate the list of our copied signals
+    # lstm_features and labels would now be our cross validation data, and because
+    # unlike our cross_lstm_features and cross_labels directly being np.ndarrays
+    # now after popping, we have to concatenate the list of our copied lstm_features
     # and labels which is our train data across the 0th dimension since the 
     # dimension of each element is (m, window_size, 1)
-    train_signals = np.concatenate(copied_signals, axis=0)
-    train_labels = np.concatenate(copied_labels, axis=0)
+    train_lstm_features = np.concatenate(copied_lstm_features, axis=0)
+    train_lstm_labels = np.concatenate(copied_lstm_labels, axis=0).ravel()
 
-    # # this would be appropriate if there was a larger ram
-    # scaler = MinMaxScaler()
-    # train_signals = scaler.fit_transform(train_signals)
-    # cross_signals = scaler.transform(cross_labels)
-
-    return train_signals, train_labels, cross_signals, cross_labels
+    return train_lstm_features, train_lstm_labels, cross_lstm_features, cross_lstm_labels
 
 def check_file_key(selector_config, estimator_name, hyper_param_config_key):
     # if json file exists read and use it
@@ -104,8 +105,8 @@ def check_file_key(selector_config, estimator_name, hyper_param_config_key):
 
         return results
 
-def loso_cross_validation(subjects_features: pd.DataFrame,
-    subjects_labels: pd.DataFrame,
+def loso_cross_validation(subjects_lstm_features: pd.DataFrame | np.ndarray,
+    subjects_lstm_labels: pd.DataFrame | np.ndarray,
     subject_to_id: dict,
     selector_config: str,
     estimator_name,
@@ -144,8 +145,8 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
     folds_cross_rec = []
     folds_cross_f1 = []
     folds_cross_roc_auc = []
-    # folds_train_roc_auc_prob = []
-    # folds_cross_roc_auc_prob = []
+    folds_train_roc_auc_prob = []
+    folds_cross_roc_auc_prob = []
 
     # split features and labels into train and cross by 
     # leaving 1 subject out for cross validatoin and the
@@ -159,30 +160,31 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         # want to at every fold have the train features scaled and 
         # normalized and the cross features scaled and normalized 
         # using the scaler fitted on the train features 
-        train_features, train_labels, cross_features, cross_labels = leave_one_subject_out(subjects_features, subjects_labels, subject_id, selector_config)
+        train_lstm_features, train_lstm_labels, cross_lstm_features, cross_lstm_labels = leave_one_subject_out(subjects_lstm_features, subjects_lstm_labels, subject_id)
 
         # train model
-        model.fit(train_features, train_labels)
+        print('commencing tuning...')
+        model.fit(train_lstm_features, train_lstm_labels)
 
         # compare true cross and train labels to pred cross and train labels
-        pred_train_labels = model.predict(train_features)
-        pred_cross_labels = model.predict(cross_features)
-        pred_train_probs = model.predict_proba(train_features)
-        pred_cross_probs = model.predict_proba(cross_features)
+        pred_train_labels = model.predict(train_lstm_features)
+        pred_cross_labels = model.predict(cross_lstm_features)
+        pred_train_probs = model.predict_proba(train_lstm_features)
+        pred_cross_probs = model.predict_proba(cross_lstm_features)
 
         # compute performance metric values for each fold
-        fold_train_acc = accuracy_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_acc = accuracy_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_prec = precision_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_prec = precision_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_rec = recall_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_rec = recall_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_f1 = f1_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_f1 = f1_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_roc_auc = roc_auc_score(y_true=train_labels, y_score=pred_train_labels)
-        fold_cross_roc_auc = roc_auc_score(y_true=cross_labels, y_score=pred_cross_labels)
-        # fold_train_roc_auc_prob = roc_auc_score(y_true=train_labels, y_score=pred_train_probs[:, 1])
-        # fold_cross_roc_auc_prob = roc_auc_score(y_true=cross_labels, y_score=pred_cross_probs[:, 1])
+        fold_train_acc = accuracy_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
+        fold_cross_acc = accuracy_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
+        fold_train_prec = precision_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
+        fold_cross_prec = precision_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
+        fold_train_rec = recall_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
+        fold_cross_rec = recall_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
+        fold_train_f1 = f1_score(y_true=train_lstm_labels, y_pred=pred_train_labels)
+        fold_cross_f1 = f1_score(y_true=cross_lstm_labels, y_pred=pred_cross_labels)
+        fold_train_roc_auc = roc_auc_score(y_true=train_lstm_labels, y_score=pred_train_labels)
+        fold_cross_roc_auc = roc_auc_score(y_true=cross_lstm_labels, y_score=pred_cross_labels)
+        fold_train_roc_auc_prob = roc_auc_score(y_true=train_lstm_labels, y_score=pred_train_probs[:, 1])
+        fold_cross_roc_auc_prob = roc_auc_score(y_true=cross_lstm_labels, y_score=pred_cross_probs[:, 1])
         
         # save append each metric value to each respective list
         folds_train_acc.append(fold_train_acc)
@@ -195,16 +197,16 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         folds_cross_f1.append(fold_cross_f1)
         folds_train_roc_auc.append(fold_train_roc_auc)
         folds_cross_roc_auc.append(fold_cross_roc_auc)
-        # folds_train_roc_auc_prob.append(fold_train_roc_auc_prob)
-        # folds_cross_roc_auc_prob.append(fold_cross_roc_auc_prob)
+        folds_train_roc_auc_prob.append(fold_train_roc_auc_prob)
+        folds_cross_roc_auc_prob.append(fold_cross_roc_auc_prob)
 
         print(f"fold: {subject_id} with hyper params: {hyper_param_config} \
               \ntrain acc: {fold_train_acc} cross acc: {fold_cross_acc} \
               \ntrain prec: {fold_train_prec} cross prec: {fold_cross_prec} \
               \ntrain rec: {fold_train_rec} cross rec: {fold_cross_rec} \
               \ntrain f1: {fold_train_f1} cross f1: {fold_cross_f1} \
-              \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc}")
-            #   \ntrain roc_auc_prob: {fold_train_roc_auc_prob} cross roc_auc_prob: {fold_cross_roc_auc_prob}")
+              \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc} \
+              \ntrain roc_auc_prob: {fold_train_roc_auc_prob} cross roc_auc_prob: {fold_cross_roc_auc_prob}")
 
     # once all fold train and cross metric values collected update read
     # dictionary with specific hyper param config as key and its recorded
@@ -220,15 +222,15 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         'folds_cross_f1': folds_cross_f1,
         'folds_train_roc_auc': folds_train_roc_auc,
         'folds_cross_roc_auc': folds_cross_roc_auc,
-        # 'folds_train_roc_auc_prob': folds_train_roc_auc_prob,
-        # 'folds_cross_roc_auc_prob': folds_cross_roc_auc_prob
+        'folds_train_roc_auc_prob': folds_train_roc_auc_prob,
+        'folds_cross_roc_auc_prob': folds_cross_roc_auc_prob
     }
 
     with open(f'results/{selector_config}_{estimator_name}_results.json', 'w') as file:
         json.dump(results, file)
 
-def grid_search_loso_cv(subjects_features: pd.DataFrame,
-    subjects_labels: pd.DataFrame,
+def grid_search_loso_cv(subjects_lstm_features: pd.DataFrame | np.ndarray,
+    subjects_lstm_labels: pd.DataFrame | np.ndarray,
     subject_to_id: dict,
     selector_config: str,
     n_rows_to_sample: int | None,
@@ -258,12 +260,6 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame,
         >>> myFunc(**dict)
     """
 
-    # sample a small part if not all of the dataset
-    sampled_ids = sample_ids(subjects_features, n_rows_to_sample)
-
-    subjects_features = subjects_features.iloc[sampled_ids]
-    subjects_labels = subjects_labels.iloc[sampled_ids]
-
     # unpack the dictionaries items and separate into list of keys and values
     # ('n_estimators', 'max_depth', 'gamma'), ([10, 50, 100], [3], [1, 10, 100, 1000])
     keys, values = zip(*hyper_params.items())
@@ -278,8 +274,8 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame,
         # of the same keys as hyper params
         hyper_param_config = dict(zip(keys, prod))
         loso_cross_validation(
-            subjects_features, 
-            subjects_labels, 
+            subjects_lstm_features, 
+            subjects_lstm_labels, 
             subject_to_id, 
             selector_config,
             estimator_name,
@@ -288,16 +284,16 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame,
 
 
 
-def train_final_estimator(subjects_features: pd.DataFrame,
-    subjects_labels: pd.DataFrame,
+def train_final_estimator(subjects_lstm_features: pd.DataFrame | np.ndarray,
+    subjects_lstm_labels: pd.DataFrame | np.ndarray,
     selector_config: str,
     estimator_name: str,
     estimator,
     hyper_param_config: dict):
 
     # assign to x and y vars for readability
-    X = subjects_features
-    Y = subjects_labels
+    X = subjects_lstm_features
+    Y = subjects_lstm_labels.ravel()
 
     # create model with specific hyper param configurations
     # and fit to whole training and validation dataset
@@ -357,17 +353,23 @@ if __name__ == "__main__":
 
     # read and load data
     print(os.getcwd())
-    subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl)
-    print(subjects_features)
-    print(subjects_labels)
+    subjects_lstm_features, subjects_lstm_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl)
+    print(subjects_lstm_features)
+    print(subjects_lstm_labels)
+
+    # # create and load test data
+    # m = 1000
+    # n_f = 32
+    # n_subjects = 5
+    # subjects_lstm_features = [np.random.randn(m, n_f) for _ in range(n_subjects)]
+    # subjects_lstm_labels = [np.random.randint(low=0, high=2, size=(m, 1)) for _ in range(n_subjects)]
+    # subject_to_id = {subject: id for id, subject in enumerate(range(n_subjects))}
 
     # model hyper params
     models = {
         'svm': {
-            'model': SVC, 
-            'hyper_params': {
-                'hyper_params': {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.01, 0.1, 1]}
-            },
+            'model': SVC,
+            'hyper_params': {'kernel': ['linear', 'rbf'], 'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.01, 0.1, 1], 'probability': [True]}
         }
     }
 
@@ -377,8 +379,8 @@ if __name__ == "__main__":
         # loso cross validation across all subjects, and
         # save model & results
         grid_search_loso_cv(
-            subjects_features, 
-            subjects_labels, 
+            subjects_lstm_features, 
+            subjects_lstm_labels, 
             subject_to_id, 
             selector_config=args.pl,
             n_rows_to_sample=args.n_rows_to_sample,
@@ -397,8 +399,8 @@ if __name__ == "__main__":
         # and instead use the best hyper param config obtained from summarization.ipynb and train the model
         # not on a specific fold or set of subjects but all subjects
         train_final_estimator(
-            subjects_features,
-            subjects_labels, 
+            subjects_lstm_features,
+            subjects_lstm_labels, 
             selector_config=args.pl,
             estimator_name=args.m,
             estimator=models[args.m]['model'],

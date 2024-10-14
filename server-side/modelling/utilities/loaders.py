@@ -144,7 +144,7 @@ def concur_load_data(feat_config: str="Taylor"):
         # concurrent processing
         def helper(subject_name: str):
             subject_lstm_features = np.load(f'{dir}{subject_name}_lstm_features.npy')
-            subject_lstm_labels = np.load(f'{dir}{subject_name}_lstm_label.npy')
+            subject_lstm_labels = np.load(f'{dir}{subject_name}_lstm_labels.npy')
 
             return (subject_lstm_features, subject_lstm_labels, subject_name)
         
