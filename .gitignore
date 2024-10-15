@@ -2,6 +2,9 @@
 /server-side/modelling/data/Hybrid Artifact Detection Data/*
 /server-side/modelling/data/Electrodermal Activity artifact correction BEnchmark (EDABE)/
 /server-side/modelling/data/EDABE dataset.zip
+/server-side/modelling/data/WESAD.zip
+/server-side/modelling/data/WESAD/
+
 /server-side/.env
 /server-side/modelling/results/*.csv
 
