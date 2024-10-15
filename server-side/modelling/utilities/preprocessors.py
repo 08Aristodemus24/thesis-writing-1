@@ -303,10 +303,10 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
 
     # loop thorugh the begin adn end indeces
     for ctr_it in range(len(end_bad_elements)):
-        # create two figures
-        fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-        axes = axes.flat
-        fig.tight_layout(pad=1)
+        # # create two figures
+        # fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+        # axes = axes.flat
+        # fig.tight_layout(pad=1)
         
 
         # 128 / 4 = 32
@@ -431,10 +431,10 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         print(f'x_to_spline: {x_to_spline} - length: {len(x_to_spline)}')
         print(f'y_to_spline: {y_to_spline} - length: {len(y_to_spline)}')
 
-        axes[0].scatter(x_int, y_int, c="#eb34b7", marker='o')
-        axes[0].plot(x_int, y_int, c="#7c31de", linestyle="-")
-        axes[1].scatter(x_to_spline, y_to_spline, c="#eb34b7", marker='o')
-        axes[1].plot(x_to_spline, y_to_spline, c="#7c31de", linestyle="-")
+        # axes[0].scatter(x_int, y_int, c="#eb34b7", marker='o')
+        # axes[0].plot(x_int, y_int, c="#7c31de", linestyle="-")
+        # axes[1].scatter(x_to_spline, y_to_spline, c="#eb34b7", marker='o')
+        # axes[1].plot(x_to_spline, y_to_spline, c="#7c31de", linestyle="-")
         
         # scipy.interpolate.spline(*args, **kwds)
         # spline is deprecated! spline is deprecated in scipy 0.19.0, use Bspline class instead.
@@ -468,8 +468,8 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         """
         # y_output = spline(x_int)
         y_output = splev(x_int, tck, der=0)
-        axes[2].scatter(x_int, y_output, c="#236cb0", marker="^")
-        axes[2].plot(x_int, y_output, c="#3de343", linestyle="--")
+        # axes[2].scatter(x_int, y_output, c="#236cb0", marker="^")
+        # axes[2].plot(x_int, y_output, c="#3de343", linestyle="--")
         
         # mixes the average values between the line that uses a linear graph
         # and a line that uses a cubic graph or a degree of 3 as used above

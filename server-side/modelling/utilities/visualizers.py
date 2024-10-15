@@ -35,21 +35,22 @@ def view_time_frame(raw_eda_df, samp_freq=128, begin_time_s=1750, end_time_s=176
     # why is it multiplied by 128?
     # results it 224000 and 225920 and is used as indeces to access a slice of the dataframes rows
     begin_sample, end_sample = begin_time_s * samp_freq, end_time_s * samp_freq
+    print(begin_sample, end_sample)
 
     # 
     time_to_plot = raw_eda_df["time"].iloc[begin_sample:end_sample]
+    
 
     # colors and linestyles to use
     colors = ['#df03fc', '#5203fc', '#fc034e', '#fc8003', '#3dfc03']
     lines = ['solid', 'dotted', 'dashed', 'dashdot', (5, (10, 3))]
 
     for i, col in enumerate(cols_to_use):
+        
         col_to_plot = raw_eda_df[col].iloc[begin_sample:end_sample]
+        print(time_to_plot)
+        print(col_to_plot)
         axis.plot(time_to_plot, col_to_plot, label=col, alpha=0.75, linestyle=lines[i], c=colors[i])
-    # axis.plot(time_to_plot, rawdata_to_plot, label="Raw data")
-    # axis.plot(time_to_plot, cleandata_to_plot, label="Manual", c="orange")
-    # axis.plot(time_to_plot, autodata_to_plot, label="Automatic", alpha=0.7, linestyle="--", c="red")
-    # axis.plot(time_to_plot, autodata_to_plot, label="Automatic", alpha=0.7, linestyle="--", c="red")
             
     axis.legend(fontsize=14)
     axis.grid()
