@@ -6,9 +6,22 @@ import pywt
 from concurrent.futures import ThreadPoolExecutor
 import datetime
 import pandas as pd
-from scipy.signal import butter, lfilter, hilbert
-from scipy.stats import entropy
+from scipy.signal import butter, lfilter, hilbert, find_peaks
+from scipy.stats import entropy, kurtosis, skew
 from statsmodels.tsa.ar_model import AutoReg
+from cvxEDA import cvxEDA
+
+# cvxEDA
+def eda_stats(y, samp_freq=4):
+    """decompose raw biosignal into phasic and tonic components"""
+    yn = (y - y.mean()) / y.std()
+    [r, p, t, l, d, e, obj] = cvxEDA.cvxEDA(yn, 1. / samp_freq)
+    return [r, p, t, l, d, e, obj]
+
+def _compute_morphological_feats(data: pd.DataFrame | np.ndarray, col_to_use: str='raw_signal'):
+    skewness = skew(data[col_to_use])
+    kurt = kurtosis(data[col_to_use])
+    return skewness, kurt
 
 def interpolate_signals(data: pd.DataFrame, sample_rate: int=128, start_time: datetime.datetime | str='01/01/1970', target_hz: int=8):
     """

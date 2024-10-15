@@ -6,7 +6,9 @@
 /server-side/modelling/data/WESAD.zip
 /server-side/modelling/data/WESAD/
 /server-side/modelling/data/Hosseini_Stress_Dataset/
+/server-side/modelling/data/Stress Detection Features/
 /server-side/modelling/data/Stress_dataset.zip
+
 
 /server-side/.env
 /server-side/modelling/results/*.csv
