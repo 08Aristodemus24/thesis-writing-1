@@ -1,10 +1,11 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
-#SBATCH --partition=batch
-#SBATCH --qos=batch_default
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu-p40_default
 ##SBATCH --nodes=20
-#SBATCH --ntasks=70
-#SBATCH --job-name="hossain_gbt_tuning_job"
+#SBATCH --ntasks=10
+#SBATCH --gres=gpu:p40:1
+#SBATCH --job-name="jurado_lstm_cnn_tuning_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
 ##SBATCH --mail-user=<email_add>  ## optional
@@ -49,7 +50,7 @@ module load anaconda/3-2023.07-2
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
-python tuning_ml.py -m gbt -pl hossain --mode tuning
+python tuning_dl.py -m lstm-cnn -pl jurado -lr 5e-5 --mode tuning
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then
