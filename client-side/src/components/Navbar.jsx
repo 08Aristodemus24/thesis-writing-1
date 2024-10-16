@@ -43,7 +43,7 @@ export default function Navbar({ children }){
             <a className="navbar-brand" href="/" onClick={(event) => {
               event.preventDefault();
               document.body.scrollIntoView();
-            }}>Michael</a>
+            }}>-</a>
             
             <div onClick={toggle_menu} className={`button-container ${isOpened === true ? "opened" : ""}`}>
                 <a href="#" className="top-left-corner"></a>
