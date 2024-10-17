@@ -3,7 +3,7 @@
 #SBATCH --partition=debug
 #SBATCH --qos=debug_default
 ##SBATCH --nodes=20
-#SBATCH --ntasks=70
+#SBATCH --ntasks=12
 #SBATCH --job-name="hossain_lr_tuning_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional

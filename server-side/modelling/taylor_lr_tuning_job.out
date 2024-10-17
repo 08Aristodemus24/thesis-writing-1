@@ -1,15 +1,15 @@
-Submitted on Thu Oct 17 12:08:42 PST 2024
+Submitted on Thu Oct 17 13:09:43 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 30268
+SLURM_JOB_ID          : 30278
 SLURM_JOB_NAME        : taylor_lr_tuning_job
-SLURM_JOB_NUM_NODES   : 1
-SLURM_JOB_NODELIST    : saliksik-cpu-26
+SLURM_JOB_NUM_NODES   : 2
+SLURM_JOB_NODELIST    : saliksik-cpu-[25-26]
 SLURM_NTASKS          : 70
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30268
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30278
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-/var/spool/slurm/job30268/slurm_script: line 51: 88584 Segmentation fault      python tuning_ml.py -m lr -pl taylor --mode tuning
-Finished on Thu Oct 17 12:08:47 PST 2024
-Total runtime (sec): 4.5639355182647705
+/var/spool/slurm/job30278/slurm_script: line 51: 73621 Segmentation fault      python tuning_ml.py -m lr -pl taylor --mode tuning
+Finished on Thu Oct 17 13:09:51 PST 2024
+Total runtime (sec): 7.861542224884033

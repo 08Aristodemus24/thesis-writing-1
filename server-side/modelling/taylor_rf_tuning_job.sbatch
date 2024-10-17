@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
 #SBATCH --partition=batch
-#SBATCH --qos=batch_default
-#SBATCH --ntasks=10
+#SBATCH --qos=240c-1h_batch.
+#SBATCH --ntasks=12
 #SBATCH --job-name="taylor_rf_tuning_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
