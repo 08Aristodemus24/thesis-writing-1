@@ -11,6 +11,14 @@ from scipy.stats import entropy, kurtosis, skew
 from statsmodels.tsa.ar_model import AutoReg
 
 def _compute_morphological_feats(data: pd.DataFrame | np.ndarray, col_to_use: str='raw_signal'):
+    """
+    compute morphological related features of signals
+
+    args:
+        data - 
+        col_to_use - 
+    """
+
     skewness = skew(data[col_to_use])
     kurt = kurtosis(data[col_to_use])
     return skewness, kurt
@@ -220,17 +228,15 @@ def _standardize_signals(data):
     scaling or by z-score
     """
 
-def _compute_stat_feats(data):
+def _compute_stat_feats(data: pd.Series | np.ndarray, col_to_use: str):
     """
     computes the statistical features of both the 
     raw/unfiltered signal and the filtered signal
     """
 
-    raw_signal = data['raw_signal']
-    filt_signal = data['filtered_signal']
+    raw_signal = data[col_to_use]
 
     raw_1d_signal, raw_2d_signal = _differentiate(raw_signal)
-    filt_1d_signal, filt_2d_signal = _differentiate(filt_signal)
 
     raw_max = np.max(raw_signal, axis=0)
     raw_min = np.min(raw_signal, axis=0)
@@ -260,44 +266,13 @@ def _compute_stat_feats(data):
     raw_2d_max_abs = np.max(np.absolute(raw_2d_signal), axis=0)
     raw_2d_avg_abs = np.mean(np.absolute(raw_1d_signal), axis=0)
 
-    filt_max = np.max(filt_signal, axis=0)
-    filt_min = np.min(filt_signal, axis=0)
-    filt_amp = np.mean(filt_signal, axis=0)
-    filt_median = np.median(filt_signal, axis=0)
-    filt_std = np.std(filt_signal, axis=0)
-    filt_range = np.max(filt_signal, axis=0) - np.min(filt_signal, axis=0)
-    filt_shannon_entropy = entropy(filt_signal.value_counts())
-
-    filt_1d_max = np.max(filt_1d_signal, axis=0)
-    filt_1d_min = np.min(filt_1d_signal, axis=0)
-    filt_1d_amp = np.mean(filt_1d_signal, axis=0)
-    filt_1d_median = np.median(filt_1d_signal, axis=0)
-    filt_1d_std = np.std(filt_1d_signal, axis=0)
-    filt_1d_range = np.max(filt_1d_signal, axis=0) - np.min(filt_1d_signal, axis=0)
-    filt_1d_shannon_entropy = entropy(filt_1d_signal.value_counts())
-    filt_1d_max_abs = np.max(np.absolute(filt_1d_signal), axis=0)
-    filt_1d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
-
-    filt_2d_max = np.max(filt_2d_signal, axis=0)
-    filt_2d_min = np.min(filt_2d_signal, axis=0)
-    filt_2d_amp = np.mean(filt_2d_signal, axis=0)
-    filt_2d_median = np.median(filt_2d_signal, axis=0)
-    filt_2d_std = np.std(filt_2d_signal, axis=0)
-    filt_2d_range = np.max(filt_2d_signal, axis=0) - np.min(filt_2d_signal, axis=0)
-    filt_2d_shannon_entropy = entropy(filt_2d_signal.value_counts())
-    filt_2d_max_abs = np.max(np.absolute(filt_2d_signal), axis=0)
-    filt_2d_avg_abs = np.mean(np.absolute(filt_1d_signal), axis=0)
-
     return (raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy,
     raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, 
-    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, 
-    filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy,
-    filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, 
-    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs)
+    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs)
 
 
 
-def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
+def _compute_ar_feats(data: pd.DataFrame | np.ndarray, col_to_use):
     """
     computes autoregressive features by training AutoReg
     from statsmodels.tsa.ar_model then obtaining sigma2
@@ -316,7 +291,7 @@ def _compute_ar_feats(data: pd.DataFrame | np.ndarray):
     # train_data = data.iloc[:partition_index]
     # test_data = data.iloc[partition_index:]
 
-    ar_model = AutoReg(data['raw_signal'], lags=2)
+    ar_model = AutoReg(data[col_to_use], lags=2)
     ar_results = ar_model.fit()
 
     # get all autoregressive model's optimized coefficients
@@ -361,7 +336,7 @@ def _get_amp_phase(z):
 
 
 
-def _compute_vfcdm_feats(data: pd.DataFrame | np.ndarray, hertz: int):
+def _compute_vfcdm_feats(data: pd.DataFrame | np.ndarray, col_to_use: str, hertz: int):
     """
     computes time-frequency based features based on variable
     frequency complex demodulation (VFCDM), using cutoff
@@ -381,7 +356,7 @@ def _compute_vfcdm_feats(data: pd.DataFrame | np.ndarray, hertz: int):
     decomp_signals = []
 
     for cutoff in cutoffs:
-        filtered_signal = butter_lowpass_filter(data['raw_signal'], cutoff=cutoff, samp_freq=hertz)
+        filtered_signal = butter_lowpass_filter(data[col_to_use], cutoff=cutoff, samp_freq=hertz)
 
         # hilbert signal would have same shape as filtered signal 
         # i.e. (64,) or (8,) if signal is 16hz 
@@ -411,7 +386,7 @@ def _compute_vfcdm_feats(data: pd.DataFrame | np.ndarray, hertz: int):
 
 
 
-def load_wavelet_data(data: pd.DataFrame | np.ndarray, hertz: int, samples_per_win_size: int):
+def load_wavelet_data(data: pd.DataFrame | np.ndarray, col_to_use: str, hertz: int, samples_per_win_size: int):
     """
     function to create whole and half wavelet dataframes
     """
@@ -437,7 +412,7 @@ def load_wavelet_data(data: pd.DataFrame | np.ndarray, hertz: int, samples_per_w
     half_inc_ts = pd.date_range(start=timestamp_list[0], periods=data.shape[0], freq=f'{((1 / half_freq) * 1000)}ms')
 
     # obtain wavelet coefficients
-    coeffs = restructure_wavelets(pywt.wavedec(data['raw_signal'], wavelet='haar', level=3))
+    coeffs = restructure_wavelets(pywt.wavedec(data[col_to_use], wavelet='haar', level=3))
     cA_1, cD_3, cD_2, cD_1 = coeffs
     n_rows_wavelet = cD_3.shape[0]
 
@@ -641,18 +616,18 @@ def compute_features(data: pd.DataFrame | np.ndarray, whole_wave: pd.DataFrame |
     # compute statistical features
     raw_max, raw_min, raw_amp, raw_median, raw_std, raw_range, raw_shannon_entropy, \
     raw_1d_max, raw_1d_min, raw_1d_amp, raw_1d_median, raw_1d_std, raw_1d_range, raw_1d_shannon_entropy, raw_1d_max_abs, raw_1d_avg_abs, \
-    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, \
+    raw_2d_max, raw_2d_min, raw_2d_amp, raw_2d_median, raw_2d_std, raw_2d_range, raw_2d_shannon_entropy, raw_2d_max_abs, raw_2d_avg_abs, = _compute_stat_feats(data, col_to_use="raw_signal")
     filt_max, filt_min, filt_amp, filt_median, filt_std, filt_range, filt_shannon_entropy, \
     filt_1d_max, filt_1d_min, filt_1d_amp, filt_1d_median, filt_1d_std, filt_1d_range, filt_1d_shannon_entropy, filt_1d_max_abs, filt_1d_avg_abs, \
-    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs = _compute_stat_feats(data)
+    filt_2d_max, filt_2d_min, filt_2d_amp, filt_2d_median, filt_2d_std, filt_2d_range, filt_2d_shannon_entropy, filt_2d_max_abs, filt_2d_avg_abs = _compute_stat_feats(data, col_to_use="filtered_signal")
 
     # compute autoregressive features
-    *ar_coeffs, ar_err_var = _compute_ar_feats(data)
+    *ar_coeffs, ar_err_var = _compute_ar_feats(data, col_to_use="raw_signal")
     # ar_feats = _compute_ar_feats(data)
     # ar_coeffs, ar_err_var = ar_feats[:-1], ar_feats[-1]
 
     # compute VFCDM features
-    vfcdm_signals_mean, vfcdm_signals_std = _compute_vfcdm_feats(data, hertz=samples_per_sec)
+    vfcdm_signals_mean, vfcdm_signals_std = _compute_vfcdm_feats(data, col_to_use="raw_signal", hertz=samples_per_sec)
 
     # compute wavelet features
     wavelet_feats_whole_max, wavelet_feats_whole_mean, wavelet_feats_whole_std, wavelet_feats_whole_median, wavelet_feats_whole_range, wavelet_feats_whole_n_coeffs_above_zero = _compute_wave_feats(whole_wave)
@@ -876,7 +851,7 @@ def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, w
         # if 128 hertz data samples per sec will be 128 and samples per window size
         # will be as specified which in this case must be 64
         # this will create wavelet dataframe for the current data slice of 1 hour 
-        whole_wave, half_wave = load_wavelet_data(curr_data, samples_per_sec, samples_per_win_size)
+        whole_wave, half_wave = load_wavelet_data(curr_data, col_to_use="raw_signal", hertz=samples_per_sec, samples_per_win_size=samples_per_win_size)
 
         # samples per sec 128 samples per win size 64
         # samples per sec 16 samples per win size 8
