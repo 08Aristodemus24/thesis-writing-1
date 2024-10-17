@@ -907,7 +907,7 @@ def concur_extract_features_from_all(dir: str, files: list[str]):
 
     return eda_data
 
-def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=128, scale=False, verbose=False):
+def compute(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=128, scale=False, verbose=False):
     """
     charge_raw_data" preprocesses the input signal cutting the signal in pieces of 5 seconds.
     In the case that a target is introduced i.e. y_col != None, the target is cut the last 0.5
