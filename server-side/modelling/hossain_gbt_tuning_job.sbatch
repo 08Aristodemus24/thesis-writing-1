@@ -2,7 +2,7 @@
 #SBATCH --account=pup-manila    
 #SBATCH --partition=batch
 #SBATCH --qos=240c-1h_batch
-##SBATCH --nodes=20
+##SBATCH --nodes=1
 #SBATCH --ntasks=12
 #SBATCH --job-name="hossain_gbt_tuning_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
@@ -11,7 +11,7 @@
 ##SBATCH --requeue                ## optional
 ##SBATCH --ntasks-per-node=1      ## optional
 ##SBATCH --mem=24G                ## optional: mem per node
-##SBATCH --error="%x.%j.err"      ## optional; better to use --output only
+#SBATCH --error="%x.%j.err"      ## optional; better to use --output only
 
 ## For more `sbatch` options, use `man sbatch` in the HPC, or go to https://slurm.schedmd.com/sbatch.html.
 
@@ -45,6 +45,7 @@ fi
 ## Reset modules.
 module purge
 module load anaconda/3-2023.07-2
+
 
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1

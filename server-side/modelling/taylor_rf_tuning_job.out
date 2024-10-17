@@ -1,15 +1,16 @@
-Submitted on Thu Oct 17 13:09:00 PST 2024
+Submitted on Thu Oct 17 16:25:36 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 30276
+SLURM_JOB_ID          : 30331
 SLURM_JOB_NAME        : taylor_rf_tuning_job
 SLURM_JOB_NUM_NODES   : 1
-SLURM_JOB_NODELIST    : saliksik-cpu-25
-SLURM_NTASKS          : 10
+SLURM_JOB_NODELIST    : saliksik-cpu-14
+SLURM_NTASKS          : 64
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 102400
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30276
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30331
+Module unload: anaconda/3-2023.07-2
+/var/spool/slurm/job30331/slurm_script: line 5: conda: command not found
+/var/spool/slurm/job30331/slurm_script: line 5: conda: command not found
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-/var/spool/slurm/job30276/slurm_script: line 51: 73465 Segmentation fault      python tuning_ml.py -m rf -pl taylor --mode tuning
-Finished on Thu Oct 17 13:09:07 PST 2024
-Total runtime (sec): 7.773260593414307
+slurmstepd: error: *** JOB 30331 ON saliksik-cpu-14 CANCELLED AT 2024-10-17T16:33:58 ***

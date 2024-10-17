@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
 #SBATCH --partition=batch
-#SBATCH --qos=240c-1h_batch.
-#SBATCH --ntasks=12
+#SBATCH --qos=240c-1h_batch
+#SBATCH --ntasks=64
 #SBATCH --job-name="taylor_rf_tuning_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
@@ -46,7 +46,7 @@ module purge
 module load anaconda/3-2023.07-2
 
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
-conda activate thesis-writing-1
+conda activate /home/michael.cueva/.conda/envs/thesis-writing-1
 python --version
 python tuning_ml.py -m rf -pl taylor --mode tuning
 

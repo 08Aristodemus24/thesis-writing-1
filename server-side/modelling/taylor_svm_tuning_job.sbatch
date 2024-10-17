@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
 #SBATCH --partition=batch
-#SBATCH --qos=240c-1h_batch.
+#SBATCH --qos=240c-1h_batch
 #SBATCH --ntasks=12
 #SBATCH --job-name="taylor_svm_tuning_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
