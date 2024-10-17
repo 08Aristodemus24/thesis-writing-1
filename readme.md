@@ -574,6 +574,26 @@ https://note.nkmk.me/en/python-numpy-load-save-savez-npy-npz/#save-an-array-to-a
 
 25. sometimes outputs of jupyter notebooks can be so big that committing these changes may result in file being too large error and require you to use git large, or pulling these changes may end up in remote hang error
 
+26. The choice of F1-score variant (weighted, micro, or macro) depends on your specific use case and the distribution of your classes. Here's a brief explanation of each:
+
+* Weighted F1-score:
+Calculates the F1-score for each class and then computes a weighted average based on the support (number of samples) of each class.
+This is useful when you have imbalanced classes and want to give more importance to the minority classes.
+
+* Micro F1-score:
+Calculates the F1-score based on the overall number of true positives, false positives, and false negatives across all classes.
+This is useful when you want to evaluate the overall performance of the model without considering the class distribution.
+
+* Macro F1-score:
+Calculates the F1-score for each class and then computes the unweighted average.
+This is useful when you want to evaluate the performance of the model for each class equally, regardless of the class distribution.
+Choosing the right F1-score:
+
+If your classes are imbalanced, use the weighted F1-score to give more importance to the minority classes.
+If you want to evaluate the overall performance of the model without considering class distribution, use the micro F1-score.
+If you want to evaluate the performance of the model for each class equally, use the macro F1-score.
+You can also experiment with different F1-score variants to see which one best suits your specific needs.
+
 
 ## artifact detection and correction:
 * <s>clone and review repo of Taylor et al.</s>

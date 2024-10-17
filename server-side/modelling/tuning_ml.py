@@ -6,6 +6,7 @@ from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.feature_selection import RFE
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_validate
 
 import os
 import pandas as pd
@@ -209,8 +210,8 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
     folds_cross_rec = []
     folds_cross_f1 = []
     folds_cross_roc_auc = []
-    # folds_train_roc_auc_prob = []
-    # folds_cross_roc_auc_prob = []
+    folds_train_roc_auc_prob = []
+    folds_cross_roc_auc_prob = []
 
     # split features and labels into train and cross by 
     # leaving 1 subject out for cross validatoin and the
@@ -238,16 +239,16 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         # compute performance metric values for each fold
         fold_train_acc = accuracy_score(y_true=train_labels, y_pred=pred_train_labels)
         fold_cross_acc = accuracy_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_prec = precision_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_prec = precision_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_rec = recall_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_rec = recall_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_f1 = f1_score(y_true=train_labels, y_pred=pred_train_labels)
-        fold_cross_f1 = f1_score(y_true=cross_labels, y_pred=pred_cross_labels)
-        fold_train_roc_auc = roc_auc_score(y_true=train_labels, y_score=pred_train_labels)
-        fold_cross_roc_auc = roc_auc_score(y_true=cross_labels, y_score=pred_cross_labels)
-        # fold_train_roc_auc_prob = roc_auc_score(y_true=train_labels, y_score=pred_train_probs[:, 1])
-        # fold_cross_roc_auc_prob = roc_auc_score(y_true=cross_labels, y_score=pred_cross_probs[:, 1])
+        fold_train_prec = precision_score(y_true=train_labels, y_pred=pred_train_labels, average='weighted')
+        fold_cross_prec = precision_score(y_true=cross_labels, y_pred=pred_cross_labels, average='weighted')
+        fold_train_rec = recall_score(y_true=train_labels, y_pred=pred_train_labels, average='weighted')
+        fold_cross_rec = recall_score(y_true=cross_labels, y_pred=pred_cross_labels, average='weighted')
+        fold_train_f1 = f1_score(y_true=train_labels, y_pred=pred_train_labels, average='weighted')
+        fold_cross_f1 = f1_score(y_true=cross_labels, y_pred=pred_cross_labels, average='weighted')
+        # fold_train_roc_auc = roc_auc_score(y_true=train_labels, y_score=pred_train_labels, average='weighted', multi_class='ovo')
+        # fold_cross_roc_auc = roc_auc_score(y_true=cross_labels, y_score=pred_cross_labels, average='weighted', multi_class='ovo')
+        fold_train_roc_auc_prob = roc_auc_score(y_true=train_labels, y_score=pred_train_probs[:, 1], average='weighted', multi_class='ovo')
+        fold_cross_roc_auc_prob = roc_auc_score(y_true=cross_labels, y_score=pred_cross_probs[:, 1], average='weighted', multi_class='ovo')
         
         # save append each metric value to each respective list
         folds_train_acc.append(fold_train_acc)
@@ -258,18 +259,18 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         folds_cross_rec.append(fold_cross_rec)
         folds_train_f1.append(fold_train_f1)
         folds_cross_f1.append(fold_cross_f1)
-        folds_train_roc_auc.append(fold_train_roc_auc)
-        folds_cross_roc_auc.append(fold_cross_roc_auc)
-        # folds_train_roc_auc_prob.append(fold_train_roc_auc_prob)
-        # folds_cross_roc_auc_prob.append(fold_cross_roc_auc_prob)
+        # folds_train_roc_auc.append(fold_train_roc_auc)
+        # folds_cross_roc_auc.append(fold_cross_roc_auc)
+        folds_train_roc_auc_prob.append(fold_train_roc_auc_prob)
+        folds_cross_roc_auc_prob.append(fold_cross_roc_auc_prob)
 
         print(f"fold: {subject_id} with hyper params: {hyper_param_config} \
               \ntrain acc: {fold_train_acc} cross acc: {fold_cross_acc} \
               \ntrain prec: {fold_train_prec} cross prec: {fold_cross_prec} \
               \ntrain rec: {fold_train_rec} cross rec: {fold_cross_rec} \
               \ntrain f1: {fold_train_f1} cross f1: {fold_cross_f1} \
-              \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc}")
-            #   \ntrain roc_auc_prob: {fold_train_roc_auc_prob} cross roc_auc_prob: {fold_cross_roc_auc_prob}")
+              \ntrain roc_auc_prob: {fold_train_roc_auc_prob} cross roc_auc_prob: {fold_cross_roc_auc_prob}")
+        # \ntrain roc_auc: {fold_train_roc_auc} cross roc_auc: {fold_cross_roc_auc} \
 
     # once all fold train and cross metric values collected update read
     # dictionary with specific hyper param config as key and its recorded
@@ -283,16 +284,80 @@ def loso_cross_validation(subjects_features: pd.DataFrame,
         'folds_cross_rec': folds_cross_rec,
         'folds_train_f1': folds_train_f1,
         'folds_cross_f1': folds_cross_f1,
-        'folds_train_roc_auc': folds_train_roc_auc,
-        'folds_cross_roc_auc': folds_cross_roc_auc,
-        # 'folds_train_roc_auc_prob': folds_train_roc_auc_prob,
-        # 'folds_cross_roc_auc_prob': folds_cross_roc_auc_prob
+        # 'folds_train_roc_auc': folds_train_roc_auc,
+        # 'folds_cross_roc_auc': folds_cross_roc_auc,
+        'folds_train_roc_auc_prob': folds_train_roc_auc_prob,
+        'folds_cross_roc_auc_prob': folds_cross_roc_auc_prob
     }
 
     with open(f'results/{selector_config}_{estimator_name}_results.json', 'w') as file:
         json.dump(results, file)
 
-def grid_search_loso_cv(subjects_features: pd.DataFrame,
+def k_fold_cross_validation(subjects_features: pd.DataFrame,
+    subjects_labels: pd.DataFrame,
+    subject_to_id: dict,
+    selector_config: str,
+    estimator_name,
+    estimator,
+    hyper_param_config: dict):
+    """
+    args:
+        subjects_features: pd.DataFrame - 
+        subjects_labels: pd.DataFrame - 
+        subject_to_id: dict - 
+        model - 
+        hyper_param_config: dict - 
+    """
+    # create key out of hyper_param_config
+    hyper_param_config_key = "|".join([f"{hyper_param}_{value}" for hyper_param, value in hyper_param_config.items()])
+
+    # if file exists or not return a dictionary but if hyper param 
+    # config key already exists return from function
+    if check_file_key(selector_config, estimator_name, hyper_param_config_key) != False:
+        results = check_file_key(selector_config, estimator_name, hyper_param_config_key)
+    else:
+        return
+
+    X = subjects_features.loc[:, subjects_features.columns != 'subject_id'].to_numpy()
+    Y = subjects_labels.loc[:, subjects_labels.columns != 'subject_id'].to_numpy().ravel()
+    
+    
+    model = estimator(**hyper_param_config, verbose=1)
+
+    # recall that ml classifiers cannot classify multiple classes at once like
+    # neural networks so multiple classifiers are trained to classify multiple classes
+    # in ovo is computationally expensive for large number of classes, works well for
+    # binary classes, less prone with class imbalance. ovr is for multi class rather
+    # binary classes. In this case we use ovo in roc auc since we have binary classes.
+    # Because we also have an imbalance in classes we must use weighted f1, prec, rec
+    # and roc auc as these give importance also to minority classes
+    scores = cross_validate(
+        model, X, Y, 
+        cv=5, 
+        scoring=['accuracy', 'precision_weighted', 'recall_weighted', 'f1_weighted', 'roc_auc_ovo_weighted'],
+        return_train_score=True)
+
+    # once all fold train and cross metric values collected update read
+    # dictionary with specific hyper param config as key and its recorded
+    # metric values as value
+    results[f'{estimator_name}'][hyper_param_config_key] = {
+        'folds_train_acc':  scores['train_accuracy'].tolist(),
+        'folds_cross_acc': scores['test_accuracy'].tolist(),
+        'folds_train_prec': scores['train_precision_weighted'].tolist(),
+        'folds_cross_prec': scores['test_precision_weighted'].tolist(),
+        'folds_train_rec': scores['train_recall_weighted'].tolist(),
+        'folds_cross_rec': scores['test_recall_weighted'].tolist(),
+        'folds_train_f1': scores['train_f1_weighted'].tolist(),
+        'folds_cross_f1': scores['test_f1_weighted'].tolist(),
+        'folds_train_roc_auc': scores['train_roc_auc_ovo_weighted'].tolist(),
+        'folds_cross_roc_auc': scores['test_roc_auc_ovo_weighted'].tolist(),
+    }
+
+    with open(f'results/{selector_config}_{estimator_name}_results.json', 'w') as file:
+        json.dump(results, file)
+
+
+def grid_search_cv(subjects_features: pd.DataFrame,
     subjects_labels: pd.DataFrame,
     subject_to_id: dict,
     selector_config: str,
@@ -300,6 +365,7 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame,
     n_rows_to_sample: int | None,
     estimator_name: str,
     estimator,
+    cv_type: str,
     hyper_params: dict,):
     """
     args:
@@ -345,7 +411,8 @@ def grid_search_loso_cv(subjects_features: pd.DataFrame,
         # we use the possible permutations and create a dictionary
         # of the same keys as hyper params
         hyper_param_config = dict(zip(keys, prod))
-        loso_cross_validation(
+        cross_validator = loso_cross_validation if cv_type == "loso" else k_fold_cross_validation
+        cross_validator(
             subjects_features, 
             subjects_labels, 
             subject_to_id, 
@@ -442,6 +509,7 @@ if __name__ == "__main__":
     parser.add_argument("--mode", type=str, default="tuning", help="tuning mode will not \
         save model/s during fitting, while training mode saves model single model with \
         specific hyper param config")
+    parser.add_argument("--cv_type", type=str, default="loso", help="what type of cross validator to use whether k-fold or leave one subject out")
     parser.add_argument("--hyper_param_list", type=str, default="C_100", nargs="+", help="list of hyper parameters to be used as configuration during training")
     args = parser.parse_args()
 
@@ -482,7 +550,7 @@ if __name__ == "__main__":
         # do feature selection, hyperparameter tuning, 
         # loso cross validation across all subjects, and
         # save model & results
-        grid_search_loso_cv(
+        grid_search_cv(
             subjects_features, 
             subjects_labels, 
             subject_to_id, 
@@ -491,6 +559,7 @@ if __name__ == "__main__":
             n_rows_to_sample=args.n_rows_to_sample,
             estimator_name=args.m,
             estimator=models[args.m]['model'],
+            cv_type=args.cv_type,
             hyper_params=models[args.m]['hyper_params'],
         )
 

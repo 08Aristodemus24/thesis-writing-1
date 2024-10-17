@@ -270,7 +270,7 @@ def loso_cross_validation(subjects_signals: list[np.ndarray],
     with open(f'results/{selector_config}_{estimator_name}_results.json', 'w') as file:
         json.dump(results, file)
 
-def grid_search_loso_cv(subjects_signals: list[np.ndarray],
+def grid_search_cv(subjects_signals: list[np.ndarray],
     subjects_labels: list[np.ndarray],
     subject_to_id: dict,
     selector_config: str,
@@ -558,7 +558,7 @@ if __name__ == "__main__":
         # do feature selection, hyperparameter tuning, 
         # loso cross validation across all subjects, and
         # save model & results
-        grid_search_loso_cv(
+        grid_search_cv(
             subjects_signals, 
             subjects_labels, 
             subject_to_id,
