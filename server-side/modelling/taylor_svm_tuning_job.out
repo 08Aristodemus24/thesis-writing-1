@@ -14,4 +14,19 @@ Module unload: anaconda/3-2023.07-2
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
 ......slurmstepd: error: *** JOB 30330 ON saliksik-cpu-26 CANCELLED AT 2024-10-17T16:33:58 ***
-.
+................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73776
+obj = -61443.636244, rho = 0.568699
+nSV = 62241, nBSV = 62208
+Total nSV = 62241
+....................................................
