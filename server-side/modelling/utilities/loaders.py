@@ -392,13 +392,13 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
     """
 
     # we access the SCR values via raw data column
-    x_signal = df[x_col].values
+    x_signals = df[x_col].values
 
     # here if we would want to create windows of the raw data including the target label
     # we must specify which target label we want to include since there are multiple columns
     # that pertain to the label I vbelieve which are: binary_target, predicted artifacts
     # and post processed artifacts
-    y_signal = df[y_col].values
+    y_signals = df[y_col].values
 
     window_size = 5 * freq_signal
 
@@ -412,9 +412,10 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
     # to multiply 128 by 1 and use it as index raw_eda_df['time'].iloc[:128 * 1]
 
     # but what is the point of subtracting 765045 by window size of 640 (5 * 128)?
-    print(f'length of x_signals: {len(x_signal)}')
+    print(f'length of x_signals: {len(x_signals)}')
     print(f'window size: {window_size}')
-    stop = len(x_signal) - window_size
+
+    stop = len(x_signals) - window_size
     while i <= stop:
         # iteration pattern is the following
         # 0 <= 765045 - 640 (764405)
@@ -446,19 +447,19 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
 
         # if scale is true then min max scaling is applied
         if scale == True:
-            denominator_norm = (np.nanmax(x_signal[i:(i + window_size)]) - np.nanmin(x_signal[i:(i + window_size)]))
+            denominator_norm = (np.nanmax(x_signals[i:(i + window_size)]) - np.nanmin(x_signals[i:(i + window_size)]))
             denominator_norm = denominator_norm + 1e-100 if denominator_norm == 0 else denominator_norm
 
             # this is full min max scaling formula with the denominator using
             # the difference of the min and max of a window
             # to address also potential zero division concerns
-            x_signal_norm = (x_signal[i:(i + window_size)] - np.nanmin(x_signal[i:(i + window_size)])) / denominator_norm
+            x_window = (x_signals[i:(i + window_size)] - np.nanmin(x_signals[i:(i + window_size)])) / denominator_norm
         else:
             # this would be appropriate if there was a larger ram
-            x_signal_norm = x_signal[i:(i + window_size)]
+            x_window = x_signals[i:(i + window_size)]
 
         # we then append these normed signals to a list
-        x_window_list.append(x_signal_norm)
+        x_window_list.append(x_window)
 
         # returns the mean of a list or matrix of values given an
         # axis ignoring any nan values. Based on Llanes-Jurado et al. (2023)
@@ -473,7 +474,7 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         # 764352 + 640 - 64:764352 + 640 = 764928:764992
         # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
         
-        cond = np.nanmean(y_signal[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
+        cond = np.nanmean(y_signals[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
         y_window_list.append(1 if cond else 0)
 
         if (i == 0 or (i + target_size_frames) >= stop) and verbose:

@@ -932,5 +932,123 @@ def concur_extract_features_from_all(dir: str, files: list[str]):
 
     return eda_data
 
+def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=128, scale=False, verbose=False):
+    """
+    charge_raw_data" preprocesses the input signal cutting the signal in pieces of 5 seconds.
+    In the case that a target is introduced i.e. y_col != None, the target is cut the last 0.5
+    seconds of the binary target, becoming the target of the correspondent 5 seconds segement.
+    """
+
+    # we access the SCR values via raw data column
+    x_signals = df[x_col].values
+
+    # here if we would want to create windows of the raw data including the target label
+    # we must specify which target label we want to include since there are multiple columns
+    # that pertain to the label I vbelieve which are: binary_target, predicted artifacts
+    # and post processed artifacts
+    y_signals = df[y_col].values
+
+    window_size = 5 * freq_signal
+
+    x_window_list, y_window_list = [], []
+
+    i = 0
+    # so if we have a length of 765045 rows for the raw eda data
+    # and in each row we'd have to multiply 128 to get specific seconds e.g.
+    # to get 0th second we multiply 128 by 0 and use it as index
+    # raw_eda_df['time'].iloc[:128 * 0], to get 1st second mark we'd have
+    # to multiply 128 by 1 and use it as index raw_eda_df['time'].iloc[:128 * 1]
+
+    # but what is the point of subtracting 765045 by window size of 640 (5 * 128)?
+    print(f'length of x_signals: {len(x_signals)}')
+    print(f'window size: {window_size}')
+
+    stop = len(x_signals) - window_size
+    while i <= stop:
+        # iteration pattern is the following
+        # 0 <= 765045 - 640 (764405)
+        # 64 <= 765045 - 640
+        # 128 <= 765045 - 640
+        # 192 <= 765045 - 640
+        # 256 <= 765045 - 640
+        # 320 <= 765045 - 640
+        # ...
+        # 764288 <= 765045 - 640
+        # 764352 <= 765045 - 640 (764405) we only go until here as 764352 + 64
+        # (or another 0.5s segment would result in 764416 which is greater than 764405)  
+
+        # maybe what this truly does is we get 5 seconds of a signal and since there are 128 signals per second
+        # we would in total get 640 rows for 5 seconds of our signals
+
+        # oh so this is the denominator part of the min max scaling formula
+        # and as stated by llanes-jurado et al. they used min max scaling to scale the raw signals
+        # mroeover nanmax and min is used in case of nan values in the windows which returns
+        # minimum of an array or minimum along an axis, ignoring any NaNs
+        # 0:0 + 640 = 0:640
+        # 64:64 + 640 = 64:704
+        # 128:128 + 640 = 128:768
+        # 192:192 + 640 = 192:832
+        # ...
+        # 764352:764352 + 640 = 764352:764992
+        # if we exceed 764352 by adding 64 then we have 764416
+        # 764416:764416 + 640 = 764416:765056 and 765056 exceeds the index and rows of 765045 
+
+        # if scale is true then min max scaling is applied
+        if scale == True:
+            denominator_norm = (np.nanmax(x_signals[i:(i + window_size)]) - np.nanmin(x_signals[i:(i + window_size)]))
+            denominator_norm = denominator_norm + 1e-100 if denominator_norm == 0 else denominator_norm
+
+            # this is full min max scaling formula with the denominator using
+            # the difference of the min and max of a window
+            # to address also potential zero division concerns
+            x_window = (x_signals[i:(i + window_size)] - np.nanmin(x_signals[i:(i + window_size)])) / denominator_norm
+        else:
+            # this would be appropriate if there was a larger ram
+            x_window = x_signals[i:(i + window_size)]
+
+        # we then append these normed signals to a list
+        x_window_list.append(x_window)
+
+        # returns the mean of a list or matrix of values given an
+        # axis ignoring any nan values. Based on Llanes-Jurado et al. (2023)
+        # the threshold for a 0.5s segment of a signal to be accepted as an
+        # artifact must be 0.5 or 50% if it is less than this then the label
+        # of such a segment of the signal will be not an artifact
+        # 0 + 640 - 64:0 + 640 = 576:640
+        # 64 + 640 - 64:64 + 640 = 640:704
+        # 128 + 640 - 64:128 + 640 = 704:768
+        # ...
+        # 764288 + 640 - 64:764288 + 640 = 764864:764928
+        # 764352 + 640 - 64:764352 + 640 = 764928:764992
+        # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
+        
+        cond = np.nanmean(y_signals[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
+        y_window_list.append(1 if cond else 0)
+
+        if (i == 0 or (i + target_size_frames) >= stop) and verbose:
+            print(f'i: {i}, i + window_size: {i + window_size}')
+            print(f'i + window_size - target_size_frames: {i + window_size - target_size_frames}, i + window_size: {i + window_size}')
+            print(f"Iteration {i} of {stop - 1}\n")
+        
+        # this will increment our i by the size of our target frames which in this 
+        # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
+        i += target_size_frames
+        
+
+    # because x_window_list and y_window_list when converted to a numpy array will
+    # be of dimensions (m, 640) and (m,) respectively we need to first and foremost
+    # reshpae x_window_list into a 3D matrix such that it is able to be taken in
+    # by an LSTM layer, m being the number of examples, 640 being the number of time steps
+    # and 1 being the number of features which will be just our raw eda signals.
+    X = np.array(x_window_list)
+    subject_signals = np.reshape(X, (X.shape[0], X.shape[1], -1))
+
+    # and because y_window_list is merely of dimension (m, ) we will have to
+    # expand its dimensions such that it can be accepted by our tensorflow model
+    # resulting shape of subject_labels will now be (m, 1)
+    Y = np.array(y_window_list)
+    subject_labels = np.reshape(Y, (Y.shape[0], -1))
+
+    return (subject_signals, subject_labels)
 
 
