@@ -1,0 +1,15 @@
+Submitted on Thu Oct 17 12:06:25 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 30264
+SLURM_JOB_NAME        : hossain_gbt_tuning_job
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-26
+SLURM_NTASKS          : 70
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30264
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
+/var/spool/slurm/job30264/slurm_script: line 52: 88050 Segmentation fault      python tuning_ml.py -m gbt -pl hossain --mode tuning
+Finished on Thu Oct 17 12:06:31 PST 2024
+Total runtime (sec): 6.347872495651245
