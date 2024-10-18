@@ -296,6 +296,7 @@ def predict():
 
         model = models[model_name]['model']
         Y_pred = model.predict(X)
+        Y_pred_prob = model.predict_proba(X)
         print(f"predicted Y: {Y_pred}")
         print(f"unique values and counts: {np.unique(Y_pred, return_counts=True)}")
         print(f"true Y: {Y}")
@@ -303,10 +304,10 @@ def predict():
 
         # compute performance metric values for test subject
         test_acc = accuracy_score(y_true=Y, y_pred=Y_pred)
-        test_prec = precision_score(y_true=Y, y_pred=Y_pred)
-        test_rec = recall_score(y_true=Y, y_pred=Y_pred)
-        test_f1 = f1_score(y_true=Y, y_pred=Y_pred)
-        test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred)
+        test_prec = precision_score(y_true=Y, y_pred=Y_pred, average="weighted")
+        test_rec = recall_score(y_true=Y, y_pred=Y_pred, average="weighted")
+        test_f1 = f1_score(y_true=Y, y_pred=Y_pred, average="weighted")
+        test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred_prob, average="weighted", multi_class="ovo")
 
         print(f"test acc: {test_acc} \
               \ntest prec: {test_prec} \
