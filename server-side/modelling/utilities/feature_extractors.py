@@ -801,7 +801,7 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
 
 
 
-def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_size: float | int=1, verbose: bool=False):
+def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_time: float | int=1, verbose: bool=False):
     """
     partitions the given dataframe of eda data into at least 1 hour 
     and extracts wavelet and statistical features in each of these
@@ -829,7 +829,7 @@ def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, w
     # we also need to specify how large our windows/epochs/segments
     # would be in order to create the rows for our dataset and subsequently
     # each feature of that window or row
-    samples_per_win_size = int(samples_per_sec * window_size)
+    samples_per_win_size = int(samples_per_sec * window_time)
 
     # get number of rows of 128hz timestamps and signals
     n_rows = data.shape[0]
@@ -866,48 +866,14 @@ def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, w
 
     return features_per_hour
 
-def extract_features(df: pd.DataFrame):
-    eda_df_128hz = df.copy()
-    eda_df_128hz.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
-    print(eda_df_128hz)
-
-    # set index first of uninterpolated eda data
-    start_time = eda_df_128hz.iloc[0]['time']
-    eda_df_128hz.set_index(pd.date_range(start=start_time, periods=eda_df_128hz.shape[0], freq=get_time_frequency(128)), inplace=True)
-    
-    # interpolate data to 16hz by downsampling
-    eda_df_16hz = interpolate_signals(eda_df_128hz, sample_rate=128, start_time=start_time, target_hz=16)
-
-    # once downsampled low-pass filter both uninterpolated and
-    # interpolated data. Cutoff of 1 means we retain the 128hz signal
-    # at 128hz, because if we put in 0.5 for instance then we "cut off"
-    # the 128hz signal by 0.5 or 50% which results in 64hz
-    eda_df_128hz['filtered_signal'] = butter_lowpass_filter(eda_df_128hz['raw_signal'], cutoff=1.0, samp_freq=128, order=6)
-    eda_df_16hz['filtered_signal'] = butter_lowpass_filter(eda_df_16hz['raw_signal'], cutoff=1.0, samp_freq=16, order=6)
-
-    # process the dfs and extract its features
-    data_128hz = extract_features_per_hour(eda_df_128hz, hertz=128, window_size=0.5, verbose=False)
-    data_16hz = extract_features_per_hour(eda_df_16hz, hertz=16, window_size=0.5, verbose=False)
-
-    # rejoin 128hz and 16hz features and labels
-    eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
-
-    return eda_feature_df, eda_labels
-
-def concur_extract_features_from_all(dir: str, files: list[str]):
-    def helper(file: str):
-        subject_name = file.strip(".csv")
-        eda_df_128hz = pd.read_csv(f'{dir}{file}', sep=';')
-        eda_feature_df, eda_labels = extract_features(eda_df_128hz)
-
-        return (subject_name, (eda_feature_df, eda_labels))
-
-    with ThreadPoolExecutor() as exe:
-        eda_data = list(exe.map(helper, files))
-
-    return eda_data
-
-def compute(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=128, scale=False, verbose=False):
+def extract_features_whole(data: pd.DataFrame | np.ndarray, 
+    hertz: int=128, 
+    window_time: float | int=5, 
+    x_col="raw_signal", 
+    target_time=0.5, 
+    y_col=None, 
+    scale=False,
+    verbose: bool=False):
     """
     charge_raw_data" preprocesses the input signal cutting the signal in pieces of 5 seconds.
     In the case that a target is introduced i.e. y_col != None, the target is cut the last 0.5
@@ -915,15 +881,17 @@ def compute(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=
     """
 
     # we access the SCR values via raw data column
-    x_signals = df[x_col].values
+    x_signals = data[x_col].values
 
     # here if we would want to create windows of the raw data including the target label
     # we must specify which target label we want to include since there are multiple columns
     # that pertain to the label I vbelieve which are: binary_target, predicted artifacts
     # and post processed artifacts
-    y_signals = df[y_col].values
+    if y_col is not None:
+        y_signals = data[y_col].values
 
-    window_size = 5 * freq_signal
+    window_size = int(window_time * hertz)
+    target_size = int(target_time * hertz)
 
     x_window_list, y_window_list = [], []
 
@@ -997,17 +965,18 @@ def compute(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=
         # 764352 + 640 - 64:764352 + 640 = 764928:764992
         # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
         
-        cond = np.nanmean(y_signals[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
-        y_window_list.append(1 if cond else 0)
+        if y_col is not None:
+            cond = np.nanmean(y_signals[(i + window_size - target_size):(i + window_size)]) > 0.5
+            y_window_list.append(1 if cond else 0)
 
-        if (i == 0 or (i + target_size_frames) >= stop) and verbose:
+        if (i == 0 or (i + target_size) >= stop) and verbose:
             print(f'i: {i}, i + window_size: {i + window_size}')
-            print(f'i + window_size - target_size_frames: {i + window_size - target_size_frames}, i + window_size: {i + window_size}')
+            print(f'i + window_size - target_size: {i + window_size - target_size}, i + window_size: {i + window_size}')
             print(f"Iteration {i} of {stop - 1}\n")
         
         # this will increment our i by the size of our target frames which in this 
         # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
-        i += target_size_frames
+        i += target_size
         
 
     # because x_window_list and y_window_list when converted to a numpy array will
@@ -1021,9 +990,101 @@ def compute(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=
     # and because y_window_list is merely of dimension (m, ) we will have to
     # expand its dimensions such that it can be accepted by our tensorflow model
     # resulting shape of subject_labels will now be (m, 1)
-    Y = np.array(y_window_list)
-    subject_labels = np.reshape(Y, (Y.shape[0], -1))
+    if y_col is not None:
+        Y = np.array(y_window_list)
+        subject_labels = np.reshape(Y, (Y.shape[0], -1))
 
-    return (subject_signals, subject_labels)
+        return (subject_signals, subject_labels) 
+    
+    else:
+        return subject_signals
 
 
+def extract_features(df: pd.DataFrame | np.ndarray, extractor_fn):
+    """
+    takes in dataframe of 128hz downsamples it to 16hz and uses
+    both frequencies of dataframes to extract low level features
+    from
+
+    args:
+        df -
+        extractor_fn - calllback function that will be used by extract_features()
+        as feature extractor. This callback can either be a feature extractor
+        function that extracts features from 5 second windows to be used for hybrid
+        architectures like LSTM-SVM or 0.5 second windows to be used for traditional
+        ML architectures like SVM, RF, LR, GBT, etc.
+    """
+
+    eda_df_128hz = df.copy()
+    eda_df_128hz.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
+    print(eda_df_128hz)
+
+    # set index first of uninterpolated eda data
+    start_time = eda_df_128hz.iloc[0]['time']
+    eda_df_128hz.set_index(pd.date_range(start=start_time, periods=eda_df_128hz.shape[0], freq=get_time_frequency(128)), inplace=True)
+    
+    # interpolate data to 16hz by downsampling
+    eda_df_16hz = interpolate_signals(eda_df_128hz, sample_rate=128, start_time=start_time, target_hz=16)
+
+    # once downsampled low-pass filter both uninterpolated and
+    # interpolated data. Cutoff of 1 means we retain the 128hz signal
+    # at 128hz, because if we put in 0.5 for instance then we "cut off"
+    # the 128hz signal by 0.5 or 50% which results in 64hz
+    eda_df_128hz['filtered_signal'] = butter_lowpass_filter(eda_df_128hz['raw_signal'], cutoff=1.0, samp_freq=128, order=6)
+    eda_df_16hz['filtered_signal'] = butter_lowpass_filter(eda_df_16hz['raw_signal'], cutoff=1.0, samp_freq=16, order=6)
+
+    # define arguments for both 128 hertz and 16 hertz signal dataframes
+    args_128hz = {
+        'data': eda_df_128hz,
+        'hertz': 128,
+        'window_time': 0.5,
+        'verbose': False
+    } if extractor_fn.__name__ == "extract_features_per_hour" else {
+        'data': eda_df_128hz, 
+        'hertz': 128, 
+        'window_time': 5, 
+        'x_col': "raw_signal",
+        'target_time': 0.5,
+        'y_col': None,
+        'scale': True,
+        'verbose': False
+    }
+
+    args_16hz = {
+        'data': eda_df_16hz,
+        'hertz': 16,
+        'window_time': 0.5,
+        'verbose': False
+    } if extractor_fn.__name__ == "extract_features_per_hour" else {
+        'data': eda_df_16hz, 
+        'hertz': 16, 
+        'window_time': 5, 
+        'x_col': "raw_signal",
+        'target_time': 0.5,
+        'y_col': None,
+        'scale': True,
+        'verbose': False
+    }
+
+    # process the dfs and extract its features
+    data_128hz = extractor_fn(**args_128hz)
+    data_16hz = extractor_fn(**args_16hz)
+
+    # rejoin 128hz and 16hz features and labels
+    eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
+
+    return eda_feature_df, eda_labels
+
+def concur_extract_features_from_all(dir: str, files: list[str], arch: str="hybrid"):
+    def helper(file: str):
+        subject_name = file.strip(".csv")
+        eda_df_128hz = pd.read_csv(f'{dir}{file}', sep=';')
+        extractor_fn = extract_features_per_hour if arch.lower() == "ml" else extract_features_whole
+        eda_feature_df, eda_labels = extract_features(eda_df_128hz, extractor_fn=extractor_fn)
+
+        return (subject_name, (eda_feature_df, eda_labels))
+
+    with ThreadPoolExecutor() as exe:
+        eda_data = list(exe.map(helper, files))
+
+    return eda_data

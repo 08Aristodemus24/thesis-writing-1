@@ -384,24 +384,32 @@ def create_classified_df(train_conf_matrix, val_conf_matrix, test_conf_matrix, t
     return classified_df
 
 
-def charge_raw_data(df, x_col="raw_signal", target_size_frames=64, y_col='label', freq_signal=128, scale=False, verbose=False):
+def charge_raw_data(data: pd.DataFrame | np.ndarray, 
+    hertz: int=128, 
+    window_time: float | int=5, 
+    x_col="raw_signal", 
+    target_time=0.5, 
+    y_col=None, 
+    scale=False,
+    verbose: bool=False):
     """
     charge_raw_data" preprocesses the input signal cutting the signal in pieces of 5 seconds.
     In the case that a target is introduced i.e. y_col != None, the target is cut the last 0.5
-    seconds of the binary target, becoming the target of the corresponding 5 second segement.
+    seconds of the binary target, becoming the target of the correspondent 5 seconds segement.
     """
 
     # we access the SCR values via raw data column
-    x_signals = df[x_col].values
+    x_signals = data[x_col].values
 
     # here if we would want to create windows of the raw data including the target label
     # we must specify which target label we want to include since there are multiple columns
     # that pertain to the label I vbelieve which are: binary_target, predicted artifacts
     # and post processed artifacts
     if y_col is not None:
-        y_signals = df[y_col].values
+        y_signals = data[y_col].values
 
-    window_size = 5 * freq_signal
+    window_size = int(window_time * hertz)
+    target_size = int(target_time * hertz)
 
     x_window_list, y_window_list = [], []
 
@@ -476,17 +484,17 @@ def charge_raw_data(df, x_col="raw_signal", target_size_frames=64, y_col='label'
         # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
         
         if y_col is not None:
-            cond = np.nanmean(y_signals[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
+            cond = np.nanmean(y_signals[(i + window_size - target_size):(i + window_size)]) > 0.5
             y_window_list.append(1 if cond else 0)
 
-        if (i == 0 or (i + target_size_frames) >= stop) and verbose:
+        if (i == 0 or (i + target_size) >= stop) and verbose:
             print(f'i: {i}, i + window_size: {i + window_size}')
-            print(f'i + window_size - target_size_frames: {i + window_size - target_size_frames}, i + window_size: {i + window_size}')
+            print(f'i + window_size - target_size: {i + window_size - target_size}, i + window_size: {i + window_size}')
             print(f"Iteration {i} of {stop - 1}\n")
         
         # this will increment our i by the size of our target frames which in this 
         # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
-        i += target_size_frames
+        i += target_size
         
 
     # because x_window_list and y_window_list when converted to a numpy array will
