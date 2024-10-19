@@ -194,3 +194,30 @@ nSV = 60889, nBSV = 60862
 Total nSV = 60889
 ........................................................
 Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 69829
+obj = -59902.954437, rho = 0.543619
+nSV = 60648, nBSV = 60621
+Total nSV = 60648
+..........................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68724
+obj = -60079.769731, rho = 0.450960
+nSV = 60846, nBSV = 60816
+Total nSV = 60846
+........
