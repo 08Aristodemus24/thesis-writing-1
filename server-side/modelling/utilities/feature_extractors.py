@@ -866,7 +866,49 @@ def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, w
 
     return features_per_hour
 
-def extract_features_whole(data: pd.DataFrame | np.ndarray, 
+def load_wavelet_data_hybrid(data: pd.DataFrame | np.ndarray, col_to_use: str, hertz: int):
+    """
+    function to create whole and half wavelet dataframes
+    """
+
+    # determine frequency
+    # 128 / 8 is 16, then we use 16 as a divisor to 1
+    # 16 / 8 is 2, then we use 2 as a divisor to 1
+    # 8 / 8 is 1, then we use 1 as a divisor to 1
+    whole_freq = int(hertz / 8)
+    half_freq = int((hertz / 8) * 2)
+
+    # obtain wavelet coefficients
+    coeffs = restructure_wavelets(pywt.wavedec(data[col_to_use], wavelet='haar', level=3))
+    cA_1, cD_3, cD_2, cD_1 = coeffs
+    n_rows_wavelet = cD_3.shape[0]
+
+    # reshape, calculate absolute and max value of wavelet coefficients
+    # such that all shapes of wavelet coefficients adhere to that of the
+    # third level coefficients shape
+    whole_coeff_1 = np.max(np.absolute(np.reshape(cD_1[:n_rows_wavelet * 4], newshape=(n_rows_wavelet, 4))), axis=1)
+    whole_coeff_2 = np.max(np.absolute(np.reshape(cD_2[:n_rows_wavelet * 2], newshape=(n_rows_wavelet, 2))), axis=1)
+    whole_coeff_3 = np.absolute(cD_3[:n_rows_wavelet])
+
+    # create whole wave features dataframe
+    whole_wave_features = pd.DataFrame({
+        f'first_{whole_freq}thofa_sec_feat': whole_coeff_1,
+        f'second_{whole_freq}thofa_sec_feat': whole_coeff_2,
+        f'third_{whole_freq}thofa_sec_feat': whole_coeff_3,
+    })
+
+    # recall that cD_1 has shape of 9688 which is second_data_n_segments_half * 2
+    half_coeff_1 = np.max(np.absolute(np.reshape(cD_1[:n_rows_wavelet * 4], newshape=(n_rows_wavelet * 2, 2))), axis=1)
+    half_coeff_2 = np.absolute(cD_2[:n_rows_wavelet * 2])
+
+    half_wave_features = pd.DataFrame({
+        f'first_{half_freq}thofa_sec_feat': half_coeff_1,
+        f'second_{half_freq}thofa_sec_feat': half_coeff_2,
+    })
+
+    return whole_wave_features, half_wave_features
+
+def extract_features_hybrid(data: pd.DataFrame | np.ndarray, 
     hertz: int=128, 
     window_time: float | int=5, 
     x_col="raw_signal", 
@@ -875,10 +917,79 @@ def extract_features_whole(data: pd.DataFrame | np.ndarray,
     scale=False,
     verbose: bool=False):
     """
-    charge_raw_data" preprocesses the input signal cutting the signal in pieces of 5 seconds.
-    In the case that a target is introduced i.e. y_col != None, the target is cut the last 0.5
-    seconds of the binary target, becoming the target of the correspondent 5 seconds segement.
+    modified version of charge_raw_data() where each window of the signal is used in order to
+    calculate ML based/lower order features from the 5 second window of the signal. Like
+    charge_raw_data() where in case a target is introduced i.e. y_col != None, the target is 
+    cut the last 0.5 seconds of the binary target, becoming the target of the corresponding 5
+    seconds segement.
     """
+
+    whole_freq = int(hertz / 8)
+    half_freq = int((hertz / 8) * 2)
+
+    feature_names = [
+        # statistical features names
+        f"raw_{hertz}hz_max", f"raw_{hertz}hz_min", 
+        f"raw_{hertz}hz_amp", f"raw_{hertz}hz_median", 
+        f"raw_{hertz}hz_std", f"raw_{hertz}hz_range", 
+        f"raw_{hertz}hz_shannon_entropy",
+        
+        f"raw_{hertz}hz_1d_max", f"raw_{hertz}hz_1d_min", 
+        f"raw_{hertz}hz_1d_amp", f"raw_{hertz}hz_1d_median", 
+        f"raw_{hertz}hz_1d_std", f"raw_{hertz}hz_1d_range", 
+        f"raw_{hertz}hz_1d_shannon_entropy",
+        f"raw_{hertz}hz_1d_max_abs", f"raw_{hertz}hz_1d_avg_abs", 
+
+        f"raw_{hertz}hz_2d_max", f"raw_{hertz}hz_2d_min", 
+        f"raw_{hertz}hz_2d_amp", f"raw_{hertz}hz_2d_median", 
+        f"raw_{hertz}hz_2d_std", f"raw_{hertz}hz_2d_range", 
+        f"raw_{hertz}hz_2d_shannon_entropy",
+        f"raw_{hertz}hz_2d_max_abs", f"raw_{hertz}hz_2d_avg_abs", 
+
+        f"filt_{hertz}hz_max", f"filt_{hertz}hz_min", 
+        f"filt_{hertz}hz_amp", f"filt_{hertz}hz_median", 
+        f"filt_{hertz}hz_std", f"filt_{hertz}hz_range", 
+        f"filt_{hertz}hz_shannon_entropy",
+        
+        f"filt_{hertz}hz_1d_max", f"filt_{hertz}hz_1d_min", 
+        f"filt_{hertz}hz_1d_amp", f"filt_{hertz}hz_1d_median", 
+        f"filt_{hertz}hz_1d_std", f"filt_{hertz}hz_1d_range", 
+        f"filt_{hertz}hz_1d_shannon_entropy",
+        f"filt_{hertz}hz_1d_max_abs", f"filt_{hertz}hz_1d_avg_abs", 
+
+        f"filt_{hertz}hz_2d_max", f"filt_{hertz}hz_2d_min", 
+        f"filt_{hertz}hz_2d_amp", f"filt_{hertz}hz_2d_median", 
+        f"filt_{hertz}hz_2d_std", f"filt_{hertz}hz_2d_range", 
+        f"filt_{hertz}hz_2d_shannon_entropy",
+        f"filt_{hertz}hz_2d_max_abs", f"filt_{hertz}hz_2d_avg_abs", 
+
+        # autoregressive features names
+        f"ar_coeff_1_{hertz}hz", f"ar_coeff_2_{hertz}hz", f"ar_err_var_{hertz}hz",
+
+        # vfcdm features names
+        f"vfcdm_4/8_{hertz}hz_mean", f"vfcdm_3/8_cut_{hertz}hz_mean", f"vfcdm_2/8_cut_{hertz}hz_mean", f"vfcdm_1/8_cut_{hertz}hz_mean", 
+        f"vfcdm_4/8_{hertz}hz_std", f"vfcdm_3/8_cut_{hertz}hz_std", f"vfcdm_2/8_cut_{hertz}hz_std", f"vfcdm_1/8_cut_{hertz}hz_std",
+
+        # wavelet features names
+        f"first_{whole_freq}thofa_sec_max", f"second_{whole_freq}thofa_sec_max", f"third_{whole_freq}thofa_sec_max", 
+        f"first_{whole_freq}thofa_sec_mean", f"second_{whole_freq}thofa_sec_mean", f"third_{whole_freq}thofa_sec_mean", 
+        f"first_{whole_freq}thofa_sec_std", f"second_{whole_freq}thofa_sec_std", f"third_{whole_freq}thofa_sec_std", 
+        f"first_{whole_freq}thofa_sec_median", f"second_{whole_freq}thofa_sec_median", f"third_{whole_freq}thofa_sec_median",
+        f"first_{whole_freq}thofa_sec_range", f"second_{whole_freq}thofa_sec_range", f"third_{whole_freq}thofa_sec_range",
+        f"first_{whole_freq}thofa_sec_n_coeffs_above_zero", f"second_{whole_freq}thofa_sec_n_coeffs_above_zero", f"third_{whole_freq}thofa_sec_n_coeffs_above_zero",
+
+        f"first_{half_freq}thofa_sec_max", f"second_{half_freq}thofa_sec_max", 
+        f"first_{half_freq}thofa_sec_mean", f"second_{half_freq}thofa_sec_mean", 
+        f"first_{half_freq}thofa_sec_std", f"second_{half_freq}thofa_sec_std", 
+        f"first_{half_freq}thofa_sec_median", f"second_{half_freq}thofa_sec_median", 
+        f"first_{half_freq}thofa_sec_range", f"second_{half_freq}thofa_sec_range", 
+        f"first_{half_freq}thofa_sec_n_coeffs_above_zero", f"second_{half_freq}thofa_sec_n_coeffs_above_zero"
+    ]
+
+    # create empty list  that will be populated during
+    # computation of the features of the window of the specific
+    # slice of the signal
+    feature_segments_list = []
 
     # we access the SCR values via raw data column
     x_signals = data[x_col].values
@@ -903,8 +1014,8 @@ def extract_features_whole(data: pd.DataFrame | np.ndarray,
     # to multiply 128 by 1 and use it as index raw_eda_df['time'].iloc[:128 * 1]
 
     # but what is the point of subtracting 765045 by window size of 640 (5 * 128)?
-    print(f'length of x_signals: {len(x_signals)}')
-    print(f'window size: {window_size}')
+    # print(f'length of x_signals: {len(x_signals)}')
+    # print(f'window size: {window_size}')
 
     stop = len(x_signals) - window_size
     while i <= stop:
@@ -949,55 +1060,75 @@ def extract_features_whole(data: pd.DataFrame | np.ndarray,
             # this would be appropriate if there was a larger ram
             x_window = x_signals[i:(i + window_size)]
 
+        # use x_window as the current data to base feature extraction from
+        # calculate the necessary features like its wavelet, statistical,
+        # auto regressive, and time-frequency based features
+
+        # put windowed signal to current dataframe slice
+        curr_data = data.iloc[i: (i + window_size)]
+        curr_data['scaled_signal'] = x_window
+        # print(curr_data)
+
+        # calculate current dataframe slices whole wavelets and half wavelets
+        whole_wave, half_wave = load_wavelet_data_hybrid(curr_data, col_to_use="scaled_signal", hertz=hertz)
+
+        feature_segment = compute_features(curr_data, whole_wave, half_wave, samples_per_sec=hertz)
+        feature_segments_list.append(feature_segment)
+
         # we then append these normed signals to a list
-        x_window_list.append(x_window)
+    #     x_window_list.append(x_window)
 
-        # returns the mean of a list or matrix of values given an
-        # axis ignoring any nan values. Based on Llanes-Jurado et al. (2023)
-        # the threshold for a 0.5s segment of a signal to be accepted as an
-        # artifact must be 0.5 or 50% if it is less than this then the label
-        # of such a segment of the signal will be not an artifact
-        # 0 + 640 - 64:0 + 640 = 576:640
-        # 64 + 640 - 64:64 + 640 = 640:704
-        # 128 + 640 - 64:128 + 640 = 704:768
-        # ...
-        # 764288 + 640 - 64:764288 + 640 = 764864:764928
-        # 764352 + 640 - 64:764352 + 640 = 764928:764992
-        # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
+    #     # returns the mean of a list or matrix of values given an
+    #     # axis ignoring any nan values. Based on Llanes-Jurado et al. (2023)
+    #     # the threshold for a 0.5s segment of a signal to be accepted as an
+    #     # artifact must be 0.5 or 50% if it is less than this then the label
+    #     # of such a segment of the signal will be not an artifact
+    #     # 0 + 640 - 64:0 + 640 = 576:640
+    #     # 64 + 640 - 64:64 + 640 = 640:704
+    #     # 128 + 640 - 64:128 + 640 = 704:768
+    #     # ...
+    #     # 764288 + 640 - 64:764288 + 640 = 764864:764928
+    #     # 764352 + 640 - 64:764352 + 640 = 764928:764992
+    #     # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
         
-        if y_col is not None:
-            cond = np.nanmean(y_signals[(i + window_size - target_size):(i + window_size)]) > 0.5
-            y_window_list.append(1 if cond else 0)
+    #     if y_col is not None:
+    #         cond = np.nanmean(y_signals[(i + window_size - target_size):(i + window_size)]) > 0.5
+    #         y_window_list.append(1 if cond else 0)
 
-        if (i == 0 or (i + target_size) >= stop) and verbose:
-            print(f'i: {i}, i + window_size: {i + window_size}')
-            print(f'i + window_size - target_size: {i + window_size - target_size}, i + window_size: {i + window_size}')
-            print(f"Iteration {i} of {stop - 1}\n")
+    #     if (i == 0 or (i + target_size) >= stop) and verbose:
+    #         print(f'i: {i}, i + window_size: {i + window_size}')
+    #         print(f'i + window_size - target_size: {i + window_size - target_size}, i + window_size: {i + window_size}')
+    #         print(f"Iteration {i} of {stop - 1}\n")
         
-        # this will increment our i by the size of our target frames which in this 
-        # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
+    #     # this will increment our i by the size of our target frames which in this 
+    #     # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
         i += target_size
-        
+    zipped_results = zip(feature_names, feature_segments_list)
+    print(zipped_results)
+    dict_results = dict(zipped_results)
+    print(dict_results)
+    feature_segments = pd.DataFrame.from_dict(dict_results)
+    print(feature_segments.shape)
 
-    # because x_window_list and y_window_list when converted to a numpy array will
-    # be of dimensions (m, 640) and (m,) respectively we need to first and foremost
-    # reshpae x_window_list into a 3D matrix such that it is able to be taken in
-    # by an LSTM layer, m being the number of examples, 640 being the number of time steps
-    # and 1 being the number of features which will be just our raw eda signals.
-    X = np.array(x_window_list)
-    subject_signals = np.reshape(X, (X.shape[0], X.shape[1], -1))
+    # # because x_window_list and y_window_list when converted to a numpy array will
+    # # be of dimensions (m, 640) and (m,) respectively we need to first and foremost
+    # # reshpae x_window_list into a 3D matrix such that it is able to be taken in
+    # # by an LSTM layer, m being the number of examples, 640 being the number of time steps
+    # # and 1 being the number of features which will be just our raw eda signals.
+    # X = np.array(x_window_list)
+    # subject_signals = np.reshape(X, (X.shape[0], X.shape[1], -1))
 
-    # and because y_window_list is merely of dimension (m, ) we will have to
-    # expand its dimensions such that it can be accepted by our tensorflow model
-    # resulting shape of subject_labels will now be (m, 1)
-    if y_col is not None:
-        Y = np.array(y_window_list)
-        subject_labels = np.reshape(Y, (Y.shape[0], -1))
+    # # and because y_window_list is merely of dimension (m, ) we will have to
+    # # expand its dimensions such that it can be accepted by our tensorflow model
+    # # resulting shape of subject_labels will now be (m, 1)
+    # if y_col is not None:
+    #     Y = np.array(y_window_list)
+    #     subject_labels = np.reshape(Y, (Y.shape[0], -1))
 
-        return (subject_signals, subject_labels) 
+    #     return (subject_signals, subject_labels) 
     
-    else:
-        return subject_signals
+    # else:
+    #     return subject_signals
 
 
 def extract_features(df: pd.DataFrame | np.ndarray, extractor_fn):
@@ -1017,7 +1148,7 @@ def extract_features(df: pd.DataFrame | np.ndarray, extractor_fn):
 
     eda_df_128hz = df.copy()
     eda_df_128hz.columns = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art']
-    print(eda_df_128hz)
+    # print(eda_df_128hz)
 
     # set index first of uninterpolated eda data
     start_time = eda_df_128hz.iloc[0]['time']
@@ -1070,16 +1201,20 @@ def extract_features(df: pd.DataFrame | np.ndarray, extractor_fn):
     data_128hz = extractor_fn(**args_128hz)
     data_16hz = extractor_fn(**args_16hz)
 
-    # rejoin 128hz and 16hz features and labels
-    eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
+    if extractor_fn.__name__ == "extract_features_per_hour":
+        # rejoin 128hz and 16hz features and labels
+        eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
 
-    return eda_feature_df, eda_labels
+        return eda_feature_df, eda_labels
+    else:
+        pass
+
 
 def concur_extract_features_from_all(dir: str, files: list[str], arch: str="hybrid"):
     def helper(file: str):
         subject_name = file.strip(".csv")
         eda_df_128hz = pd.read_csv(f'{dir}{file}', sep=';')
-        extractor_fn = extract_features_per_hour if arch.lower() == "ml" else extract_features_whole
+        extractor_fn = extract_features_per_hour if arch.lower() == "ml" else extract_features_hybrid
         eda_feature_df, eda_labels = extract_features(eda_df_128hz, extractor_fn=extractor_fn)
 
         return (subject_name, (eda_feature_df, eda_labels))
