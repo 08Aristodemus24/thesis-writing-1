@@ -179,4 +179,18 @@ optimization finished, #iter = 67850
 obj = -60071.976464, rho = 0.564874
 nSV = 60818, nBSV = 60789
 Total nSV = 60818
-...............................
+..........................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 70294
+obj = -60144.578917, rho = 0.547134
+nSV = 60889, nBSV = 60862
+Total nSV = 60889
+........................................................
+Warning: using -h 0 may be faster
