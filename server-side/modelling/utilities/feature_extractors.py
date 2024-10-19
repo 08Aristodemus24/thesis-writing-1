@@ -1071,7 +1071,6 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
 
         # calculate current dataframe slices whole wavelets and half wavelets
         whole_wave, half_wave = load_wavelet_data_hybrid(curr_data, col_to_use="scaled_signal", hertz=hertz)
-
         feature_segment = compute_features(curr_data, whole_wave, half_wave, samples_per_sec=hertz)
         feature_segments_list.append(feature_segment)
 
@@ -1103,12 +1102,13 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
     #     # this will increment our i by the size of our target frames which in this 
     #     # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
         i += target_size
-    zipped_results = zip(feature_names, feature_segments_list)
-    print(zipped_results)
-    dict_results = dict(zipped_results)
-    print(dict_results)
-    feature_segments = pd.DataFrame.from_dict(dict_results)
-    print(feature_segments.shape)
+    print(len(feature_segments_list))
+    # zipped_results = zip(feature_names, feature_segments_list)
+    # print(zipped_results)
+    # dict_results = dict(zipped_results)
+    # print(dict_results)
+    # feature_segments = pd.DataFrame.from_dict(dict_results)
+    # print(feature_segments.shape)
 
     # # because x_window_list and y_window_list when converted to a numpy array will
     # # be of dimensions (m, 640) and (m,) respectively we need to first and foremost
