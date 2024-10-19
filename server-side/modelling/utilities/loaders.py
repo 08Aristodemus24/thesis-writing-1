@@ -384,11 +384,11 @@ def create_classified_df(train_conf_matrix, val_conf_matrix, test_conf_matrix, t
     return classified_df
 
 
-def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq_signal=128, scale=False, verbose=False):
+def charge_raw_data(df, x_col="raw_signal", target_size_frames=64, y_col='label', freq_signal=128, scale=False, verbose=False):
     """
     charge_raw_data" preprocesses the input signal cutting the signal in pieces of 5 seconds.
     In the case that a target is introduced i.e. y_col != None, the target is cut the last 0.5
-    seconds of the binary target, becoming the target of the correspondent 5 seconds segement.
+    seconds of the binary target, becoming the target of the corresponding 5 second segement.
     """
 
     # we access the SCR values via raw data column
@@ -398,7 +398,8 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
     # we must specify which target label we want to include since there are multiple columns
     # that pertain to the label I vbelieve which are: binary_target, predicted artifacts
     # and post processed artifacts
-    y_signals = df[y_col].values
+    if y_col is not None:
+        y_signals = df[y_col].values
 
     window_size = 5 * freq_signal
 
@@ -474,8 +475,9 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
         # 764352 + 640 - 64:764352 + 640 = 764928:764992
         # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
         
-        cond = np.nanmean(y_signals[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
-        y_window_list.append(1 if cond else 0)
+        if y_col is not None:
+            cond = np.nanmean(y_signals[(i + window_size - target_size_frames):(i + window_size)]) > 0.5
+            y_window_list.append(1 if cond else 0)
 
         if (i == 0 or (i + target_size_frames) >= stop) and verbose:
             print(f'i: {i}, i + window_size: {i + window_size}')
@@ -498,10 +500,14 @@ def charge_raw_data(df, x_col="rawdata", target_size_frames=64, y_col=None, freq
     # and because y_window_list is merely of dimension (m, ) we will have to
     # expand its dimensions such that it can be accepted by our tensorflow model
     # resulting shape of subject_labels will now be (m, 1)
-    Y = np.array(y_window_list)
-    subject_labels = np.reshape(Y, (Y.shape[0], -1))
+    if y_col is not None:
+        Y = np.array(y_window_list)
+        subject_labels = np.reshape(Y, (Y.shape[0], -1))
 
-    return (subject_signals, subject_labels)
+        return (subject_signals, subject_labels) 
+    
+    else:
+        return subject_signals
 
 def split_data(subjects_signals: list, subjects_labels: list, test_ratio: int):
 
