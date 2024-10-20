@@ -272,3 +272,15 @@ nSV = 55289, nBSV = 55246
 Total nSV = 55289
 ........................................................
 Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68562
+obj = -54539.597700, rho = 0.466011
+nSV = 54942, nBSV = 54901
+Total nSV = 54942
+.....slurmstepd: error: *** JOB 30312 ON saliksik-cpu-26 CANCELLED AT 2024-10-20T15:09:44 DUE TO TIME LIMIT ***
