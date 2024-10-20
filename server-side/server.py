@@ -21,7 +21,7 @@ from modelling.models.cueva import LSTM_SVM
 from modelling.models.llanes_jurado import LSTM_CNN
 from modelling.utilities.preprocessors import correct_signals
 from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
-from modelling.utilities.feature_extractors import extract_features
+from modelling.utilities.feature_extractors import extract_features, extract_features_hybrid, extract_features_per_hour
 
 from tensorflow.keras.metrics import BinaryAccuracy, F1Score, AUC, BinaryCrossentropy as bce_metric, Precision, Recall
 
@@ -274,7 +274,7 @@ def predict():
     # this is if deep learning model is chosen
     if selector_config == "hossain" or selector_config == "taylor":
         # extract features of the test data
-        subject_features, subject_labels = extract_features(subject_eda_data)
+        subject_features, subject_labels = extract_features(subject_eda_data, extractor_fn=extract_features_per_hour)
         print(subject_features.shape)
         print(subject_labels.shape)
 

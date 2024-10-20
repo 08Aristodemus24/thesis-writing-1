@@ -385,17 +385,3 @@ def get_features(subjects, hertz, window_size):
         subjects_features_and_labels[subject] = subject_features_and_labels
     return subjects_features_and_labels
     # window will be 5 seconds of non overlapping segments 
-
-
-def concur_extract_features_from_all(dir: str, files: list[str]):
-    def helper(file: str):
-        subject_name = file.strip(".csv")
-        eda_df_128hz = pd.read_csv(f'{dir}{file}', sep=';')
-        eda_feature_df, eda_labels = extract_features(eda_df_128hz)
-
-        return (subject_name, (eda_feature_df, eda_labels))
-
-    with ThreadPoolExecutor() as exe:
-        eda_data = list(exe.map(helper, files))
-
-    return eda_data
