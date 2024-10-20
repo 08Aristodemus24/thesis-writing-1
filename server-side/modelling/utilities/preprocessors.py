@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import tensorflow as tf
 
-def down_sample(signals: pd.DataFrame | np.ndarray | list, target_freq = 16):
+def down_sample(signals: pd.DataFrame | np.ndarray | list, target_freq=16):
     """
     takes in raw signals x and converts it to another frequency
     via downsampling e.g. 128hz to 16hz

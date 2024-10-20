@@ -413,7 +413,7 @@ def charge_raw_data(data: pd.DataFrame | np.ndarray,
 
     x_window_list, y_window_list = [], []
 
-    i = 0
+    ctr = 0
     # so if we have a length of 765045 rows for the raw eda data
     # and in each row we'd have to multiply 128 to get specific seconds e.g.
     # to get 0th second we multiply 128 by 0 and use it as index
@@ -424,8 +424,9 @@ def charge_raw_data(data: pd.DataFrame | np.ndarray,
     print(f'length of x_signals: {len(x_signals)}')
     print(f'window size: {window_size}')
 
-    stop = len(x_signals) - window_size
-    while i <= stop:
+    signals_len = data.shape[0]
+    for i in range(window_size, signals_len, target_size):
+        # print(f'start x: {i - window_size} - end x: {i}')
         # iteration pattern is the following
         # 0 <= 765045 - 640 (764405)
         # 64 <= 765045 - 640
@@ -455,17 +456,19 @@ def charge_raw_data(data: pd.DataFrame | np.ndarray,
         # 764416:764416 + 640 = 764416:765056 and 765056 exceeds the index and rows of 765045 
 
         # if scale is true then min max scaling is applied
+        x_signal = x_signals[(i - window_size):i]
         if scale == True:
-            denominator_norm = (np.nanmax(x_signals[i:(i + window_size)]) - np.nanmin(x_signals[i:(i + window_size)]))
+            
+            denominator_norm = (np.nanmax(x_signal) - np.nanmin(x_signal))
             denominator_norm = denominator_norm + 1e-100 if denominator_norm == 0 else denominator_norm
 
             # this is full min max scaling formula with the denominator using
             # the difference of the min and max of a window
             # to address also potential zero division concerns
-            x_window = (x_signals[i:(i + window_size)] - np.nanmin(x_signals[i:(i + window_size)])) / denominator_norm
+            x_window = (x_signal - np.nanmin(x_signal)) / denominator_norm
         else:
             # this would be appropriate if there was a larger ram
-            x_window = x_signals[i:(i + window_size)]
+            x_window = x_signal
 
         # we then append these normed signals to a list
         x_window_list.append(x_window)
@@ -484,18 +487,14 @@ def charge_raw_data(data: pd.DataFrame | np.ndarray,
         # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
         
         if y_col is not None:
-            cond = np.nanmean(y_signals[(i + window_size - target_size):(i + window_size)]) > 0.5
+            y_signal = y_signals[(i - target_size):i]
+            cond = np.nanmean(y_signal) > 0.5
             y_window_list.append(1 if cond else 0)
-
-        if (i == 0 or (i + target_size) >= stop) and verbose:
-            print(f'i: {i}, i + window_size: {i + window_size}')
-            print(f'i + window_size - target_size: {i + window_size - target_size}, i + window_size: {i + window_size}')
-            print(f"Iteration {i} of {stop - 1}\n")
         
         # this will increment our i by the size of our target frames which in this 
         # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
-        i += target_size
-        
+        ctr += 1
+    print(f'number of rows created: {ctr}')
 
     # because x_window_list and y_window_list when converted to a numpy array will
     # be of dimensions (m, 640) and (m,) respectively we need to first and foremost

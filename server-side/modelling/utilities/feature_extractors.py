@@ -128,7 +128,7 @@ def butter_lowpass_filter(data, cutoff, samp_freq, order=5):
 
 
 
-def rejoin_data(features_per_hour_1, features_per_hour_2):
+def rejoin_data(features_per_hour_1: list[tuple], features_per_hour_2: list[tuple]):
     """
     args:
         features_per_hour_1 - is a list containing tuples containing an hour long 
@@ -908,6 +908,8 @@ def load_wavelet_data_hybrid(data: pd.DataFrame | np.ndarray, col_to_use: str, h
 
     return whole_wave_features, half_wave_features
 
+    
+
 def extract_features_hybrid(data: pd.DataFrame | np.ndarray, 
     hertz: int=128, 
     window_time: float | int=5, 
@@ -1006,7 +1008,7 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
 
     x_window_list, y_window_list = [], []
 
-    i = 0
+    ctr = 0
     # so if we have a length of 765045 rows for the raw eda data
     # and in each row we'd have to multiply 128 to get specific seconds e.g.
     # to get 0th second we multiply 128 by 0 and use it as index
@@ -1014,11 +1016,12 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
     # to multiply 128 by 1 and use it as index raw_eda_df['time'].iloc[:128 * 1]
 
     # but what is the point of subtracting 765045 by window size of 640 (5 * 128)?
-    # print(f'length of x_signals: {len(x_signals)}')
-    # print(f'window size: {window_size}')
+    print(f'length of x_signals: {len(x_signals)}')
+    print(f'window size: {window_size}')
 
-    stop = len(x_signals) - window_size
-    while i <= stop:
+    signals_len = data.shape[0]
+    for i in range(window_size, signals_len, target_size):
+        # print(f'start x: {i - window_size} - end x: {i}')
         # iteration pattern is the following
         # 0 <= 765045 - 640 (764405)
         # 64 <= 765045 - 640
@@ -1048,21 +1051,19 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
         # 764416:764416 + 640 = 764416:765056 and 765056 exceeds the index and rows of 765045 
 
         # if scale is true then min max scaling is applied
+        x_signal = x_signals[(i - window_size):i]
         if scale == True:
-            denominator_norm = (np.nanmax(x_signals[i:(i + window_size)]) - np.nanmin(x_signals[i:(i + window_size)]))
+            
+            denominator_norm = (np.nanmax(x_signal) - np.nanmin(x_signal))
             denominator_norm = denominator_norm + 1e-100 if denominator_norm == 0 else denominator_norm
 
             # this is full min max scaling formula with the denominator using
             # the difference of the min and max of a window
             # to address also potential zero division concerns
-            x_window = (x_signals[i:(i + window_size)] - np.nanmin(x_signals[i:(i + window_size)])) / denominator_norm
+            x_window = (x_signal - np.nanmin(x_signal)) / denominator_norm
         else:
             # this would be appropriate if there was a larger ram
-            x_window = x_signals[i:(i + window_size)]
-
-        # use x_window as the current data to base feature extraction from
-        # calculate the necessary features like its wavelet, statistical,
-        # auto regressive, and time-frequency based features
+            x_window = x_signal
 
         # put windowed signal to current dataframe slice
         curr_data = data.iloc[i: (i + window_size)]
@@ -1075,60 +1076,50 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
         feature_segments_list.append(feature_segment)
 
         # we then append these normed signals to a list
-    #     x_window_list.append(x_window)
+        x_window_list.append(x_window)
 
-    #     # returns the mean of a list or matrix of values given an
-    #     # axis ignoring any nan values. Based on Llanes-Jurado et al. (2023)
-    #     # the threshold for a 0.5s segment of a signal to be accepted as an
-    #     # artifact must be 0.5 or 50% if it is less than this then the label
-    #     # of such a segment of the signal will be not an artifact
-    #     # 0 + 640 - 64:0 + 640 = 576:640
-    #     # 64 + 640 - 64:64 + 640 = 640:704
-    #     # 128 + 640 - 64:128 + 640 = 704:768
-    #     # ...
-    #     # 764288 + 640 - 64:764288 + 640 = 764864:764928
-    #     # 764352 + 640 - 64:764352 + 640 = 764928:764992
-    #     # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
+        # returns the mean of a list or matrix of values given an
+        # axis ignoring any nan values. Based on Llanes-Jurado et al. (2023)
+        # the threshold for a 0.5s segment of a signal to be accepted as an
+        # artifact must be 0.5 or 50% if it is less than this then the label
+        # of such a segment of the signal will be not an artifact
+        # 0 + 640 - 64:0 + 640 = 576:640
+        # 64 + 640 - 64:64 + 640 = 640:704
+        # 128 + 640 - 64:128 + 640 = 704:768
+        # ...
+        # 764288 + 640 - 64:764288 + 640 = 764864:764928
+        # 764352 + 640 - 64:764352 + 640 = 764928:764992
+        # this iteration pattern now I know just gets the last 0.5s segment of a 5s segment and 
         
-    #     if y_col is not None:
-    #         cond = np.nanmean(y_signals[(i + window_size - target_size):(i + window_size)]) > 0.5
-    #         y_window_list.append(1 if cond else 0)
-
-    #     if (i == 0 or (i + target_size) >= stop) and verbose:
-    #         print(f'i: {i}, i + window_size: {i + window_size}')
-    #         print(f'i + window_size - target_size: {i + window_size - target_size}, i + window_size: {i + window_size}')
-    #         print(f"Iteration {i} of {stop - 1}\n")
+        if y_col is not None:
+            y_signal = y_signals[(i - target_size):i]
+            cond = np.nanmean(y_signal) > 0.5
+            y_window_list.append(1 if cond else 0)
         
-    #     # this will increment our i by the size of our target frames which in this 
-    #     # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
-        i += target_size
-    print(len(feature_segments_list))
-    # zipped_results = zip(feature_names, feature_segments_list)
-    # print(zipped_results)
-    # dict_results = dict(zipped_results)
-    # print(dict_results)
-    # feature_segments = pd.DataFrame.from_dict(dict_results)
-    # print(feature_segments.shape)
+        # this will increment our i by the size of our target frames which in this 
+        # case is 0.5s or 64 rows since 1 second is 128 rows or 128hz
+        ctr += 1
+    print(f'number of rows created: {ctr}')
 
-    # # because x_window_list and y_window_list when converted to a numpy array will
-    # # be of dimensions (m, 640) and (m,) respectively we need to first and foremost
-    # # reshpae x_window_list into a 3D matrix such that it is able to be taken in
-    # # by an LSTM layer, m being the number of examples, 640 being the number of time steps
-    # # and 1 being the number of features which will be just our raw eda signals.
-    # X = np.array(x_window_list)
-    # subject_signals = np.reshape(X, (X.shape[0], X.shape[1], -1))
+    # because x_window_list and y_window_list when converted to a numpy array will
+    # be of dimensions (m, 640) and (m,) respectively we need to first and foremost
+    # reshpae x_window_list into a 3D matrix such that it is able to be taken in
+    # by an LSTM layer, m being the number of examples, 640 being the number of time steps
+    # and 1 being the number of features which will be just our raw eda signals.
+    X = np.array(x_window_list)
+    subject_signals = np.reshape(X, (X.shape[0], X.shape[1], -1))
 
-    # # and because y_window_list is merely of dimension (m, ) we will have to
-    # # expand its dimensions such that it can be accepted by our tensorflow model
-    # # resulting shape of subject_labels will now be (m, 1)
-    # if y_col is not None:
-    #     Y = np.array(y_window_list)
-    #     subject_labels = np.reshape(Y, (Y.shape[0], -1))
+    # and because y_window_list is merely of dimension (m, ) we will have to
+    # expand its dimensions such that it can be accepted by our tensorflow model
+    # resulting shape of subject_labels will now be (m, 1)
+    if y_col is not None:
+        Y = np.array(y_window_list)
+        subject_labels = np.reshape(Y, (Y.shape[0], -1))
 
-    #     return (subject_signals, subject_labels) 
+        return (subject_signals, subject_labels) 
     
-    # else:
-    #     return subject_signals
+    else:
+        return subject_signals
 
 
 def extract_features(df: pd.DataFrame | np.ndarray, extractor_fn):
