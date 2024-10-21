@@ -389,4 +389,4 @@ optimization finished, #iter = 46440
 obj = -53586.984638, rho = -2.405668
 nSV = 54702, nBSV = 54608
 Total nSV = 54702
-.....
+........................slurmstepd: error: *** JOB 30327 ON saliksik-cpu-26 CANCELLED AT 2024-10-20T15:56:44 DUE TO TIME LIMIT ***
