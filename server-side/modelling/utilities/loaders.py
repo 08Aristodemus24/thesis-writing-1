@@ -14,11 +14,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 from sklearn.preprocessing import MinMaxScaler
 
-# import tensorflow as tf
-# from tensorflow.keras.preprocessing.image import ImageDataGenerator
-# from tensorflow.keras.preprocessing.text import tokenizer_from_json
-
-
 def download_dataset(url):
     response = requests.get("https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/w8fxrg4pv5-2.zip", stream=True)
     response.headers
@@ -127,8 +122,8 @@ def concur_load_data(feat_config: str="Taylor"):
             # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
             subjects_data = list(exe.map(helper, subject_names))
 
-        # find a way here to combine all 3d subject_signals and subject_labels
-        subjects_signals, subjects_labels, subjects_names = _combine_data(subjects_data)
+            # find a way here to combine all 3d subject_signals and subject_labels
+            subjects_signals, subjects_labels, subjects_names = _combine_data(subjects_data)
 
         print("subjects signals, labels, names and subject to id lookup loaded")
         return subjects_signals, subjects_labels, subjects_names, subject_to_id
@@ -138,26 +133,42 @@ def concur_load_data(feat_config: str="Taylor"):
         dir = f'./data/Hybrid Artifact Detection Data/train/'
 
         # list all .csv features and .csv labels in directory
-        subject_names = list(set([re.sub(r"_lstm_features.npy|_lstm_labels.npy", "", file) for file in os.listdir(dir)]))
+        subject_names = list(set([re.sub(r"_hof.csv|_labels.csv|_lof.csv", "", file) for file in os.listdir(dir)]))
         subject_to_id = {subject: id for id, subject in enumerate(subject_names)}
 
         # concurrent processing
         def helper(subject_name: str):
-            subject_lstm_features = np.load(f'{dir}{subject_name}_lstm_features.npy')
-            subject_lstm_labels = np.load(f'{dir}{subject_name}_lstm_labels.npy')
+            # read higher and lower order features of subject into df
+            subject_hof = pd.read_csv(f'{dir}{subject_name}_hof.csv', index_col=0)
+            subject_lof = pd.read_csv(f'{dir}{subject_name}_lof.csv', index_col=0)
 
-            return (subject_lstm_features, subject_lstm_labels, subject_name)
+            # concatenate both dataframes of higher and lower features 
+            subject_hof_lof = pd.concat([subject_hof, subject_lof], axis=1, ignore_index=True)
+
+            # save also feature set of combined hofs and lofs
+            # for easier access during training
+            feature_set = subject_hof_lof.columns.to_list()
+            save_lookup_array('./data/Artifact Detection Data/cueva2_feature_set.txt', feature_set)
+
+            # after concatenating dataframes containing higher and lower order
+            # features of subject assign id column and value to the subject
+            subject_hof_lof['subject_id'] = subject_to_id[subject_name]
+
+            subject_labels = pd.read_csv(f'{dir}{subject_name}_labels.csv', index_col=0)
+            subject_labels['subject_id'] = subject_to_id[subject_name]
+
+            return (subject_hof_lof, subject_labels, subject_name)
         
         with ThreadPoolExecutor() as exe:
             # return from this will be a list of all subjects
             # features and labels e.g. [(subject1_features.csv, subject1_labels.csv)]
             subjects_data = list(exe.map(helper, subject_names))
 
-        # find a way here to combine all 3d subject_signals and subject_labels
-        subjects_signals, subjects_labels, subjects_names = _combine_data(subjects_data)
+            # find a way here to combine all 3d subject_signals and subject_labels
+            subjects_features, subjects_labels, subjects_names = _combine_data(subjects_data)
 
-        print("subjects lstm features, labels, names and subject to id lookup loaded")
-        return subjects_signals, subjects_labels, subjects_names, subject_to_id
+        print("subjects features, labels, names and subject to id lookup loaded")
+        return subjects_features, subjects_labels, subjects_names, subject_to_id
 
 def load_results(filename: str):
     # read .json file and maybe convert it to a readable dataframe
