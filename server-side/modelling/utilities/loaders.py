@@ -141,14 +141,10 @@ def concur_load_data(feat_config: str="Taylor"):
             # read higher and lower order features of subject into df
             subject_hof = pd.read_csv(f'{dir}{subject_name}_hof.csv', index_col=0)
             subject_lof = pd.read_csv(f'{dir}{subject_name}_lof.csv', index_col=0)
+            
 
             # concatenate both dataframes of higher and lower features 
-            subject_hof_lof = pd.concat([subject_hof, subject_lof], axis=1, ignore_index=True)
-
-            # save also feature set of combined hofs and lofs
-            # for easier access during training
-            feature_set = subject_hof_lof.columns.to_list()
-            save_lookup_array('./data/Artifact Detection Data/cueva2_feature_set.txt', feature_set)
+            subject_hof_lof = pd.concat([subject_hof, subject_lof], axis=1)
 
             # after concatenating dataframes containing higher and lower order
             # features of subject assign id column and value to the subject
@@ -166,6 +162,11 @@ def concur_load_data(feat_config: str="Taylor"):
 
             # find a way here to combine all 3d subject_signals and subject_labels
             subjects_features, subjects_labels, subjects_names = _combine_data(subjects_data)
+
+            # save also feature set of combined hofs and lofs
+            # for easier access during training
+            feature_set = subjects_features.columns[subjects_features.columns != 'subject_id'].to_list()
+            save_lookup_array('./data/Artifact Detection Data/cueva_second_phase_feature_set.txt', feature_set)
 
         print("subjects features, labels, names and subject to id lookup loaded")
         return subjects_features, subjects_labels, subjects_names, subject_to_id

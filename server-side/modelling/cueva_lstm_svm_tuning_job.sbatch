@@ -1,18 +1,17 @@
 #!/bin/bash
 #SBATCH --account=pup-manila    
-#SBATCH --partition=gpu_a100
-#SBATCH --qos=gpu-a100_default
-##SBATCH --nodes=20
-#SBATCH --ntasks=10
-#SBATCH --gres=gpu:1
-#SBATCH --job-name="cueva_lstm_svm_training_job"
+#SBATCH --partition=batch
+#SBATCH --qos=240c-1h_batch
+##SBATCH --nodes=1
+#SBATCH --ntasks=12
+#SBATCH --job-name="cueva_lstm_svm_tuning_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
 ##SBATCH --mail-user=<email_add>  ## optional
 ##SBATCH --requeue                ## optional
 ##SBATCH --ntasks-per-node=1      ## optional
 ##SBATCH --mem=24G                ## optional: mem per node
-##SBATCH --error="%x.%j.err"      ## optional; better to use --output only
+#SBATCH --error="%x.%j.err"      ## optional; better to use --output only
 
 ## For more `sbatch` options, use `man sbatch` in the HPC, or go to https://slurm.schedmd.com/sbatch.html.
 
@@ -47,10 +46,11 @@ fi
 module purge
 module load anaconda/3-2023.07-2
 
+
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
-python tuning_dl.py -m lstm-svm -pl cueva -lr 75e-4 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_0.7 gamma_0.5 units_10
+python tuning_ml.py -m svm -pl cueva_second_phase --n_features_to_select 70 --mode tuning
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then
