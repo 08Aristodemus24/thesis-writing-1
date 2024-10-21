@@ -801,7 +801,11 @@ def get_features(data: pd.DataFrame, data_slice: pd.DataFrame | np.ndarray, whol
 
 
 
-def extract_features_per_hour(data: pd.DataFrame | np.ndarray, hertz: int=128, window_time: float | int=1, verbose: bool=False):
+def extract_features_per_hour(
+    data: pd.DataFrame | np.ndarray, 
+    hertz: int=128, 
+    window_time: float | int=1, 
+    verbose: bool=False) -> list[tuple]:
     """
     partitions the given dataframe of eda data into at least 1 hour 
     and extracts wavelet and statistical features in each of these
@@ -917,7 +921,7 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
     target_time=0.5, 
     y_col=None, 
     scale=False,
-    verbose: bool=False):
+    verbose: bool=False) -> list[tuple[pd.DataFrame, pd.Series]] | list[tuple[pd.DataFrame]]:
     """
     modified version of charge_raw_data() where each window of the signal is used in order to
     calculate ML based/lower order features from the 5 second window of the signal. Like
@@ -1019,6 +1023,8 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
     print(f'length of x_signals: {len(x_signals)}')
     print(f'window size: {window_size}')
 
+    # create empty dataframe to be populated later on
+    feature_segments = pd.DataFrame(columns=feature_names)
     signals_len = data.shape[0]
     for i in range(window_size, signals_len, target_size):
         # print(f'start x: {i - window_size} - end x: {i}')
@@ -1066,17 +1072,14 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
             x_window = x_signal
 
         # put windowed signal to current dataframe slice
-        curr_data = data.iloc[i: (i + window_size)]
+        curr_data = data.iloc[(i - window_size):i]
         curr_data['scaled_signal'] = x_window
-        # print(curr_data)
 
         # calculate current dataframe slices whole wavelets and half wavelets
         whole_wave, half_wave = load_wavelet_data_hybrid(curr_data, col_to_use="scaled_signal", hertz=hertz)
         feature_segment = compute_features(curr_data, whole_wave, half_wave, samples_per_sec=hertz)
-        feature_segments_list.append(feature_segment)
-
-        # we then append these normed signals to a list
-        x_window_list.append(x_window)
+        row_to_add = pd.DataFrame(feature_segment.reshape(1, -1), columns=feature_names)
+        feature_segments  = pd.concat([feature_segments, row_to_add], axis=0, ignore_index=True)
 
         # returns the mean of a list or matrix of values given an
         # axis ignoring any nan values. Based on Llanes-Jurado et al. (2023)
@@ -1106,17 +1109,15 @@ def extract_features_hybrid(data: pd.DataFrame | np.ndarray,
     # reshpae x_window_list into a 3D matrix such that it is able to be taken in
     # by an LSTM layer, m being the number of examples, 640 being the number of time steps
     # and 1 being the number of features which will be just our raw eda signals.
-    X = np.array(x_window_list)
-    subject_signals = np.reshape(X, (X.shape[0], X.shape[1], -1))
+    subject_signals = feature_segments.fillna(0)
 
     # and because y_window_list is merely of dimension (m, ) we will have to
     # expand its dimensions such that it can be accepted by our tensorflow model
     # resulting shape of subject_labels will now be (m, 1)
     if y_col is not None:
-        Y = np.array(y_window_list)
-        subject_labels = np.reshape(Y, (Y.shape[0], -1))
+        subject_labels = pd.Series(y_window_list)
 
-        return (subject_signals, subject_labels) 
+        return [(subject_signals, subject_labels)]
     
     else:
         return subject_signals
@@ -1167,7 +1168,7 @@ def extract_features(df: pd.DataFrame | np.ndarray, extractor_fn):
         'window_time': 5, 
         'x_col': "raw_signal",
         'target_time': 0.5,
-        'y_col': None,
+        'y_col': 'label',
         'scale': True,
         'verbose': False
     }
@@ -1183,7 +1184,7 @@ def extract_features(df: pd.DataFrame | np.ndarray, extractor_fn):
         'window_time': 5, 
         'x_col': "raw_signal",
         'target_time': 0.5,
-        'y_col': None,
+        'y_col': 'label',
         'scale': True,
         'verbose': False
     }
@@ -1192,13 +1193,10 @@ def extract_features(df: pd.DataFrame | np.ndarray, extractor_fn):
     data_128hz = extractor_fn(**args_128hz)
     data_16hz = extractor_fn(**args_16hz)
 
-    if extractor_fn.__name__ == "extract_features_per_hour":
-        # rejoin 128hz and 16hz features and labels
-        eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
+    # rejoin 128hz and 16hz features and labels
+    eda_feature_df, eda_labels = rejoin_data(data_128hz, data_16hz)
 
-        return eda_feature_df, eda_labels
-    else:
-        pass
+    return eda_feature_df, eda_labels
 
 
 def concur_extract_features_from_all(dir: str, files: list[str], arch: str="hybrid"):
