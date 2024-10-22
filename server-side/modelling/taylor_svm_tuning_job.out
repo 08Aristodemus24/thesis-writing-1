@@ -84,3 +84,79 @@ optimization finished, #iter = 74649
 obj = -75915.999430, rho = -0.477950
 nSV = 76896, nBSV = 76864
 Total nSV = 76896
+..........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 76112
+obj = -63466.908216, rho = 0.598125
+nSV = 64306, nBSV = 64275
+Total nSV = 64306
+........................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71322
+obj = -63604.005454, rho = 0.528642
+nSV = 64461, nBSV = 64438
+Total nSV = 64461
+...........................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 69899
+obj = -63689.526244, rho = 0.578072
+nSV = 64555, nBSV = 64523
+Total nSV = 64555
+............................................................
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71889
+obj = -63485.704760, rho = 0.529310
+nSV = 64321, nBSV = 64287
+Total nSV = 64321
+.............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 76342
+obj = -63689.299199, rho = 0.433610
+nSV = 64551, nBSV = 64520
+Total nSV = 64551
+...............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72267
+obj = -79248.744693, rho = -0.596580
+nSV = 80327, nBSV = 80283
+Total nSV = 80327
