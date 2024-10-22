@@ -46,9 +46,9 @@ module purge
 module load anaconda/3-2023.07-2
 
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
-conda activate /home/michael.cueva/.conda/envs/thesis-writing-1
+conda activate thesis-writing-1
 python --version
-python tuning_ml.py -m rf -pl taylor --mode training --hyper_param_list n_estimators 
+python tuning_ml.py -m rf -pl taylor --mode training --hyper_param_list n_estimators 600
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then

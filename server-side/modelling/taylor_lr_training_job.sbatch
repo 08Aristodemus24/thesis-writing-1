@@ -48,7 +48,7 @@ module load anaconda/3-2023.07-2
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
-python tuning_ml.py -m lr -pl taylor --mode training --hyper_param_list
+python tuning_ml.py -m lr -pl taylor --mode training --hyper_param_list C_0.1
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then
