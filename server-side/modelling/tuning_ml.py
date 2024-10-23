@@ -478,16 +478,12 @@ def create_hyper_param_config(hyper_param_list: list[str]):
     """
 
     hyper_param_config = {}
-    hyper_param_pattern = r'[A-Za-z_]+'
-    value_pattern = r'\d+(\.\d+)?'
     
     for hyper_param in hyper_param_list:
         # extract hyper param name and strip its last occuring underscore
-        key = re.search(hyper_param_pattern, hyper_param)[0].strip('_')
-
         # extract hyper param value and convert to 
         # appropriate data type using literal evaluator
-        value = re.search(value_pattern, hyper_param)[0]
+        key, value = hyper_param.rsplit('_', 1)
         hyper_param_config[key] = ast.literal_eval(value)
     
     return hyper_param_config
