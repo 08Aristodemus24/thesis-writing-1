@@ -17,6 +17,8 @@
 !/server-side/modelling/data/Artifact Detection Data/reduced_*.txt
 !/server-side/modelling/data/Hybrid Artifact Detection Data/dummy.txt
 
+/server-side/modelling/saved/models/*.pkl
+
 # Logs
 /client-side/logs
 /client-side/*.log
