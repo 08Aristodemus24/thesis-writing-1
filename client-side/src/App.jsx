@@ -24,6 +24,7 @@ function App() {
         <About/>
         <Researchers/>
         <FAQ/>
+        <Footer></Footer>
       </ThemeContext.Provider>  
     </DesignsProvider> 
   );
