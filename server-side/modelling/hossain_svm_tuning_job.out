@@ -184,4 +184,16 @@ optimization finished, #iter = 46813
 obj = -54644.510408, rho = -2.532515
 nSV = 55828, nBSV = 55705
 Total nSV = 55828
-......................
+.............................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 48045
+obj = -54385.825103, rho = -2.750073
+nSV = 55561, nBSV = 55453
+Total nSV = 55561
+Line search fails in two-class probability estimates
+.
