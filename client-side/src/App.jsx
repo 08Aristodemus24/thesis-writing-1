@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import About from './components/About';
 import Researchers from './components/Researchers';
 import FAQ from './components/FAQ';
+import Footer from './components/Footer';
 import './App.css';
 import './navbar-862-and-up.css';
 import './navbar-862-down.css';
@@ -24,6 +25,7 @@ function App() {
         <About/>
         <Researchers/>
         <FAQ/>
+        <Footer></Footer>
       </ThemeContext.Provider>  
     </DesignsProvider> 
   );

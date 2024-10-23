@@ -17,7 +17,7 @@ import pandas as pd
 import numpy as np
 
 # import and load model architectures as well as decoder
-from modelling.models.cueva import LSTM_SVM
+from modelling.models.cueva import LSTM_FE
 from modelling.models.llanes_jurado import LSTM_CNN
 from modelling.utilities.preprocessors import correct_signals
 from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
@@ -38,7 +38,10 @@ CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5000", "https://ed
 
 # global variables
 models = {
-    'cueva-lstm-svm': {
+    'cueva-lstm-svm':{
+
+    },
+    'lstm-fe': {
         # 'model':
         # 'hyper_params':
     },
@@ -89,10 +92,10 @@ def load_miscs():
     print('loading miscellaneous...')
     # this is for loading miscellaneous variables for 
     # deep learning models such as hyper parameters
-    # lstm_svm_hp = load_meta_data('./modelling/saved/misc/cueva_lstm-svm_meta_data.json')
+    lstm_fe_hp = load_meta_data('./modelling/saved/misc/cueva_lstm-fe_meta_data.json')
     lstm_cnn_hp = load_meta_data('./modelling/saved/misc/jurado_lstm-cnn_meta_data.json')
 
-    # models['cueva-lstm-svm']['hyper_params'] = lstm_svm_hp
+    models['lstm-fe']['hyper_params'] = lstm_fe_hp
     models['jurado-lstm-cnn']['hyper_params'] = lstm_cnn_hp
 
     # this is for loading miscellaneous variables for
@@ -145,12 +148,15 @@ def load_models():
     global models
     
     print('loading models...')
+    # pre load saved weights for deep learning models
     jurado_lstm_cnn = LSTM_CNN(**models['jurado-lstm-cnn']['hyper_params'])
-    # cueva_lstm_svm = LSTM_SVM(**models['cueva-lstm-svm']['hyper_params'])
-
-    # # pre load saved weights for deep learning models
     jurado_lstm_cnn.load_weights('./modelling/saved/weights/EDABE_LSTM_1DCNN_Model.h5')
-    # cueva_lstm_svm.load_weights('./modelling/saved/weights/cueva_lstm-svm_28_0.7896.weights.h5')
+
+    # load side task model and convert it to a feature extractor model 
+    lstm_fe = LSTM_FE(**models['lstm-fe']['hyper_params'])
+    lstm_fe.load_weights('./modelling/saved/weights/cueva_lstm-fe_20_0.7291.weights.h5')
+    lstm_layer_2 = lstm_fe.get_layer('lstm-layer-2')
+    lstm_fe_main = tf.keras.Model(inputs=lstm_fe.inputs, outputs=lstm_layer_2.output)
 
     # # pre load saved machine learning models
     taylor_lr = load_model('./modelling/saved/models/taylor_lr_clf.pkl')
@@ -162,7 +168,8 @@ def load_models():
 
     # populate dictionary with loaded models
     models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
-    # models['cueva-lstm-svm']['model'] = cueva_lstm_svm
+    models['lstm-fe']['model'] = lstm_fe_main
+
     models['taylor-lr']['model'] = taylor_lr
     # models['taylor-svm']['model'] = taylor_svm
     models['taylor-rf']['model'] = taylor_rf
@@ -378,10 +385,60 @@ def predict():
         #       \ntest prec: {test_prec} \
         #       \ntest rec: {test_rec}")
     else:
-        # extract features of the test data akin to previous ml models
-        subject_features, subject_labels = extract_features(subject_eda_data, extractor_fn=extract_features_hybrid)
-        print(subject_features.shape)
-        print(subject_labels.shape)
+        # extract lower order features of the test data akin to previous ml models
+        subject_lof, subject_labels = extract_features(subject_eda_data, extractor_fn=extract_features_hybrid)
+        print(f'lower order features shape: {subject_lof.shape}')
+        print(f'labels shape: {subject_labels.shape}')
+
+        # load test signals and use it to extract the higher order features from it
+        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label', scale=True, verbose=True)
+        print(f'signals {subject_signals}, shape: {subject_signals.shape}')
+        print(f'labels {subject_labels}, shape: {subject_labels.shape}')
+
+        # extract higher features
+        lstm_fe_main = models['lstm-fe']['model']
+        subject_hof_arr = lstm_fe_main.predict(subject_signals)
+        columns = [f'HOF_{i}' for i in range(1, subject_hof_arr.shape[1] + 1)]
+        subject_hof = pd.DataFrame(subject_hof_arr, columns=columns)
+        print(f'higher order features shape: {subject_hof.shape}')
+
+        # concatenate both dataframes of higher and lower features 
+        subject_hof_lof = pd.concat([subject_hof, subject_lof], axis=1)
+        print(f'full subject_hof_lof shape: {subject_hof_lof.shape}')
+
+        # once features are extracted features selected during
+        # tuning will be used in testing as done also during training
+        selected_feats = models[model_name]['selected_feats']
+        subject_hof_lof = subject_hof_lof[selected_feats]
+        print(f'reduced subject_hof_lof shape: {subject_hof_lof.shape}')
+
+        X = subject_hof_lof.to_numpy()
+        Y = subject_labels
+
+        # assign model
+        model = models[model_name]['model']
+
+        # use model for prediction
+        Y_pred = model.predict(X)
+        Y_pred_prob = model.predict_proba(X)
+        print(f"predicted Y: {Y_pred}")
+        print(f"unique values and counts: {np.unique(Y_pred, return_counts=True)}")
+        print(f"true Y: {Y}")
+        print(f"unique values and counts: {np.unique(Y, return_counts=True)}")
+
+        # compute performance metric values for test subject
+        test_acc = accuracy_score(y_true=Y, y_pred=Y_pred)
+        test_prec = precision_score(y_true=Y, y_pred=Y_pred, average="weighted")
+        test_rec = recall_score(y_true=Y, y_pred=Y_pred, average="weighted")
+        test_f1 = f1_score(y_true=Y, y_pred=Y_pred, average="weighted")
+        test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred_prob, average="weighted", multi_class="ovo")
+
+        print(f"test acc: {test_acc} \
+              \ntest prec: {test_prec} \
+              \ntest rec: {test_rec} \
+              \ntest f1: {test_f1} \
+              \ntest roc_auc: {test_roc_auc}")
+
 
     # once predictions have been extracted from respective models
     # pass to the correct_signals() function
