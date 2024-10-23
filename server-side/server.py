@@ -23,8 +23,6 @@ from modelling.utilities.preprocessors import correct_signals
 from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
 from modelling.utilities.feature_extractors import extract_features, extract_features_hybrid, extract_features_per_hour
 
-from tensorflow.keras.metrics import BinaryAccuracy, F1Score, AUC, BinaryCrossentropy as bce_metric, Precision, Recall
-
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 # # configure location of build file and the static html template file
@@ -348,15 +346,6 @@ def predict():
         # depending on dl model Y_pred will either be unactivated logits 
         # or sigmoid probabilities
         Y_pred = model.predict(X)
-        print(Y_pred)
-
-        # use model for predictions recall that the dl models 
-        # output a sigmoid probability value however for 
-        # lstm-svm because it's output is a series of untransformed
-        # logit values
-        if estimator_name.lower() == 'lstm-svm':
-            # convert unactivated logits to sigmoid probabilities
-            Y_pred = tf.nn.sigmoid(Y_pred)
 
         # when our predictions is 0.2, 0.15, and below which is <= 0.2 then y_pred will be 0
         # when our predictions is 1, 0.5, 0.4, 0.3, 0.21, and above which is > 0.2 then y_pred will be 1
@@ -370,20 +359,19 @@ def predict():
         print(f"true Y: {Y}")
         print(f"unique values and counts: {np.unique(Y, return_counts=True)}")
 
-        print(type(Y))
-        print(type(Y_pred))
-        # test_acc = BinaryAccuracy(Y, Y_pred.numpy())().numpy()
-        # test_f1 = F1Score(Y, Y_pred)().numpy()
-        # test_roc_auc = AUC(Y, Y_pred)().numpy()
-        # test_prec = Precision(Y, Y_pred_whole)().numpy()
-        # test_rec = Recall(Y, Y_pred_whole)().numpy()
+        # compute performance metric values for test subject
+        test_acc = accuracy_score(y_true=Y, y_pred=Y_pred_whole)
+        test_prec = precision_score(y_true=Y, y_pred=Y_pred_whole, average="weighted")
+        test_rec = recall_score(y_true=Y, y_pred=Y_pred_whole, average="weighted")
+        test_f1 = f1_score(y_true=Y, y_pred=Y_pred_whole, average="weighted")
+        test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred, average="weighted", multi_class="ovo")
 
-        # # compute performance metric values for test subject
-        # print(f"test acc: {test_acc} \
-        #       \ntest f1: {test_f1} \
-        #       \ntest roc_auc: {test_roc_auc} \
-        #       \ntest prec: {test_prec} \
-        #       \ntest rec: {test_rec}")
+        print(f"test acc: {test_acc} \
+            \ntest prec: {test_prec} \
+            \ntest rec: {test_rec} \
+            \ntest f1: {test_f1} \
+            \ntest roc_auc: {test_roc_auc}")
+        
     else:
         # extract lower order features of the test data akin to previous ml models
         subject_lof, subject_labels = extract_features(subject_eda_data, extractor_fn=extract_features_hybrid)

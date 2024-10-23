@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Navbar({ children }){
+export default function Footer({ children }){
 
   return (
     <footer>
