@@ -231,4 +231,82 @@ optimization finished, #iter = 73147
 obj = -63833.809750, rho = 0.472467
 nSV = 64635, nBSV = 64604
 Total nSV = 64635
-.......
+.............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74632
+obj = -79628.969389, rho = -0.556685
+nSV = 80685, nBSV = 80641
+Total nSV = 80685
+/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+..........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73947
+obj = -63497.428120, rho = 0.531455
+nSV = 64310, nBSV = 64278
+Total nSV = 64310
+.............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*..........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75254
+obj = -63577.742915, rho = 0.479409
+nSV = 64400, nBSV = 64359
+Total nSV = 64400
+...........................................................
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73240
+obj = -63479.105108, rho = 0.543470
+nSV = 64291, nBSV = 64261
+Total nSV = 64291
+.............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74525
+obj = -63393.490194, rho = 0.474470
+nSV = 64204, nBSV = 64166
+Total nSV = 64204
+..........................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
