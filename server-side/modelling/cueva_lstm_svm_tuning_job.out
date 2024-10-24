@@ -10,4 +10,69 @@ SLURM_MEM_PER_NODE    :
 TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30711
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-.............
+............................................
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 45215
+obj = -56618.772919, rho = 1.776833
+nSV = 57575, nBSV = 57505
+Total nSV = 57575
+............................................
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 45401
+obj = -56955.818450, rho = 1.871341
+nSV = 57912, nBSV = 57852
+Total nSV = 57912
+..........................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 44735
+obj = -56507.207675, rho = 1.657646
+nSV = 57463, nBSV = 57396
+Total nSV = 57463
+...........................................
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 44916
+obj = -56718.157561, rho = 1.900723
+nSV = 57680, nBSV = 57616
+Total nSV = 57680
+...........................................
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 44956
+obj = -56761.877478, rho = 1.862493
+nSV = 57722, nBSV = 57659
+Total nSV = 57722
+...............................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 51138
+obj = -70643.702627, rho = -1.756301
+nSV = 71761, nBSV = 71694
+Total nSV = 71761
+..........................................
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 42836
+obj = -56614.731139, rho = 2.195234
+nSV = 57514, nBSV = 57463
+Total nSV = 57514
+........................
