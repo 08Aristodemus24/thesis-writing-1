@@ -449,3 +449,52 @@ nSV = 64430, nBSV = 64398
 Total nSV = 64430
 .............................................................
 Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68821
+obj = -63647.458144, rho = 0.532499
+nSV = 64468, nBSV = 64434
+Total nSV = 64468
+..............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68102
+obj = -63625.407821, rho = 0.489507
+nSV = 64464, nBSV = 64430
+Total nSV = 64464
+.............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*............
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 78950
+obj = -79311.891704, rho = -0.594816
+nSV = 80369, nBSV = 80331
+Total nSV = 80369
+/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+...........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75166
+obj = -62726.217589, rho = 0.506136
+nSV = 63472, nBSV = 63438
+Total nSV = 63472
+..........................
