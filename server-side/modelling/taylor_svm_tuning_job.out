@@ -497,4 +497,70 @@ optimization finished, #iter = 75166
 obj = -62726.217589, rho = 0.506136
 nSV = 63472, nBSV = 63438
 Total nSV = 63472
-..........................
+............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71498
+obj = -62300.607666, rho = 0.559283
+nSV = 63026, nBSV = 63000
+Total nSV = 63026
+...........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68480
+obj = -62257.111439, rho = 0.478033
+nSV = 63004, nBSV = 62965
+Total nSV = 63004
+............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72161
+obj = -62603.923604, rho = 0.545489
+nSV = 63359, nBSV = 63320
+Total nSV = 63359
+.............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73522
+obj = -62443.564597, rho = 0.526732
+nSV = 63144, nBSV = 63117
+Total nSV = 63144
+Line search fails in two-class probability estimates
+...............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 67969
+obj = -77879.614347, rho = -0.593731
+nSV = 78835, nBSV = 78794
+Total nSV = 78835
+..
