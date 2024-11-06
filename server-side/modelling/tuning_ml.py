@@ -512,7 +512,7 @@ def create_hyper_param_config(hyper_param_list: list[str]):
     return hyper_param_config
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     # read and parse user arguments
     parser = ArgumentParser()
     parser.add_argument("--n_features_to_select", type=int, default=40, help="number of features to select by RFE")
@@ -539,9 +539,9 @@ if _name_ == "_main_":
     subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl, exc_lof=args.exc_lof)
 
     # just to determine class ratio
-    print(f'value counts: {subjects_labels['0'].value_counts()}')
-
-    
+    class_ratio = subjects_labels['0'].value_counts().to_dict()
+    maj_class_ratio = round(class_ratio[0] / class_ratio[1], 2)
+    print(maj_class_ratio)
 
     # model hyper params
     models = {
@@ -560,7 +560,7 @@ if _name_ == "_main_":
                 'probability': [True],
                 'degree': [3, 5, 6],
                 # this indicates that there is class imbalance of 80% to 20% of negative to positive classes 
-                'class_weight': [{1: 20}]
+                'class_weight': [{0: 1, 1: maj_class_ratio}]
             }
             # 'model': LinearSVC, 
             # 'hyper_params': {'C': [1, 10, 100, 1000]}
@@ -598,6 +598,7 @@ if _name_ == "_main_":
     elif args.mode.lower() == "training":
         # build hyper param config dictionary from input
         hyper_param_config = create_hyper_param_config(hyper_param_list=args.hyper_param_list)  
+        print(hyper_param_config)
         
         # we can just modify this script such that it doesn't loop through hyper param configs anymore and
         # will just only now 1. load the preprocessed features, load the reduced feature set, 

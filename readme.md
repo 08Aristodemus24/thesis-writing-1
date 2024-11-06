@@ -1172,6 +1172,7 @@ c. try class weighted svm, because there is an imbalance of data with ratio of 8
 d. removed collinear features
 e. use polynomial or linear kernel
 f. try to visualize the features of the data to see what kind of kernel may be best suited for the data
+g. try to retrain a feature extractor LSTM again but with more powerful hyperparams
 
 because...
 a. I've already tried removing outliers in the training dataset
