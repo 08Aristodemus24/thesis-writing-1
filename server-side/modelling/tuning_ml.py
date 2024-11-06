@@ -440,7 +440,12 @@ def train_final_estimator(subjects_features: pd.DataFrame,
     # be run first in tuning mode in order to obtain reduced feature set
     # this only applies for ordinary models and not the hybrid svm which can use
     # both loweer order features and higher order features
-    if selector_config != 'cueva_second_phase' and exc_lof == False:
+
+    # ml based models do not use exc lof so by default will be false
+    # lstm-svm model does use exc lof so if used will be true and will
+    # go to else but if lstm-model does not use exc lof then exc lof will
+    # be false 
+    if exc_lof == False:
         if load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt') == False:
             return
         
@@ -458,9 +463,9 @@ def train_final_estimator(subjects_features: pd.DataFrame,
     print(subjects_features.columns)
     print(subjects_labels.columns)
 
-    # # visualizing data before training
-    # sb.pairplot(subjects_features.sample(n=20, axis='columns'))
-    # plt.show()
+    # # # visualizing data before training
+    # # sb.pairplot(subjects_features.sample(n=20, axis='columns'))
+    # # plt.show()
 
     # remove subject_id column of both dataframes then
     # convert to numpy arrays
