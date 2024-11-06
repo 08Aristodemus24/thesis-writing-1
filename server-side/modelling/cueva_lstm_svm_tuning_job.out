@@ -1,0 +1,12 @@
+Submitted on Sat Oct 26 20:05:46 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 31461
+SLURM_JOB_NAME        : cueva_lstm_svm_tuning_job
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-09
+SLURM_NTASKS          : 60
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 204800
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/31461
+Module load: anaconda/3-2023.07-2
+Python 3.12.3

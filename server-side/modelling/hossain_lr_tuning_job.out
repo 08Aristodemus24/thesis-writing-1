@@ -1,0 +1,47 @@
+Submitted on Thu Oct 17 16:26:01 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 30334
+SLURM_JOB_NAME        : hossain_lr_tuning_job
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-22
+SLURM_NTASKS          : 12
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30334
+Module unload: anaconda/3-2023.07-2
+/var/spool/slurm/job30334/slurm_script: line 5: conda: command not found
+/var/spool/slurm/job30334/slurm_script: line 5: conda: command not found
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
+/scratch1/michael.cueva/thesis-writing-1/server-side/modelling
+subjects features, labels, names and subject to id lookup loaded
+        raw_128hz_max  raw_128hz_min  ...  second_32thofa_sec_range  subject_id
+0            0.009102       0.000000  ...                  0.003297           0
+1            0.009102       0.008214  ...                  0.000222           0
+2            0.009102       0.007770  ...                  0.000444           0
+3            0.009546       0.007770  ...                  0.000444           0
+4            0.009102       0.005994  ...                  0.001554           0
+...               ...            ...  ...                       ...         ...
+405122       5.286467       5.230310  ...                  0.030631          32
+405123       5.281362       5.214994  ...                  0.030631          32
+405124       5.266046       5.189468  ...                  0.030631          32
+405125       5.250731       5.179257  ...                  0.045947          32
+405126       5.230310       5.153731  ...                  0.020421          32
+
+[405127 rows x 74 columns]
+          0  subject_id
+0       0.0           0
+1       0.0           0
+2       0.0           0
+3       0.0           0
+4       0.0           0
+...     ...         ...
+405122  0.0          32
+405123  0.0          32
+405124  0.0          32
+405125  0.0          32
+405126  0.0          32
+
+[405127 rows x 2 columns]
+Finished on Thu Oct 17 16:26:10 PST 2024
+Total runtime (sec): 8.939189672470093

@@ -1,0 +1,965 @@
+Submitted on Mon Oct 21 08:06:19 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 30589
+SLURM_JOB_NAME        : taylor_svm_tuning_job
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-31
+SLURM_NTASKS          : 64
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 102400
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30589
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
+........................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71340
+obj = -60831.521945, rho = 0.532001
+nSV = 61589, nBSV = 61558
+Total nSV = 61589
+.........................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 67980
+obj = -60949.991915, rho = 0.292113
+nSV = 61725, nBSV = 61696
+Total nSV = 61725
+............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68754
+obj = -61237.573595, rho = 0.495249
+nSV = 62020, nBSV = 61974
+Total nSV = 62020
+.......................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 67442
+obj = -60649.920946, rho = 0.416738
+nSV = 61399, nBSV = 61365
+Total nSV = 61399
+........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71427
+obj = -60835.989181, rho = 0.475569
+nSV = 61589, nBSV = 61550
+Total nSV = 61589
+............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74649
+obj = -75915.999430, rho = -0.477950
+nSV = 76896, nBSV = 76864
+Total nSV = 76896
+..........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 76112
+obj = -63466.908216, rho = 0.598125
+nSV = 64306, nBSV = 64275
+Total nSV = 64306
+........................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71322
+obj = -63604.005454, rho = 0.528642
+nSV = 64461, nBSV = 64438
+Total nSV = 64461
+...........................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 69899
+obj = -63689.526244, rho = 0.578072
+nSV = 64555, nBSV = 64523
+Total nSV = 64555
+............................................................
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71889
+obj = -63485.704760, rho = 0.529310
+nSV = 64321, nBSV = 64287
+Total nSV = 64321
+.............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 76342
+obj = -63689.299199, rho = 0.433610
+nSV = 64551, nBSV = 64520
+Total nSV = 64551
+...............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72267
+obj = -79248.744693, rho = -0.596580
+nSV = 80327, nBSV = 80283
+Total nSV = 80327
+............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 76288
+obj = -63689.802948, rho = 0.428302
+nSV = 64522, nBSV = 64493
+Total nSV = 64522
+...........................................................
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74189
+obj = -63732.438694, rho = 0.498510
+nSV = 64536, nBSV = 64497
+Total nSV = 64536
+...........................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75568
+obj = -64152.859721, rho = 0.543118
+nSV = 64971, nBSV = 64945
+Total nSV = 64971
+............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74966
+obj = -64016.125855, rho = 0.526626
+nSV = 64845, nBSV = 64812
+Total nSV = 64845
+..........................................................
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73147
+obj = -63833.809750, rho = 0.472467
+nSV = 64635, nBSV = 64604
+Total nSV = 64635
+.............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74632
+obj = -79628.969389, rho = -0.556685
+nSV = 80685, nBSV = 80641
+Total nSV = 80685
+/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+..........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73947
+obj = -63497.428120, rho = 0.531455
+nSV = 64310, nBSV = 64278
+Total nSV = 64310
+.............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*..........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75254
+obj = -63577.742915, rho = 0.479409
+nSV = 64400, nBSV = 64359
+Total nSV = 64400
+...........................................................
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73240
+obj = -63479.105108, rho = 0.543470
+nSV = 64291, nBSV = 64261
+Total nSV = 64291
+.............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74525
+obj = -63393.490194, rho = 0.474470
+nSV = 64204, nBSV = 64166
+Total nSV = 64204
+..........................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73909
+obj = -63422.900580, rho = 0.440292
+nSV = 64238, nBSV = 64210
+Total nSV = 64238
+..............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75189
+obj = -79115.556336, rho = -0.548772
+nSV = 80169, nBSV = 80135
+Total nSV = 80169
+..............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 70280
+obj = -63296.963188, rho = 0.434953
+nSV = 64115, nBSV = 64078
+Total nSV = 64115
+............................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*...........
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75734
+obj = -63315.910345, rho = 0.481915
+nSV = 64132, nBSV = 64101
+Total nSV = 64132
+...........................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 70197
+obj = -63135.567928, rho = 0.631480
+nSV = 63935, nBSV = 63909
+Total nSV = 63935
+...........................................................
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68178
+obj = -63153.434254, rho = 0.445303
+nSV = 63971, nBSV = 63933
+Total nSV = 63971
+...........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74987
+obj = -63425.979927, rho = 0.522524
+nSV = 64261, nBSV = 64232
+Total nSV = 64261
+............................................................
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73274
+obj = -78853.883757, rho = -0.565335
+nSV = 79905, nBSV = 79873
+Total nSV = 79905
+...........................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74956
+obj = -63728.661173, rho = 0.537889
+nSV = 64534, nBSV = 64505
+Total nSV = 64534
+............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72909
+obj = -63536.728969, rho = 0.517602
+nSV = 64361, nBSV = 64326
+Total nSV = 64361
+..........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73911
+obj = -63621.114713, rho = 0.578150
+nSV = 64430, nBSV = 64398
+Total nSV = 64430
+.............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68821
+obj = -63647.458144, rho = 0.532499
+nSV = 64468, nBSV = 64434
+Total nSV = 64468
+..............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68102
+obj = -63625.407821, rho = 0.489507
+nSV = 64464, nBSV = 64430
+Total nSV = 64464
+.............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*............
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 78950
+obj = -79311.891704, rho = -0.594816
+nSV = 80369, nBSV = 80331
+Total nSV = 80369
+/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+...........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75166
+obj = -62726.217589, rho = 0.506136
+nSV = 63472, nBSV = 63438
+Total nSV = 63472
+............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71498
+obj = -62300.607666, rho = 0.559283
+nSV = 63026, nBSV = 63000
+Total nSV = 63026
+...........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 68480
+obj = -62257.111439, rho = 0.478033
+nSV = 63004, nBSV = 62965
+Total nSV = 63004
+............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72161
+obj = -62603.923604, rho = 0.545489
+nSV = 63359, nBSV = 63320
+Total nSV = 63359
+.............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73522
+obj = -62443.564597, rho = 0.526732
+nSV = 63144, nBSV = 63117
+Total nSV = 63144
+Line search fails in two-class probability estimates
+...............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 67969
+obj = -77879.614347, rho = -0.593731
+nSV = 78835, nBSV = 78794
+Total nSV = 78835
+................................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 69925
+obj = -64326.066743, rho = 0.343402
+nSV = 65169, nBSV = 65143
+Total nSV = 65169
+.............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 70628
+obj = -64046.185949, rho = 0.498872
+nSV = 64870, nBSV = 64837
+Total nSV = 64870
+.............................................................
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74278
+obj = -64241.757133, rho = 0.599887
+nSV = 65050, nBSV = 65019
+Total nSV = 65050
+.............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74874
+obj = -64186.303363, rho = 0.551017
+nSV = 64984, nBSV = 64954
+Total nSV = 64984
+...........................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73086
+obj = -64380.434951, rho = 0.499895
+nSV = 65239, nBSV = 65209
+Total nSV = 65239
+Line search fails in two-class probability estimates
+..............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75829
+obj = -80065.452258, rho = -0.535613
+nSV = 81127, nBSV = 81095
+Total nSV = 81127
+..............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74088
+obj = -64042.803801, rho = 0.475000
+nSV = 64878, nBSV = 64850
+Total nSV = 64878
+............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 69805
+obj = -63961.673265, rho = 0.507158
+nSV = 64768, nBSV = 64741
+Total nSV = 64768
+..........................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72172
+obj = -63914.418146, rho = 0.525659
+nSV = 64725, nBSV = 64690
+Total nSV = 64725
+............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74001
+obj = -63951.098186, rho = 0.512881
+nSV = 64774, nBSV = 64743
+Total nSV = 64774
+..............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71653
+obj = -63765.436901, rho = 0.506629
+nSV = 64578, nBSV = 64552
+Total nSV = 64578
+Line search fails in two-class probability estimates
+............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72452
+obj = -79680.768014, rho = -0.558808
+nSV = 80737, nBSV = 80707
+Total nSV = 80737
+............................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 76183
+obj = -63049.285306, rho = 0.624553
+nSV = 63857, nBSV = 63830
+Total nSV = 63857
+............................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75962
+obj = -63217.029932, rho = 0.500057
+nSV = 64026, nBSV = 63989
+Total nSV = 64026
+.............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72335
+obj = -63403.953546, rho = 0.548034
+nSV = 64246, nBSV = 64221
+Total nSV = 64246
+...........................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72038
+obj = -63267.302268, rho = 0.432732
+nSV = 64102, nBSV = 64072
+Total nSV = 64102
+............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73275
+obj = -63153.128908, rho = 0.522802
+nSV = 63981, nBSV = 63951
+Total nSV = 63981
+.................................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75939
+obj = -78793.058816, rho = -0.582873
+nSV = 79853, nBSV = 79815
+Total nSV = 79853
+/home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+.............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73865
+obj = -62954.208353, rho = 0.462237
+nSV = 63775, nBSV = 63743
+Total nSV = 63775
+............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73975
+obj = -62933.575311, rho = 0.363217
+nSV = 63738, nBSV = 63712
+Total nSV = 63738
+...........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 74667
+obj = -63081.939072, rho = 0.520226
+nSV = 63882, nBSV = 63853
+Total nSV = 63882
+..............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71486
+obj = -62777.700374, rho = 0.521841
+nSV = 63577, nBSV = 63543
+Total nSV = 63577
+..........................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*..........
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73198
+obj = -62603.027836, rho = 0.521381
+nSV = 63405, nBSV = 63375
+Total nSV = 63405
+...............................................................
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 79063
+obj = -78362.915215, rho = -0.505292
+nSV = 79410, nBSV = 79375
+Total nSV = 79410
+.............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 75575
+obj = -64235.846159, rho = 0.571426
+nSV = 65038, nBSV = 65000
+Total nSV = 65038
+.............................................................
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71318
+obj = -64196.686839, rho = 0.475212
+nSV = 65001, nBSV = 64969
+Total nSV = 65001
+..............................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*.....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 72805
+obj = -64201.837646, rho = 0.540893
+nSV = 65008, nBSV = 64971
+Total nSV = 65008
+.............................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 73309
+obj = -64389.033149, rho = 0.505512
+nSV = 65208, nBSV = 65178
+Total nSV = 65208
+..........................................................
+Warning: using -h 0 may be faster
+*........
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 71834
+obj = -64114.161388, rho = 0.409473
+nSV = 64963, nBSV = 64938
+Total nSV = 64963
+.............................................................
+Warning: using -h 0 may be faster
+*.......
+Warning: using -h 0 may be faster
+*.........
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 78506
+obj = -80057.317689, rho = -0.554964
+nSV = 81116, nBSV = 81077
+Total nSV = 81116
+...........................................................
+Warning: using -h 0 may be faster
+*......
+Warning: using -h 0 may be faster
+*............
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 79671
+obj = -63773.106418, rho = 0.557483
+nSV = 64589, nBSV = 64552
+Total nSV = 64589
+................................slurmstepd: error: *** JOB 30589 ON saliksik-cpu-31 CANCELLED AT 2024-10-28T06:40:54 DUE TO TIME LIMIT ***

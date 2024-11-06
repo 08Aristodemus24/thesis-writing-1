@@ -1,0 +1,1 @@
+Taylor S, Jaques N, Chen W, Fedor S, Sano A, Picard R. Automatic identification of artifacts in electrodermal activity data. Annu Int Conf IEEE Eng Med Biol Soc. 2015;2015:1934-7. doi: 10.1109/EMBC.2015.7318762. PMID: 26736662; PMCID: PMC5413200.

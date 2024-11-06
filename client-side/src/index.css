@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&family=Nunito+Sans:opsz,wght@6..12,200;6..12,300;6..12,400;6..12,500;6..12,600;6..12,700;6..12,800&family=Open+Sans:wght@300;400;500;600;700;800&family=Oswald:wght@300&family=Poppins:wght@100;200;300;400;500;600;700&family=Roboto:wght@300&display=swap');
+
+*,
+*::before,
+*::after{
+  box-sizing: border-box;
+
+  /* spacing */
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+}
+
+html{
+  /* design */
+  line-height: 1.5;
+  /* border: 1px solid purple; */
+
+  /* behavior */
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar{
+  width: 0.25rem;
+  height: 0.25rem;
+  background-color: rgba(0, 0, 0, 0.068);
+}
+
+::-webkit-scrollbar-thumb{
+  background-color: rgb(0, 0, 0);
+}
+
+body{
+  /* design */
+  /* inherit line height of parent which is html */
+  line-height: inherit;
+  /* border: 1px solid red; */
+}
+
+div#root{
+  width: 100%;
+}

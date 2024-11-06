@@ -1,0 +1,1 @@
+Zhang, Xijun & Zhang, Qirui. (2020). Short-Term Traffic Flow Prediction Based on LSTM-XGBoost Combination Model. Computer Modeling in Engineering & Sciences. 125. 95-109. 10.32604/cmes.2020.011013. 

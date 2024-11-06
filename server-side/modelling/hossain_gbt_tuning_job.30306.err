@@ -1,0 +1,1 @@
+/var/spool/slurm/job30306/slurm_script: line 52:  2072 Segmentation fault      python tuning_ml.py -m gbt -pl hossain --mode tuning

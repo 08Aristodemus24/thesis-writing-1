@@ -1,0 +1,17 @@
+Submitted on Thu Sep 19 16:05:00 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 26029
+SLURM_JOB_NAME        : test_job
+SLURM_JOB_NUM_NODES   : 10
+SLURM_JOB_NODELIST    : saliksik-cpu-[01-09,11]
+SLURM_NTASKS          : 10
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/26029
+Module unload: anaconda/3-2023.07-2
+/var/spool/slurm/job26029/slurm_script: line 5: conda: command not found
+/var/spool/slurm/job26029/slurm_script: line 5: conda: command not found
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
+Finished on Thu Sep 19 16:05:03 PST 2024
+Total runtime (sec): 2.3406293392181396

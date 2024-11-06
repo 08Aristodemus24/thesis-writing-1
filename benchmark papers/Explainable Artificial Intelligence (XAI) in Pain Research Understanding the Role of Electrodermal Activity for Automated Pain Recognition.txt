@@ -1,0 +1,1 @@
+Gouverneur, P.; Li, F.; Shirahama, K.; Luebke, L.; Adamczyk, W.M.; Szikszay, T.M.; Luedtke, K.; Grzegorzek, M. Explainable Artificial Intelligence (XAI) in Pain Research: Understanding the Role of Electrodermal Activity for Automated Pain Recognition. Sensors 2023, 23, 1959. https://doi.org/10.3390/s23041959

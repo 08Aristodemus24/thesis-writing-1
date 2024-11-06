@@ -1,0 +1,1 @@
+Nagabushanam, P., George, S.T., & Radha, S. (2019). EEG signal classification using LSTM and improved neural network algorithms. Soft Computing, 24, 9981 - 10003.

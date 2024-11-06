@@ -1,0 +1,45 @@
+/server-side/modelling/data/Artifact Detection Data/*
+/server-side/modelling/data/Hybrid Artifact Detection Data/*
+/server-side/modelling/data/Stress Detection Data/*
+/server-side/modelling/data/Electrodermal Activity artifact correction BEnchmark (EDABE)/
+/server-side/modelling/data/EDABE dataset.zip
+/server-side/modelling/data/WESAD.zip
+/server-side/modelling/data/WESAD/
+/server-side/modelling/data/Hosseini_Stress_Dataset/
+/server-side/modelling/data/Stress Detection Features/
+/server-side/modelling/data/Stress_dataset.zip
+
+
+/server-side/.env
+/server-side/modelling/results/*.csv
+
+!/server-side/modelling/data/dummy.txt
+!/server-side/modelling/data/Artifact Detection Data/reduced_*.txt
+!/server-side/modelling/data/Hybrid Artifact Detection Data/dummy.txt
+
+/server-side/modelling/saved/models/*.pkl
+
+# Logs
+/client-side/logs
+/client-side/*.log
+/client-side/npm-debug.log*
+/client-side/yarn-debug.log*
+/client-side/yarn-error.log*
+/client-side/pnpm-debug.log*
+/client-side/lerna-debug.log*
+
+/client-side/node_modules
+/client-side/dist
+/client-side/dist-ssr
+/client-side/*.local
+
+# Editor directories and files
+/client-side/.vscode/*
+/client-side/!.vscode/extensions.json
+/client-side/.idea
+/client-side/.DS_Store
+/client-side/*.suo
+/client-side/*.ntvs*
+/client-side/*.njsproj
+/client-side/*.sln
+/client-side/*.sw?

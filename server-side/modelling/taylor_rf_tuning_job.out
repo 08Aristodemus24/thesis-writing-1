@@ -1,0 +1,1897 @@
+Submitted on Thu Oct 17 16:25:36 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 30331
+SLURM_JOB_NAME        : taylor_rf_tuning_job
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-14
+SLURM_NTASKS          : 64
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 102400
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/30331
+Module unload: anaconda/3-2023.07-2
+/var/spool/slurm/job30331/slurm_script: line 5: conda: command not found
+/var/spool/slurm/job30331/slurm_script: line 5: conda: command not found
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
+slurmstepd: error: *** JOB 30331 ON saliksik-cpu-14 CANCELLED AT 2024-10-17T16:33:58 ***
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   17.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.3s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   17.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.3min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.3min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   17.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   17.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.8s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.8min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.0s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   40.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   40.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.8min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.6min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.6min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   17.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   40.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   17.7s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   39.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.6min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 23.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.9min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.4min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.9min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.4min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 23.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 23.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.9min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.4min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.8min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.6min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.3s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.8min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.9min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.5min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.5s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   41.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.0min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.7min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   17.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   40.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.4s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.0s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   40.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.2min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 23.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.6s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.2s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.8s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.0s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.7s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   19.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   43.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    0.6s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.5min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 10.1min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 22.8min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.9s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.4s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    4.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   18.7s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   42.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:    1.1s
+/scratch1/michael.cueva/thesis-writing-1/server-side/modelling
+subjects features, labels, names and subject to id lookup loaded
+        raw_128hz_max  ...  subject_id
+0            0.002442  ...           0
+1            0.001110  ...           0
+2            0.002442  ...           0
+3            0.001110  ...           0
+4            0.005550  ...           0
+...               ...  ...         ...
+405122       7.701242  ...          32
+405123       7.731873  ...          32
+405124       9.554441  ...          32
+405125       9.676966  ...          32
+405126       9.493178  ...          32
+
+[405127 rows x 139 columns]
+          0  subject_id
+0       0.0           0
+1       0.0           0
+2       0.0           0
+3       0.0           0
+4       0.0           0
+...     ...         ...
+405122  1.0          32
+405123  1.0          32
+405124  1.0          32
+405125  0.0          32
+405126  0.0          32
+
+[405127 rows x 2 columns]
+file not found please run needed script first to produce file
+Fitting estimator with 138 features.
+Fitting estimator with 137 features.
+Fitting estimator with 136 features.
+Fitting estimator with 135 features.
+Fitting estimator with 134 features.
+Fitting estimator with 133 features.
+Fitting estimator with 132 features.
+Fitting estimator with 131 features.
+Fitting estimator with 130 features.
+Fitting estimator with 129 features.
+Fitting estimator with 128 features.
+Fitting estimator with 127 features.
+Fitting estimator with 126 features.
+Fitting estimator with 125 features.
+Fitting estimator with 124 features.
+Fitting estimator with 123 features.
+Fitting estimator with 122 features.
+Fitting estimator with 121 features.
+Fitting estimator with 120 features.
+Fitting estimator with 119 features.
+Fitting estimator with 118 features.
+Fitting estimator with 117 features.
+Fitting estimator with 116 features.
+Fitting estimator with 115 features.
+Fitting estimator with 114 features.
+Fitting estimator with 113 features.
+Fitting estimator with 112 features.
+Fitting estimator with 111 features.
+Fitting estimator with 110 features.
+Fitting estimator with 109 features.
+Fitting estimator with 108 features.
+Fitting estimator with 107 features.
+Fitting estimator with 106 features.
+Fitting estimator with 105 features.
+Fitting estimator with 104 features.
+Fitting estimator with 103 features.
+Fitting estimator with 102 features.
+Fitting estimator with 101 features.
+Fitting estimator with 100 features.
+Fitting estimator with 99 features.
+Fitting estimator with 98 features.
+Fitting estimator with 97 features.
+Fitting estimator with 96 features.
+Fitting estimator with 95 features.
+Fitting estimator with 94 features.
+Fitting estimator with 93 features.
+Fitting estimator with 92 features.
+Fitting estimator with 91 features.
+Fitting estimator with 90 features.
+Fitting estimator with 89 features.
+Fitting estimator with 88 features.
+Fitting estimator with 87 features.
+Fitting estimator with 86 features.
+Fitting estimator with 85 features.
+Fitting estimator with 84 features.
+Fitting estimator with 83 features.
+Fitting estimator with 82 features.
+Fitting estimator with 81 features.
+Fitting estimator with 80 features.
+Fitting estimator with 79 features.
+Fitting estimator with 78 features.
+Fitting estimator with 77 features.
+Fitting estimator with 76 features.
+Fitting estimator with 75 features.
+Fitting estimator with 74 features.
+Fitting estimator with 73 features.
+Fitting estimator with 72 features.
+Fitting estimator with 71 features.
+Fitting estimator with 70 features.
+Fitting estimator with 69 features.
+Fitting estimator with 68 features.
+Fitting estimator with 67 features.
+Fitting estimator with 66 features.
+Fitting estimator with 65 features.
+Fitting estimator with 64 features.
+Fitting estimator with 63 features.
+Fitting estimator with 62 features.
+Fitting estimator with 61 features.
+Fitting estimator with 60 features.
+Fitting estimator with 59 features.
+Fitting estimator with 58 features.
+Fitting estimator with 57 features.
+Fitting estimator with 56 features.
+Fitting estimator with 55 features.
+Fitting estimator with 54 features.
+Fitting estimator with 53 features.
+Fitting estimator with 52 features.
+Fitting estimator with 51 features.
+Fitting estimator with 50 features.
+Fitting estimator with 49 features.
+Fitting estimator with 48 features.
+Fitting estimator with 47 features.
+Fitting estimator with 46 features.
+Fitting estimator with 45 features.
+Fitting estimator with 44 features.
+Fitting estimator with 43 features.
+Fitting estimator with 42 features.
+Fitting estimator with 41 features.
+selected features: ['raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_std', 'raw_128hz_1d_min', 'raw_128hz_1d_amp', 'raw_128hz_1d_std', 'raw_128hz_1d_avg_abs', 'raw_128hz_2d_avg_abs', 'filt_128hz_min', 'filt_128hz_median', 'filt_128hz_std', 'filt_128hz_range', 'filt_128hz_1d_min', 'filt_128hz_1d_std', 'filt_128hz_1d_range', 'third_16thofa_sec_max', 'first_16thofa_sec_mean', 'third_16thofa_sec_mean', 'second_16thofa_sec_std', 'third_16thofa_sec_std', 'first_16thofa_sec_median', 'first_32thofa_sec_mean', 'second_32thofa_sec_mean', 'first_32thofa_sec_std', 'second_32thofa_sec_std', 'raw_16hz_min', 'raw_16hz_amp', 'raw_16hz_std', 'filt_16hz_min', 'filt_16hz_std', 'filt_16hz_range', 'filt_16hz_1d_min', 'filt_16hz_1d_std', 'filt_16hz_1d_range', 'second_2thofa_sec_max', 'second_2thofa_sec_mean', 'third_2thofa_sec_mean', 'first_4thofa_sec_max', 'second_4thofa_sec_max', 'second_4thofa_sec_std']
+fold: 0 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999695711818807 cross acc: 0.9142512077294686               
+train prec: 0.9999695713252071 cross prec: 0.9064363571568517               
+train rec: 0.9999695711818807 cross rec: 0.9142512077294686               
+train f1: 0.9999695694686471 cross f1: 0.9031932768180302               
+train roc_auc_prob: 0.9999398209263103 cross roc_auc_prob: 0.9018450407327435
+fold: 1 with hyper params: {'n_estimators': 200}               
+train acc: 0.999966893657334 cross acc: 0.9373644904842207               
+train prec: 0.999966894877481 cross prec: 0.9268986463373704               
+train rec: 0.999966893657334 cross rec: 0.9373644904842207               
+train f1: 0.9999668912691533 cross f1: 0.9299154416043147               
+train roc_auc_prob: 0.9999442416883161 cross roc_auc_prob: 0.8682250909935257
+fold: 2 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999668536460989 cross acc: 0.9293726309275161               
+train prec: 0.9999668548677967 cross prec: 0.9259037696840577               
+train rec: 0.9999668536460989 cross rec: 0.9293726309275161               
+train f1: 0.9999668512241938 cross f1: 0.9273311122906117               
+train roc_auc_prob: 0.9999394326477452 cross roc_auc_prob: 0.9038943979834764
+fold: 3 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669533253852 cross acc: 0.9521457765667575               
+train prec: 0.9999669545415815 cross prec: 0.944273146082761               
+train rec: 0.9999669533253852 cross rec: 0.9521457765667575               
+train f1: 0.9999669509545288 cross f1: 0.9461898758972532               
+train roc_auc_prob: 0.9999390578705373 cross roc_auc_prob: 0.8649725383534326
+fold: 4 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999694053938291 cross acc: 0.9919386094101232               
+train prec: 0.9999694055647357 cross prec: 0.9913279742546308               
+train rec: 0.9999694053938291 cross rec: 0.9919386094101232               
+train f1: 0.9999694037311078 cross f1: 0.9895744506457437               
+train roc_auc_prob: 0.9999428890323723 cross roc_auc_prob: 0.8697084202507493
+fold: 5 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999694454346387 cross acc: 0.8385404052635828               
+train prec: 0.9999694455656495 cross prec: 0.8166386425553251               
+train rec: 0.9999694454346387 cross rec: 0.8385404052635828               
+train f1: 0.9999694436710482 cross f1: 0.8196088997505785               
+train roc_auc_prob: 0.9999390819396963 cross roc_auc_prob: 0.7749496050231318
+fold: 6 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669127004327 cross acc: 0.9446307352580355               
+train prec: 0.9999669139195047 cross prec: 0.937054385077467               
+train rec: 0.9999669127004327 cross rec: 0.9446307352580355               
+train f1: 0.999966910321459 cross f1: 0.9245709277194362               
+train roc_auc_prob: 0.9999376799125885 cross roc_auc_prob: 0.8376357880471227
+fold: 7 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999719856566562 cross acc: 0.9898163739876513               
+train prec: 0.9999719857441355 cross prec: 0.9874041367785953               
+train rec: 0.9999719856566562 cross rec: 0.9898163739876513               
+train f1: 0.9999719842857502 cross f1: 0.987250434410432               
+train roc_auc_prob: 0.9999543187623829 cross roc_auc_prob: 0.7418004065150574
+fold: 8 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999667871696282 cross acc: 0.7200991831971996               
+train prec: 0.999966788379357 cross prec: 0.7308000238779784               
+train rec: 0.9999667871696282 cross rec: 0.7200991831971996               
+train f1: 0.9999667843441823 cross f1: 0.7117990935101517               
+train roc_auc_prob: 0.9999302973369092 cross roc_auc_prob: 0.7935379609160285
+fold: 9 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999667873393338 cross acc: 0.9408460977388767               
+train prec: 0.9999667885674973 cross prec: 0.9295109197039921               
+train rec: 0.9999667873393338 cross rec: 0.9408460977388767               
+train f1: 0.9999667849390868 cross f1: 0.929948110024449               
+train roc_auc_prob: 0.9999395417177949 cross roc_auc_prob: 0.8702109892575509
+fold: 10 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999668594765326 cross acc: 0.8310779281381241               
+train prec: 0.9999668606932481 cross prec: 0.8300289654463467               
+train rec: 0.9999668594765326 cross rec: 0.8310779281381241               
+train f1: 0.9999668569600995 cross f1: 0.7892702372119922               
+train roc_auc_prob: 0.9999369042553176 cross roc_auc_prob: 0.7555947621292309
+fold: 11 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999719680231595 cross acc: 0.9970121088221419               
+train prec: 0.9999719688999483 cross prec: 0.9967813876134434               
+train rec: 0.9999719680231595 cross rec: 0.9970121088221419               
+train f1: 0.9999719663497725 cross f1: 0.9967148546203962               
+train roc_auc_prob: 0.9999490250016687 cross roc_auc_prob: 0.9041129097695555
+fold: 12 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999670564981058 cross acc: 0.9162861491628614               
+train prec: 0.9999670577058212 cross prec: 0.9104398653918847               
+train rec: 0.9999670564981058 cross rec: 0.9162861491628614               
+train f1: 0.9999670541242837 cross f1: 0.9131261270398473               
+train roc_auc_prob: 0.9999354201619985 cross roc_auc_prob: 0.8187121319505527
+fold: 13 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999743975093898 cross acc: 0.9004814305364511               
+train prec: 0.9999743982386745 cross prec: 0.9055530714448229               
+train rec: 0.9999743975093898 cross rec: 0.9004814305364511               
+train f1: 0.9999743960724914 cross f1: 0.9028731993610842               
+train roc_auc_prob: 0.9999724372812364 cross roc_auc_prob: 0.8073013490490517
+fold: 14 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669592047843 cross acc: 0.8623436696933356               
+train prec: 0.9999669604145346 cross prec: 0.8572738909877229               
+train rec: 0.9999669592047843 cross rec: 0.8623436696933356               
+train f1: 0.999966956710988 cross f1: 0.859153028323746               
+train roc_auc_prob: 0.9999337486896557 cross roc_auc_prob: 0.8817573342933848
+fold: 15 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999670016423029 cross acc: 0.9938216332378224               
+train prec: 0.9999670028567966 cross prec: 0.9933409357473438               
+train rec: 0.9999670016423029 cross rec: 0.9938216332378224               
+train f1: 0.9999669993141288 cross f1: 0.9935678139007295               
+train roc_auc_prob: 0.9999362382091179 cross roc_auc_prob: 0.7899870466914138
+fold: 16 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999744916179456 cross acc: 0.9427437208947248               
+train prec: 0.9999744916282723 cross prec: 0.9324877839751295               
+train rec: 0.9999744916179456 cross rec: 0.9427437208947248               
+train f1: 0.9999744904847953 cross f1: 0.9323063923823175               
+train roc_auc_prob: 0.9999473466736531 cross roc_auc_prob: 0.7983915167379545
+fold: 17 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999670059135555 cross acc: 0.9732841593955204               
+train prec: 0.9999670071269028 cross prec: 0.975355151470063               
+train rec: 0.9999670059135555 cross rec: 0.9732841593955204               
+train f1: 0.9999670035700413 cross f1: 0.9742375942607265               
+train roc_auc_prob: 0.9999347474792012 cross roc_auc_prob: 0.9484809005012775
+fold: 18 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669660054785 cross acc: 0.9941343914431122               
+train prec: 0.9999669672227969 cross prec: 0.9929020343132873               
+train rec: 0.9999669660054785 cross rec: 0.9941343914431122               
+train f1: 0.9999669636760732 cross f1: 0.9935023019239969               
+train roc_auc_prob: 0.9999380430514012 cross roc_auc_prob: 0.8327627679636684
+fold: 19 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669497967413 cross acc: 0.9927032071949771               
+train prec: 0.9999669510151025 cross prec: 0.9915885376452571               
+train rec: 0.9999669497967413 cross rec: 0.9927032071949771               
+train f1: 0.9999669474621606 cross f1: 0.9909152113859552               
+train roc_auc_prob: 0.9999373769376978 cross roc_auc_prob: 0.8872039679665115
+fold: 20 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669457630825 cross acc: 0.6263309109345953               
+train prec: 0.9999669469623476 cross prec: 0.773742229396358               
+train rec: 0.9999669457630825 cross rec: 0.6263309109345953               
+train f1: 0.9999669429929244 cross f1: 0.5641259918571411               
+train roc_auc_prob: 0.9999291588645913 cross roc_auc_prob: 0.7475810046933934
+fold: 21 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999668893569659 cross acc: 0.870361484325016               
+train prec: 0.9999668905735085 cross prec: 0.8637762438269442               
+train rec: 0.9999668893569659 cross rec: 0.870361484325016               
+train f1: 0.9999668868882715 cross f1: 0.8396153585031868               
+train roc_auc_prob: 0.9999312803431701 cross roc_auc_prob: 0.8320858720487434
+fold: 22 with hyper params: {'n_estimators': 200}               
+train acc: 0.999966970369881 cross acc: 0.9616151113421714               
+train prec: 0.9999669715854295 cross prec: 0.9497642376041762               
+train rec: 0.999966970369881 cross rec: 0.9616151113421714               
+train f1: 0.9999669680132957 cross f1: 0.9488454329112395               
+train roc_auc_prob: 0.9999404805608376 cross roc_auc_prob: 0.7314698485068448
+fold: 23 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999692972917653 cross acc: 0.9835457218876908               
+train prec: 0.9999692974637782 cross prec: 0.9823938117837251               
+train rec: 0.9999692972917653 cross rec: 0.9835457218876908               
+train f1: 0.9999692956169998 cross f1: 0.9781184041700086               
+train roc_auc_prob: 0.99993747106446 cross roc_auc_prob: 0.8937199706884179
+fold: 24 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999745347498803 cross acc: 0.9665460394049055               
+train prec: 0.9999745354731604 cross prec: 0.9735225845744843               
+train rec: 0.9999745347498803 cross rec: 0.9665460394049055               
+train f1: 0.999974533363302 cross f1: 0.9699192067178739               
+train roc_auc_prob: 0.9999423257059517 cross roc_auc_prob: 0.7506215331065312
+fold: 25 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669133741232 cross acc: 0.9529421392912677               
+train prec: 0.9999669145936646 cross prec: 0.9387232989567854               
+train rec: 0.9999669133741232 cross rec: 0.9529421392912677               
+train f1: 0.9999669110053973 cross f1: 0.9338942087840946               
+train roc_auc_prob: 0.999937788266529 cross roc_auc_prob: 0.7853054056381905
+fold: 26 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669597926092 cross acc: 0.9632296220107996               
+train prec: 0.99996696100875 cross prec: 0.9590094481567579               
+train rec: 0.9999669597926092 cross rec: 0.9632296220107996               
+train f1: 0.9999669574308933 cross f1: 0.9531304756175681               
+train roc_auc_prob: 0.9999423896678244 cross roc_auc_prob: 0.8201135964897338
+fold: 27 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999669372723758 cross acc: 0.9797235023041475               
+train prec: 0.9999669384910985 cross prec: 0.9763344622032041               
+train rec: 0.9999669372723758 cross rec: 0.9797235023041475               
+train f1: 0.999966934925288 cross f1: 0.9772603501338718               
+train roc_auc_prob: 0.9999370655433145 cross roc_auc_prob: 0.874471429050044
+fold: 28 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999668996422615 cross acc: 0.8041511872072363               
+train prec: 0.9999669008532514 cross prec: 0.8236965375653917               
+train rec: 0.9999668996422615 cross rec: 0.8041511872072363               
+train f1: 0.9999668970700685 cross f1: 0.7679232153482568               
+train roc_auc_prob: 0.9999341564663342 cross roc_auc_prob: 0.843256575494179
+fold: 29 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999745753446948 cross acc: 0.958079268292683               
+train prec: 0.999974576064636 cross prec: 0.9550667370604498               
+train rec: 0.9999745753446948 cross rec: 0.958079268292683               
+train f1: 0.9999745739425633 cross f1: 0.9469516564322444               
+train roc_auc_prob: 0.9999385254553209 cross roc_auc_prob: 0.8404626310192387
+fold: 30 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999695008819328 cross acc: 0.956909106485051               
+train prec: 0.999969501043757 cross prec: 0.9543148842144923               
+train rec: 0.9999695008819328 cross rec: 0.956909106485051               
+train f1: 0.9999694992083031 cross f1: 0.955534045256772               
+train roc_auc_prob: 0.9999383188090891 cross roc_auc_prob: 0.8938196855038576
+fold: 31 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999644274599682 cross acc: 0.9670557717250324               
+train prec: 0.9999644288705294 cross prec: 0.9634035893334119               
+train rec: 0.9999644274599682 cross rec: 0.9670557717250324               
+train f1: 0.9999644247389765 cross f1: 0.9651093306327525               
+train roc_auc_prob: 0.9999402890364649 cross roc_auc_prob: 0.9203277191558441
+fold: 32 with hyper params: {'n_estimators': 200}               
+train acc: 0.9999643044726496 cross acc: 0.8742357402677812               
+train prec: 0.9999643058841059 cross prec: 0.8696403740031715               
+train rec: 0.9999643044726496 cross rec: 0.8742357402677812               
+train f1: 0.9999643015511307 cross f1: 0.8712169946211703               
+train roc_auc_prob: 0.9999353979907131 cross roc_auc_prob: 0.8971835803115038
+fold: 0 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999695711818807 cross acc: 0.9143441099962839               
+train prec: 0.9999695713252071 cross prec: 0.9064327423069599               
+train rec: 0.9999695711818807 cross rec: 0.9143441099962839               
+train f1: 0.9999695694686471 cross f1: 0.9036121190483787               
+train roc_auc_prob: 0.9999305979863594 cross roc_auc_prob: 0.9028458652150935
+fold: 1 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999694402990776 cross acc: 0.9372038866136674               
+train prec: 0.9999694404557578 cross prec: 0.9265851961195211               
+train rec: 0.9999694402990776 cross rec: 0.9372038866136674               
+train f1: 0.9999694386034006 cross f1: 0.9296258325556547               
+train roc_auc_prob: 0.9999340698810255 cross roc_auc_prob: 0.8658156347030863
+fold: 2 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999694033656298 cross acc: 0.9292179159897889               
+train prec: 0.9999694035152442 cross prec: 0.9260565878096265               
+train rec: 0.9999694033656298 cross rec: 0.9292179159897889               
+train f1: 0.9999694016460083 cross f1: 0.9273912426523948               
+train roc_auc_prob: 0.9999310622183908 cross roc_auc_prob: 0.905004051051795
+fold: 3 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999669533253852 cross acc: 0.9519754768392371               
+train prec: 0.9999669545415815 cross prec: 0.9440868162526844               
+train rec: 0.9999669533253852 cross rec: 0.9519754768392371               
+train f1: 0.9999669509545288 cross f1: 0.9460542752837161               
+train roc_auc_prob: 0.9999353306439 cross roc_auc_prob: 0.8636139738300606
+fold: 4 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999668558433148 cross acc: 0.9920936361522362               
+train prec: 0.9999668570689348 cross prec: 0.991530792073681               
+train rec: 0.9999668558433148 cross rec: 0.9920936361522362               
+train f1: 0.99996685350155 cross f1: 0.989849479822505               
+train roc_auc_prob: 0.9999367741829096 cross roc_auc_prob: 0.8530342187637199
+fold: 5 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999694454346387 cross acc: 0.8372487285056914               
+train prec: 0.9999694455656495 cross prec: 0.81462736002349               
+train rec: 0.9999694454346387 cross rec: 0.8372487285056914               
+train f1: 0.9999694436710482 cross f1: 0.8176872343386739               
+train roc_auc_prob: 0.9999354173800108 cross roc_auc_prob: 0.7753090115754324
+fold: 6 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999669127004327 cross acc: 0.9450396663122598               
+train prec: 0.9999669139195047 cross prec: 0.9391618402965439               
+train rec: 0.9999669127004327 cross rec: 0.9450396663122598               
+train f1: 0.999966910321459 cross f1: 0.9249599206082416               
+train roc_auc_prob: 0.9999331186357472 cross roc_auc_prob: 0.8431299541902834
+fold: 7 with hyper params: {'n_estimators': 400}               
+train acc: 0.999974532415142 cross acc: 0.989976746050838               
+train prec: 0.9999745324350334 cross prec: 0.9877902560393508               
+train rec: 0.999974532415142 cross rec: 0.989976746050838               
+train f1: 0.9999745313073548 cross f1: 0.9872903788387558               
+train roc_auc_prob: 0.9999502886782226 cross roc_auc_prob: 0.7367854438765853
+fold: 8 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999667871696282 cross acc: 0.7217036172695449               
+train prec: 0.999966788379357 cross prec: 0.7316129621315896               
+train rec: 0.9999667871696282 cross rec: 0.7217036172695449               
+train f1: 0.9999667843441823 cross f1: 0.7138874778677827               
+train roc_auc_prob: 0.9999284328583733 cross roc_auc_prob: 0.7944047548910859
+fold: 9 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999667873393338 cross acc: 0.9410649161196207               
+train prec: 0.9999667885674973 cross prec: 0.9298389252134717               
+train rec: 0.9999667873393338 cross rec: 0.9410649161196207               
+train f1: 0.9999667849390868 cross f1: 0.9300607775425667               
+train roc_auc_prob: 0.9999341642344886 cross roc_auc_prob: 0.8712077225166726
+fold: 10 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999668594765326 cross acc: 0.8303002022087417               
+train prec: 0.9999668606932481 cross prec: 0.829111537159857               
+train rec: 0.9999668594765326 cross rec: 0.8303002022087417               
+train f1: 0.9999668569600995 cross f1: 0.7878546036027958               
+train roc_auc_prob: 0.9999312682637409 cross roc_auc_prob: 0.7564167530065944
+fold: 11 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999719680231595 cross acc: 0.9968548513917282               
+train prec: 0.9999719688999483 cross prec: 0.9965849772297052               
+train rec: 0.9999719680231595 cross rec: 0.9968548513917282               
+train f1: 0.9999719663497725 cross f1: 0.996541952231996               
+train roc_auc_prob: 0.9999476754333335 cross roc_auc_prob: 0.8952927215189873
+fold: 12 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999695906136361 cross acc: 0.917427701674277               
+train prec: 0.9999695907663592 cross prec: 0.9111922046128856               
+train rec: 0.9999695906136361 cross rec: 0.917427701674277               
+train f1: 0.9999695889281541 cross f1: 0.91402587830224               
+train roc_auc_prob: 0.9999332772029643 cross roc_auc_prob: 0.8147567351001908
+fold: 13 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999743975093898 cross acc: 0.9185006877579092               
+train prec: 0.9999743982386745 cross prec: 0.9151454837518853               
+train rec: 0.9999743975093898 cross rec: 0.9185006877579092               
+train f1: 0.9999743960724914 cross f1: 0.9166977953570967               
+train roc_auc_prob: 0.9999739060247581 cross roc_auc_prob: 0.8087375467175643
+fold: 14 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999669592047843 cross acc: 0.8611444235052252               
+train prec: 0.9999669604145346 cross prec: 0.8557997764562946               
+train rec: 0.9999669592047843 cross rec: 0.8611444235052252               
+train f1: 0.999966956710988 cross f1: 0.8577487266669931               
+train roc_auc_prob: 0.9999302858387177 cross roc_auc_prob: 0.8831081464085435
+fold: 15 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999670016423029 cross acc: 0.9934634670487106               
+train prec: 0.9999670028567966 cross prec: 0.9931831480381481               
+train rec: 0.9999670016423029 cross rec: 0.9934634670487106               
+train f1: 0.9999669993141288 cross f1: 0.9933195888220615               
+train roc_auc_prob: 0.9999335023207567 cross roc_auc_prob: 0.7775967264288689
+fold: 16 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999744916179456 cross acc: 0.9431254294220933               
+train prec: 0.9999744916282723 cross prec: 0.9330994827127298               
+train rec: 0.9999744916179456 cross rec: 0.9431254294220933               
+train f1: 0.9999744904847953 cross f1: 0.9327282579389353               
+train roc_auc_prob: 0.9999414888580652 cross roc_auc_prob: 0.8030225896283271
+fold: 17 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999670059135555 cross acc: 0.9735540163713232               
+train prec: 0.9999670071269028 cross prec: 0.9756510235097341               
+train rec: 0.9999670059135555 cross rec: 0.9735540163713232               
+train f1: 0.9999670035700413 cross f1: 0.9745163481665359               
+train roc_auc_prob: 0.9999307580151394 cross roc_auc_prob: 0.9471493429942279
+fold: 18 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999669660054785 cross acc: 0.9945656861899422               
+train prec: 0.9999669672227969 cross prec: 0.9929872542243454               
+train rec: 0.9999669660054785 cross rec: 0.9945656861899422               
+train f1: 0.9999669636760732 cross f1: 0.9937411937188834               
+train roc_auc_prob: 0.9999320202891964 cross roc_auc_prob: 0.8520551899318785
+fold: 19 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999694921200688 cross acc: 0.9929577464788732               
+train prec: 0.999969493158202 cross prec: 0.9921386141910565               
+train rec: 0.9999694921200688 cross rec: 0.9929577464788732               
+train f1: 0.9999694901308686 cross f1: 0.9911960133338051               
+train roc_auc_prob: 0.9999335120493434 cross roc_auc_prob: 0.8787556185491278
+fold: 20 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999669457630825 cross acc: 0.6232888287983775               
+train prec: 0.9999669469623476 cross prec: 0.7724468081491096               
+train rec: 0.9999669457630825 cross rec: 0.6232888287983775               
+train f1: 0.9999669429929244 cross f1: 0.55938328112444               
+train roc_auc_prob: 0.9999247072454511 cross roc_auc_prob: 0.7506063880801429
+fold: 21 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999668893569659 cross acc: 0.8700415866922585               
+train prec: 0.9999668905735085 cross prec: 0.8634465045883153               
+train rec: 0.9999668893569659 cross rec: 0.8700415866922585               
+train f1: 0.9999668868882715 cross f1: 0.8390052075141262               
+train roc_auc_prob: 0.9999347289925281 cross roc_auc_prob: 0.8378014327875097
+fold: 22 with hyper params: {'n_estimators': 400}               
+train acc: 0.999966970369881 cross acc: 0.9617884065505589               
+train prec: 0.9999669715854295 cross prec: 0.9502862780808808               
+train rec: 0.999966970369881 cross rec: 0.9617884065505589               
+train f1: 0.9999669680132957 cross f1: 0.949191775286507               
+train roc_auc_prob: 0.9999328690727329 cross roc_auc_prob: 0.7483656905867073
+fold: 23 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999667387327457 cross acc: 0.9835457218876908               
+train prec: 0.9999667399670217 cross prec: 0.9821818536721258               
+train rec: 0.9999667387327457 cross rec: 0.9835457218876908               
+train f1: 0.9999667363740176 cross f1: 0.9781987700141771               
+train roc_auc_prob: 0.9999353218347726 cross roc_auc_prob: 0.8965043422165321
+fold: 24 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999770812748923 cross acc: 0.9662243667068757               
+train prec: 0.9999770812410387 cross prec: 0.9734933930606098               
+train rec: 0.9999770812748923 cross rec: 0.9662243667068757               
+train f1: 0.9999770804013849 cross f1: 0.9697366797208369               
+train roc_auc_prob: 0.9999459465820032 cross roc_auc_prob: 0.7609332265631019
+fold: 25 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999669133741232 cross acc: 0.9528602995335134               
+train prec: 0.9999669145936646 cross prec: 0.9386522544483143               
+train rec: 0.9999669133741232 cross rec: 0.9528602995335134               
+train f1: 0.9999669110053973 cross f1: 0.9334456746293166               
+train roc_auc_prob: 0.9999306927848627 cross roc_auc_prob: 0.7786646705800087
+fold: 26 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999695013470239 cross acc: 0.9638296048684323               
+train prec: 0.9999695015075984 cross prec: 0.9609306523962754               
+train rec: 0.9999695013470239 cross rec: 0.9638296048684323               
+train f1: 0.9999694996701373 cross f1: 0.9536030415836786               
+train roc_auc_prob: 0.999932755475966 cross roc_auc_prob: 0.825326958257676
+fold: 27 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999694805591162 cross acc: 0.9798910766652702               
+train prec: 0.9999694807246813 cross prec: 0.976472849313338               
+train rec: 0.9999694805591162 cross rec: 0.9798910766652702               
+train f1: 0.9999694788926156 cross f1: 0.9773399358860615               
+train roc_auc_prob: 0.9999316815261963 cross roc_auc_prob: 0.8707816029789025
+fold: 28 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999668996422615 cross acc: 0.8036666128250687               
+train prec: 0.9999669008532514 cross prec: 0.823107305880161               
+train rec: 0.9999668996422615 cross rec: 0.8036666128250687               
+train f1: 0.9999668970700685 cross f1: 0.7672395919648671               
+train roc_auc_prob: 0.9999314261379526 cross roc_auc_prob: 0.8486246214268467
+fold: 29 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999745753446948 cross acc: 0.9583333333333334               
+train prec: 0.999974576064636 cross prec: 0.955551686505399               
+train rec: 0.9999745753446948 cross rec: 0.9583333333333334               
+train f1: 0.9999745739425633 cross f1: 0.9473116628648302               
+train roc_auc_prob: 0.9999334437466251 cross roc_auc_prob: 0.8500349196706627
+fold: 30 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999669592887606 cross acc: 0.9579371198492247               
+train prec: 0.9999669605051782 cross prec: 0.954698460992247               
+train rec: 0.9999669592887606 cross rec: 0.9579371198492247               
+train f1: 0.9999669569316318 cross f1: 0.9561841181844196               
+train roc_auc_prob: 0.9999328474159523 cross roc_auc_prob: 0.9005922355236184
+fold: 31 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999669683556848 cross acc: 0.9670557717250324               
+train prec: 0.9999669695719374 cross prec: 0.9637608537132439               
+train rec: 0.9999669683556848 cross rec: 0.9670557717250324               
+train f1: 0.9999669660095567 cross f1: 0.9653090111730767               
+train roc_auc_prob: 0.9999318507202278 cross roc_auc_prob: 0.9195270912771822
+fold: 32 with hyper params: {'n_estimators': 400}               
+train acc: 0.9999668541531747 cross acc: 0.8740809534865722               
+train prec: 0.999966855370199 cross prec: 0.8694547363731425               
+train rec: 0.9999668541531747 cross rec: 0.8740809534865722               
+train f1: 0.9999668516341472 cross f1: 0.8710376073699111               
+train roc_auc_prob: 0.9999299739767348 cross roc_auc_prob: 0.8991177234143058
+fold: 0 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999695711818807 cross acc: 0.914994425863991               
+train prec: 0.9999695713252071 cross prec: 0.9072886127014296               
+train rec: 0.9999695711818807 cross rec: 0.914994425863991               
+train f1: 0.9999695694686471 cross f1: 0.9044152157034375               
+train roc_auc_prob: 0.9999391906982078 cross roc_auc_prob: 0.9033199129656068
+fold: 1 with hyper params: {'n_estimators': 600}               
+train acc: 0.999966893657334 cross acc: 0.9365614711314543               
+train prec: 0.999966894877481 cross prec: 0.9258886943280378               
+train rec: 0.999966893657334 cross rec: 0.9365614711314543               
+train f1: 0.9999668912691533 cross f1: 0.9290721812606932               
+train roc_auc_prob: 0.9999406057602557 cross roc_auc_prob: 0.86794509931638
+fold: 2 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999668536460989 cross acc: 0.9285216987700162               
+train prec: 0.9999668548677967 cross prec: 0.9251397661606433               
+train rec: 0.9999668536460989 cross rec: 0.9285216987700162               
+train f1: 0.9999668512241938 cross f1: 0.9265528748703713               
+train roc_auc_prob: 0.9999376180630832 cross roc_auc_prob: 0.9054245324862813
+fold: 3 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669533253852 cross acc: 0.9522309264305178               
+train prec: 0.9999669545415815 cross prec: 0.9445325282705238               
+train rec: 0.9999669533253852 cross rec: 0.9522309264305178               
+train f1: 0.9999669509545288 cross f1: 0.9464792493561358               
+train roc_auc_prob: 0.9999390513847259 cross roc_auc_prob: 0.8657373486767654
+fold: 4 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999668558433148 cross acc: 0.9922486628943493               
+train prec: 0.9999668570689348 cross prec: 0.9920836887819047               
+train rec: 0.9999668558433148 cross rec: 0.9922486628943493               
+train f1: 0.99996685350155 cross f1: 0.989975433313215               
+train roc_auc_prob: 0.9999439312770633 cross roc_auc_prob: 0.8586135455898162
+fold: 5 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999668992208586 cross acc: 0.8381367562767418               
+train prec: 0.999966900435892 cross prec: 0.8159341654825243               
+train rec: 0.9999668992208586 cross rec: 0.8381367562767418               
+train f1: 0.9999668967370259 cross f1: 0.8188677620609618               
+train roc_auc_prob: 0.9999400443241857 cross roc_auc_prob: 0.7790659376969505
+fold: 6 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669127004327 cross acc: 0.9447943076797252               
+train prec: 0.9999669139195047 cross prec: 0.9369031758817818               
+train rec: 0.9999669127004327 cross rec: 0.9447943076797252               
+train f1: 0.999966910321459 cross f1: 0.925127796515517               
+train roc_auc_prob: 0.9999369084546579 cross roc_auc_prob: 0.8420765306962747
+fold: 7 with hyper params: {'n_estimators': 600}               
+train acc: 0.999974532415142 cross acc: 0.989976746050838               
+train prec: 0.9999745324350334 cross prec: 0.9877902560393508               
+train rec: 0.999974532415142 cross rec: 0.989976746050838               
+train f1: 0.9999745313073548 cross f1: 0.9872903788387558               
+train roc_auc_prob: 0.9999487617755722 cross roc_auc_prob: 0.7444794286255104
+fold: 8 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999667871696282 cross acc: 0.721120186697783               
+train prec: 0.999966788379357 cross prec: 0.7315592902923943               
+train rec: 0.9999667871696282 cross rec: 0.721120186697783               
+train f1: 0.9999667843441823 cross f1: 0.713017700032603               
+train roc_auc_prob: 0.999934231022946 cross roc_auc_prob: 0.794919890650046
+fold: 9 with hyper params: {'n_estimators': 600}               
+train acc: 0.999969342159385 cross acc: 0.9408460977388767               
+train prec: 0.9999693423179523 cross prec: 0.9295232539695941               
+train rec: 0.999969342159385 cross rec: 0.9408460977388767               
+train f1: 0.9999693404551407 cross f1: 0.9300065968224428               
+train roc_auc_prob: 0.9999393927346103 cross roc_auc_prob: 0.8752224098290704
+fold: 10 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999668594765326 cross acc: 0.8309223829522476               
+train prec: 0.9999668606932481 cross prec: 0.830876237300418               
+train rec: 0.9999668594765326 cross rec: 0.8309223829522476               
+train f1: 0.9999668569600995 cross f1: 0.7884836818259752               
+train roc_auc_prob: 0.9999390781219367 cross roc_auc_prob: 0.7575745430347194
+fold: 11 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999719680231595 cross acc: 0.9970907375373487               
+train prec: 0.9999719688999483 cross prec: 0.9969105356013348               
+train rec: 0.9999719680231595 cross rec: 0.9970907375373487               
+train f1: 0.9999719663497725 cross f1: 0.99676024442082               
+train roc_auc_prob: 0.999947690057031 cross roc_auc_prob: 0.8939082278481013
+fold: 12 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999670564981058 cross acc: 0.9196156773211568               
+train prec: 0.9999670577058212 cross prec: 0.9135330328608872               
+train rec: 0.9999670564981058 cross rec: 0.9196156773211568               
+train f1: 0.9999670541242837 cross f1: 0.9162760344411304               
+train roc_auc_prob: 0.9999368025275422 cross roc_auc_prob: 0.8165409387554589
+fold: 13 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999743975093898 cross acc: 0.9187757909215956               
+train prec: 0.9999743982386745 cross prec: 0.915930230003472               
+train rec: 0.9999743975093898 cross rec: 0.9187757909215956               
+train f1: 0.9999743960724914 cross f1: 0.9172631546986207               
+train roc_auc_prob: 0.9999731316991962 cross roc_auc_prob: 0.8096013200996021
+fold: 14 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669592047843 cross acc: 0.8601164982011307               
+train prec: 0.9999669604145346 cross prec: 0.8549655793485484               
+train rec: 0.9999669592047843 cross rec: 0.8601164982011307               
+train f1: 0.999966956710988 cross f1: 0.8568996229191889               
+train roc_auc_prob: 0.9999363725660037 cross roc_auc_prob: 0.8829998446553736
+fold: 15 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999695399775104 cross acc: 0.9940902578796562               
+train prec: 0.9999695401450505 cross prec: 0.9934767608815596               
+train rec: 0.9999695399775104 cross rec: 0.9940902578796562               
+train f1: 0.9999695383244386 cross f1: 0.9937573392468283               
+train roc_auc_prob: 0.9999408893270073 cross roc_auc_prob: 0.7762655413003045
+fold: 16 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999719407797403 cross acc: 0.9417512787235667               
+train prec: 0.9999719416562995 cross prec: 0.9309449372406383               
+train rec: 0.9999719407797403 cross rec: 0.9417512787235667               
+train f1: 0.9999719390657769 cross f1: 0.9314020899659697               
+train roc_auc_prob: 0.9999382101545504 cross roc_auc_prob: 0.7973943569323847
+fold: 17 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999670059135555 cross acc: 0.9742736349734641               
+train prec: 0.9999670071269028 cross prec: 0.9759780879280786               
+train rec: 0.9999670059135555 cross rec: 0.9742736349734641               
+train f1: 0.9999670035700413 cross f1: 0.9750639419460464               
+train roc_auc_prob: 0.9999378251295962 cross roc_auc_prob: 0.9467199039904889
+fold: 18 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669660054785 cross acc: 0.9939618735443803               
+train prec: 0.9999669672227969 cross prec: 0.992875502023887               
+train rec: 0.9999669660054785 cross rec: 0.9939618735443803               
+train f1: 0.9999669636760732 cross f1: 0.9934075592617438               
+train roc_auc_prob: 0.9999397977217971 cross roc_auc_prob: 0.822579186391102
+fold: 19 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669497967413 cross acc: 0.9929577464788732               
+train prec: 0.9999669510151025 cross prec: 0.9921386141910565               
+train rec: 0.9999669497967413 cross rec: 0.9929577464788732               
+train f1: 0.9999669474621606 cross f1: 0.9911960133338051               
+train roc_auc_prob: 0.999938102536037 cross roc_auc_prob: 0.8891217974957436
+fold: 20 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669457630825 cross acc: 0.6236268379246239               
+train prec: 0.9999669469623476 cross prec: 0.7719511125400462               
+train rec: 0.9999669457630825 cross rec: 0.6236268379246239               
+train f1: 0.9999669429929244 cross f1: 0.5600451715093491               
+train roc_auc_prob: 0.9999314778166144 cross roc_auc_prob: 0.7549316887713751
+fold: 21 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999668893569659 cross acc: 0.8709213051823417               
+train prec: 0.9999668905735085 cross prec: 0.86501036825108               
+train rec: 0.9999668893569659 cross rec: 0.8709213051823417               
+train f1: 0.9999668868882715 cross f1: 0.8402725362500386               
+train roc_auc_prob: 0.9999401625239825 cross roc_auc_prob: 0.8355381759329781
+fold: 22 with hyper params: {'n_estimators': 600}               
+train acc: 0.999966970369881 cross acc: 0.9612685209253964               
+train prec: 0.9999669715854295 cross prec: 0.9486912317492399               
+train rec: 0.999966970369881 cross rec: 0.9612685209253964               
+train f1: 0.9999669680132957 cross f1: 0.9485005069230581               
+train roc_auc_prob: 0.9999401542810454 cross roc_auc_prob: 0.7571708133389313
+fold: 23 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999667387327457 cross acc: 0.9837557765018905               
+train prec: 0.9999667399670217 cross prec: 0.9826865687605241               
+train rec: 0.9999667387327457 cross rec: 0.9837557765018905               
+train f1: 0.9999667363740176 cross f1: 0.9785164009589271               
+train roc_auc_prob: 0.999940897556885 cross roc_auc_prob: 0.8919671726549274
+fold: 24 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999745347498803 cross acc: 0.9655810213108162               
+train prec: 0.9999745354731604 cross prec: 0.9734369665186               
+train rec: 0.9999745347498803 cross rec: 0.9655810213108162               
+train f1: 0.999974533363302 cross f1: 0.9693723434222252               
+train roc_auc_prob: 0.999947671296479 cross roc_auc_prob: 0.760590610935089
+fold: 25 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669133741232 cross acc: 0.9531876585645307               
+train prec: 0.9999669145936646 cross prec: 0.9417298539474073               
+train rec: 0.9999669133741232 cross rec: 0.9531876585645307               
+train f1: 0.9999669110053973 cross f1: 0.9335033345059631               
+train roc_auc_prob: 0.9999400379691583 cross roc_auc_prob: 0.7834544756476942
+fold: 26 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669597926092 cross acc: 0.963401045684409               
+train prec: 0.99996696100875 cross prec: 0.9594017100059987               
+train rec: 0.9999669597926092 cross rec: 0.963401045684409               
+train f1: 0.9999669574308933 cross f1: 0.9533489815587448               
+train roc_auc_prob: 0.9999392400944047 cross roc_auc_prob: 0.8289418952847833
+fold: 27 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999694805591162 cross acc: 0.9794721407624634               
+train prec: 0.9999694807246813 cross prec: 0.9758873540920517               
+train rec: 0.9999694805591162 cross rec: 0.9794721407624634               
+train f1: 0.9999694788926156 cross f1: 0.9768398918695462               
+train roc_auc_prob: 0.9999386572575466 cross roc_auc_prob: 0.8758582173488532
+fold: 28 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999668996422615 cross acc: 0.804635761589404               
+train prec: 0.9999669008532514 cross prec: 0.8234145592641436               
+train rec: 0.9999668996422615 cross rec: 0.804635761589404               
+train f1: 0.9999668970700685 cross f1: 0.7689306552497611               
+train roc_auc_prob: 0.9999390819614388 cross roc_auc_prob: 0.8471411001847595
+fold: 29 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999745753446948 cross acc: 0.9583333333333334               
+train prec: 0.999974576064636 cross prec: 0.9554042208915233               
+train rec: 0.9999745753446948 cross rec: 0.9583333333333334               
+train f1: 0.9999745739425633 cross f1: 0.9473883776987455               
+train roc_auc_prob: 0.9999406343591439 cross roc_auc_prob: 0.8521898615264161
+fold: 30 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669592887606 cross acc: 0.9579371198492247               
+train prec: 0.9999669605051782 cross prec: 0.9547880265218951               
+train rec: 0.9999669592887606 cross rec: 0.9579371198492247               
+train f1: 0.9999669569316318 cross f1: 0.956236344025436               
+train roc_auc_prob: 0.9999386870914544 cross roc_auc_prob: 0.901957570082177
+fold: 31 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999669683556848 cross acc: 0.9675745784695201               
+train prec: 0.9999669695719374 cross prec: 0.9639923535982499               
+train rec: 0.9999669683556848 cross rec: 0.9675745784695201               
+train f1: 0.9999669660095567 cross f1: 0.9656587899928666               
+train roc_auc_prob: 0.999939657857276 cross roc_auc_prob: 0.9214951109936573
+fold: 32 with hyper params: {'n_estimators': 600}               
+train acc: 0.9999668541531747 cross acc: 0.8740809534865722               
+train prec: 0.999966855370199 cross prec: 0.8693870910248229               
+train rec: 0.9999668541531747 cross rec: 0.8740809534865722               
+train f1: 0.9999668516341472 cross f1: 0.8709748160204509               
+train roc_auc_prob: 0.999936973629619 cross roc_auc_prob: 0.8987596418986614
+Finished on Sat Oct 19 14:29:18 PST 2024
+Total runtime (sec): 168067.9486553669
