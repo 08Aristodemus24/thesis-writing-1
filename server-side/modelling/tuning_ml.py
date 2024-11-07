@@ -553,7 +553,7 @@ if __name__ == "__main__":
         'lr': {
             # used in Taylor et al. (2015) and Hossain et al. (2022)
             'model': LogisticRegression, 
-            'hyper_params': {'C': [0.01, 0.1, 1, 10, 100]}
+            'hyper_params': {'C': [0.01, 0.1, 1, 10, 100], 'class_weight': [{0: 1, 1: maj_class_ratio}]}
         },
         'svm': {
             # used in Taylor et al. (2015) and Hossain et al. (2022)
@@ -573,7 +573,7 @@ if __name__ == "__main__":
         'rf': {
             # used in Taylor et al. (2015)
             'model': RandomForestClassifier, 
-            'hyper_params': {'n_estimators': [200, 400, 600]}
+            'hyper_params': {'n_estimators': [200, 400, 600], 'class_weight': [{0: 1, 1: maj_class_ratio}]}
         },
         'gbt': {
             # used in Hossain et al. (2022)
