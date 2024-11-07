@@ -6,12 +6,7 @@ from urllib3.exceptions import MaxRetryError, NameResolutionError
 
 # ff. imports are for getting secret values from .env file
 from pathlib import Path
-from datetime import datetime as dt
-import io
-import os
-import csv
-import json
-import requests
+import re
 import tensorflow as tf
 import pandas as pd
 import numpy as np
@@ -104,7 +99,7 @@ def load_miscs():
     hossain_lr_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_lr_feature_set.txt')
     hossain_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_svm_feature_set.txt')
     hossain_gbt_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_gbt_feature_set.txt')
-    cueva_second_phase_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_cueva_second_phase_svm_feature_set1.txt')
+    cueva_second_phase_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_cueva_second_phase_svm_feature_set.txt')
 
     # pre-load reduced features here so that features don't have to 
     # be loaded every single time user makes a request
@@ -265,11 +260,10 @@ def predict():
     # extract raw data from client
     raw_data = request.form
     raw_files = request.files
-    print(raw_data)
-    print(raw_files)
 
     model_name = raw_data['model_name']
     spreadsheet_file = raw_files['spreadsheet_file']
+    spreadsheet_fname = re.sub(r".csv", "", spreadsheet_file.filename)
     show_raw = raw_data['show_raw']
     show_correct = raw_data['show_correct']
     show_art = raw_data['show_art']
@@ -284,8 +278,11 @@ def predict():
 
     # this is if deep learning model is chosen
     if selector_config == "hossain" or selector_config == "taylor":
-        # extract features of the test data
-        subject_features, subject_labels = extract_features(subject_eda_data, extractor_fn=extract_features_per_hour)
+        # load the extracted test features instead as opposed 
+        # to using extract-features() method which takes longer to run
+        # subject_features, subject_labels = extract_features(subject_eda_data, extractor_fn=extract_features_per_hour)
+        subject_features = pd.read_csv(f'./modelling/data/Artifact Detection Data/test/{spreadsheet_fname}_features.csv', index_col=0)
+        subject_labels = pd.read_csv(f'./modelling/data/Artifact Detection Data/test/{spreadsheet_fname}_labels.csv', index_col=0)
         print(subject_features.shape)
         print(subject_labels.shape)
 
@@ -381,20 +378,23 @@ def predict():
     # this condition is triggered whenever user picks the cueva but uses the lstm-svm as estimator name
     else:
         # extract lower order features of the test data akin to previous ml models
-        subject_lof, subject_labels = extract_features(subject_eda_data, extractor_fn=extract_features_hybrid)
+        # subject_lof, subject_labels = extract_features(subject_eda_data, extractor_fn=extract_features_hybrid)
+        subject_lof = pd.read_csv(f'./modelling/data/Hybrid Artifact Detection Data/test/{spreadsheet_fname}_lof.csv', index_col=0)
+        subject_labels = pd.read_csv(f'./modelling/data/Hybrid Artifact Detection Data/test/{spreadsheet_fname}_labels.csv', index_col=0)
         print(f'lower order features shape: {subject_lof.shape}')
         print(f'labels shape: {subject_labels.shape}')
 
         # load test signals and use it to extract the higher order features from it
-        subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label', scale=True, verbose=True)
-        print(f'signals {subject_signals}, shape: {subject_signals.shape}')
-        print(f'labels {subject_labels}, shape: {subject_labels.shape}')
+        # subject_signals, subject_labels = charge_raw_data(subject_eda_data, x_col="raw_signal", y_col='label', scale=True, verbose=True)
+        # print(f'signals {subject_signals}, shape: {subject_signals.shape}')
+        # print(f'labels {subject_labels}, shape: {subject_labels.shape}')
 
-        # extract higher features
-        lstm_fe_main = models[model_name]['feature_extractor']
-        subject_hof_arr = lstm_fe_main.predict(subject_signals)
-        columns = [f'HOF_{i}' for i in range(1, subject_hof_arr.shape[1] + 1)]
-        subject_hof = pd.DataFrame(subject_hof_arr, columns=columns)
+        # # extract higher features
+        # lstm_fe_main = models[model_name]['feature_extractor']
+        # subject_hof_arr = lstm_fe_main.predict(subject_signals)
+        # columns = [f'HOF_{i}' for i in range(1, subject_hof_arr.shape[1] + 1)]
+        # subject_hof = pd.DataFrame(subject_hof_arr, columns=columns)
+        subject_hof = pd.read_csv(f'./modelling/data/Hybrid Artifact Detection Data/test/{spreadsheet_fname}_hof.csv', index_col=0)
         print(f'higher order features shape: {subject_hof.shape}')
 
         # concatenate both dataframes of higher and lower features 
@@ -408,7 +408,7 @@ def predict():
         print(f'reduced subject_hof_lof shape: {subject_hof_lof.shape}')
 
         X = subject_hof_lof.to_numpy()
-        Y = subject_labels
+        Y = subject_labels.to_numpy().ravel()
 
         # assign model
         model = models[model_name]['model']
