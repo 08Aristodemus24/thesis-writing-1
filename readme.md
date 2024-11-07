@@ -15,6 +15,7 @@
 * `python tuning_ml.py -m svm -pl taylor --n_rows_to_sample 5000 --mode tuning`
 
 * `python tuning_ml.py -m svm -pl cueva_second_phase --mode training --hyper_param_list C_10 gamma_0.1 probability_True kernel_rbf class_weight_{0:1,1:8.86}`
+* `python tuning_ml.py -m svm -pl cueva_second_phase --mode training --hyper_param_list C_10 gamma_0.1 probability_True kernel_poly degree_3 class_weight_{0:1,1:8.86}`
 * `python tuning_ml.py -m svm -pl cueva_second_phase --mode training --hyper_param_list C_10 gamma_0.1 probability_True`
 * `python tuning_ml.py -m svm -pl hossain --mode training --hyper_param_list C_10 gamma_0.1 probability_True`
 * `python tuning_ml.py -m svm -pl taylor --mode training --hyper_param_list C_10 gamma_0.1 probability_True`
