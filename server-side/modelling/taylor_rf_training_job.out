@@ -1,0 +1,13 @@
+Submitted on Fri Nov  8 12:10:55 PST 2024
+JOB PARAMETERS
+SLURM_JOB_ID          : 33516
+SLURM_JOB_NAME        : taylor_rf_training_job
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-17
+SLURM_NTASKS          : 64
+SLURM_NTASKS_PER_NODE : 
+SLURM_MEM_PER_NODE    : 102400
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/33516
+Module load: anaconda/3-2023.07-2
+Python 3.12.3
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.3min

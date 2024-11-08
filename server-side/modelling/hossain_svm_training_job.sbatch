@@ -10,7 +10,7 @@
 ##SBATCH --mail-user=<email_add>  ## optional
 ##SBATCH --requeue                ## optional
 ##SBATCH --ntasks-per-node=1      ## optional
-##SBATCH --mem=24G                ## optional: mem per node
+#SBATCH --mem=24G                ## optional: mem per node
 ##SBATCH --error="%x.%j.err"      ## optional; better to use --output only
 
 ## For more `sbatch` options, use `man sbatch` in the HPC, or go to https://slurm.schedmd.com/sbatch.html.
