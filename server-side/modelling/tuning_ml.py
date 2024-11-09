@@ -7,6 +7,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.feature_selection import RFE
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_validate
+from sklearn.utils import class_weight
 
 import matplotlib.pyplot as plt
 import os
@@ -40,6 +41,7 @@ def select_features(subjects_features: pd.DataFrame,
     estimator_name: str,
     selector_config: str,
     n_features_to_select: int,
+    class_weights: dict,
     sampled_ids: list | pd.Series | np.ndarray):
 
     """
@@ -58,15 +60,15 @@ def select_features(subjects_features: pd.DataFrame,
         selected_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_{selector_config}_{estimator_name}_feature_set.txt')
 
         return selected_feats + ['subject_id']
-
-    # select best features first by means of backward
-    # feature selection based on support vector classifiers
-    model = RandomForestClassifier()
-    selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
     
     # remove subject_id column then convert to numpy array
     X = subjects_features.loc[sampled_ids, subjects_features.columns != 'subject_id'].to_numpy()
     Y = subjects_labels.loc[sampled_ids, subjects_labels.columns != 'subject_id'].to_numpy().ravel()
+
+    # select best features first by means of backward
+    # feature selection based on support vector classifiers
+    model = RandomForestClassifier(class_weight=class_weights)
+    selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
 
     # train feature selector on data
     selector.fit(X, Y)
@@ -396,7 +398,15 @@ def grid_search_cv(subjects_features: pd.DataFrame,
     sampled_ids = sample_ids(subjects_features, n_rows_to_sample)
 
     # use returned features from select_features()
-    selected_feats = select_features(subjects_features, subjects_labels, estimator_name, selector_config=selector_config, n_features_to_select=n_features_to_select, sampled_ids=sampled_ids)
+    class_weights_param = hyper_params['hyper_params'].get('class_weight')
+    class_weights = class_weights_param[0] if class_weights_param != None else None
+    selected_feats = select_features(subjects_features,
+        subjects_labels,
+        estimator_name,
+        selector_config=selector_config,
+        n_features_to_select=n_features_to_select,
+        class_weights=class_weights,
+        sampled_ids=sampled_ids)
     subjects_features = subjects_features[selected_feats].iloc[sampled_ids]
     subjects_labels = subjects_labels.iloc[sampled_ids]
 
@@ -496,10 +506,7 @@ def create_hyper_param_config(hyper_param_list: list[str]):
         that will be parsed and extracted its key
         and value pairs to return as a dictionary
     """
-    
-
     hyper_param_config = {}
-    
     
     for hyper_param in hyper_param_list:
         try:
@@ -543,17 +550,23 @@ if __name__ == "__main__":
     print(args.exc_lof)
     subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl, exc_lof=args.exc_lof)
 
-    # just to determine class ratio
+    # determine class ratio and calculate weights for each class
     class_ratio = subjects_labels['0'].value_counts().to_dict()
-    maj_class_ratio = round(class_ratio[0] / class_ratio[1], 2)
-    print(maj_class_ratio)
+    neg_class_weight = subjects_features.shape[0] / (2 * class_ratio[0])
+    pos_class_weight = subjects_features.shape[0] / (2 * class_ratio[1])
+    print(neg_class_weight, pos_class_weight)
+
+    cw_obj = class_weight.compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
+    class_weights = dict(enumerate(cw_obj))
+    print(class_weights)
+
 
     # model hyper params
     models = {
         'lr': {
             # used in Taylor et al. (2015) and Hossain et al. (2022)
             'model': LogisticRegression, 
-            'hyper_params': {'C': [0.01, 0.1, 1, 10, 100], 'class_weight': [{0: 1, 1: maj_class_ratio}]}
+            'hyper_params': {'C': [0.01, 0.1, 1, 10, 100], 'class_weight': [{0: neg_class_weight, 1: pos_class_weight}]}
         },
         'svm': {
             # used in Taylor et al. (2015) and Hossain et al. (2022)
@@ -565,7 +578,7 @@ if __name__ == "__main__":
                 'probability': [True],
                 'degree': [3, 5, 6],
                 # this indicates that there is class imbalance of 80% to 20% of negative to positive classes 
-                'class_weight': [{0: 1, 1: maj_class_ratio}]
+                'class_weight': [{0: neg_class_weight, 1: pos_class_weight}]
             }
             # 'model': LinearSVC, 
             # 'hyper_params': {'C': [1, 10, 100, 1000]}
@@ -573,7 +586,7 @@ if __name__ == "__main__":
         'rf': {
             # used in Taylor et al. (2015)
             'model': RandomForestClassifier, 
-            'hyper_params': {'n_estimators': [200, 400, 600], 'class_weight': [{0: 1, 1: maj_class_ratio}]}
+            'hyper_params': {'n_estimators': [200, 400, 600], 'class_weight': [{0: neg_class_weight, 1: pos_class_weight}]}
         },
         'gbt': {
             # used in Hossain et al. (2022)
@@ -603,20 +616,20 @@ if __name__ == "__main__":
     elif args.mode.lower() == "training":
         # build hyper param config dictionary from input
         hyper_param_config = create_hyper_param_config(hyper_param_list=args.hyper_param_list)
-        hyper_param_config['class_weight'] = {0: 1, 1: maj_class_ratio}
+        hyper_param_config['class_weight'] = {0: neg_class_weight, 1: pos_class_weight}
         print(hyper_param_config)
         
-        # we can just modify this script such that it doesn't loop through hyper param configs anymore and
-        # will just only now 1. load the preprocessed features, load the reduced feature set, 
-        # exclude use of grid serach loso cv, loso cross validation, and leave one subject out
-        # and instead use the best hyper param config obtained from summarization.ipynb and train the model
-        # not on a specific fold or set of subjects but all subjects
-        train_final_estimator(
-            subjects_features,
-            subjects_labels, 
-            selector_config=args.pl,
-            estimator_name=args.m,
-            estimator=models[args.m]['model'],
-            exc_lof=args.exc_lof,
-            hyper_param_config=hyper_param_config
-        )
+        # # we can just modify this script such that it doesn't loop through hyper param configs anymore and
+        # # will just only now 1. load the preprocessed features, load the reduced feature set, 
+        # # exclude use of grid serach loso cv, loso cross validation, and leave one subject out
+        # # and instead use the best hyper param config obtained from summarization.ipynb and train the model
+        # # not on a specific fold or set of subjects but all subjects
+        # train_final_estimator(
+        #     subjects_features,
+        #     subjects_labels, 
+        #     selector_config=args.pl,
+        #     estimator_name=args.m,
+        #     estimator=models[args.m]['model'],
+        #     exc_lof=args.exc_lof,
+        #     hyper_param_config=hyper_param_config
+        # )

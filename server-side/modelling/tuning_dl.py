@@ -13,6 +13,7 @@ from tensorflow.keras.metrics import BinaryCrossentropy as bce_metric, BinaryAcc
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.utils.class_weight import compute_class_weight
 
 from utilities.loaders import concur_load_data, save_meta_data, split_data
 from models.llanes_jurado import LSTM_CNN
@@ -371,7 +372,7 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     # as cross validation will be needed in case of early stopping
     # i.e. if validation metrics do not improve anymore as training
     # progresses 
-    train_signals, train_labels, cross_signals, cross_labels = split_data(subjects_signals, subjects_labels, test_ratio=0.2)
+    train_signals, train_labels, cross_signals, cross_labels = split_data(subjects_signals, subjects_labels, test_ratio=0.1)
     
     print(f'train_signals length: {len(train_signals)}')
     print(f'train_labels length: {len(train_labels)}')
@@ -385,6 +386,10 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     Y_trains = np.concatenate(train_labels, axis=0)
     X_cross = np.concatenate(cross_signals, axis=0) 
     Y_cross = np.concatenate(cross_labels, axis=0)
+
+    cw_obj = compute_class_weight(class_weight='balanced', classes=np.unique(Y_trains), y=Y_trains.ravel())
+    class_weights = dict(enumerate(cw_obj))
+    print(class_weights)
 
     # transform train and cross ys to -1 if lstm-svm is chosen
     Y_trains[Y_trains == 0] = -1 if estimator_name.lower() == "lstm-svm" else 0
@@ -441,6 +446,7 @@ def train_final_estimator(subjects_signals: list[np.ndarray],
     epochs=training_epochs,
     batch_size=batch_size, 
     callbacks=callbacks,
+    class_weight=class_weights,
 
     # we set the validation split to all possible signal values not 
     # one subject so model can pull knowledge from more training subjects 
