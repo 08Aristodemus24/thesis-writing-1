@@ -619,17 +619,17 @@ if __name__ == "__main__":
         hyper_param_config['class_weight'] = {0: neg_class_weight, 1: pos_class_weight}
         print(hyper_param_config)
         
-        # # we can just modify this script such that it doesn't loop through hyper param configs anymore and
-        # # will just only now 1. load the preprocessed features, load the reduced feature set, 
-        # # exclude use of grid serach loso cv, loso cross validation, and leave one subject out
-        # # and instead use the best hyper param config obtained from summarization.ipynb and train the model
-        # # not on a specific fold or set of subjects but all subjects
-        # train_final_estimator(
-        #     subjects_features,
-        #     subjects_labels, 
-        #     selector_config=args.pl,
-        #     estimator_name=args.m,
-        #     estimator=models[args.m]['model'],
-        #     exc_lof=args.exc_lof,
-        #     hyper_param_config=hyper_param_config
-        # )
+        # we can just modify this script such that it doesn't loop through hyper param configs anymore and
+        # will just only now 1. load the preprocessed features, load the reduced feature set, 
+        # exclude use of grid serach loso cv, loso cross validation, and leave one subject out
+        # and instead use the best hyper param config obtained from summarization.ipynb and train the model
+        # not on a specific fold or set of subjects but all subjects
+        train_final_estimator(
+            subjects_features,
+            subjects_labels, 
+            selector_config=args.pl,
+            estimator_name=args.m,
+            estimator=models[args.m]['model'],
+            exc_lof=args.exc_lof,
+            hyper_param_config=hyper_param_config
+        )
