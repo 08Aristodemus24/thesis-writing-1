@@ -616,7 +616,7 @@ if __name__ == "__main__":
     elif args.mode.lower() == "training":
         # build hyper param config dictionary from input
         hyper_param_config = create_hyper_param_config(hyper_param_list=args.hyper_param_list)
-        hyper_param_config['class_weight'] = {0: neg_class_weight, 1: pos_class_weight}
+        hyper_param_config['class_weight'] = class_weights
         print(hyper_param_config)
         
         # we can just modify this script such that it doesn't loop through hyper param configs anymore and
