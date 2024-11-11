@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/scratch1/michael.cueva/thesis-writing-1/server-side/modelling/tuning_ml.py", line 597, in <module>
-    grid_search_cv(
-  File "/scratch1/michael.cueva/thesis-writing-1/server-side/modelling/tuning_ml.py", line 401, in grid_search_cv
-    class_weights_param = hyper_params['hyper_params'].get('class_weight')
-                          ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
-KeyError: 'hyper_params'

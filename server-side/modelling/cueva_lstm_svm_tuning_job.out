@@ -1,17 +1,22 @@
-Submitted on Mon Nov 11 18:01:29 PST 2024
+Submitted on Mon Nov 11 18:05:54 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 34071
+SLURM_JOB_ID          : 34073
 SLURM_JOB_NAME        : cueva_lstm_svm_tuning_job
-SLURM_JOB_NUM_NODES   : 5
-SLURM_JOB_NODELIST    : saliksik-cpu-[25-29]
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-08
 SLURM_NTASKS          : 60
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 204800
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34071
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34073
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-False
-subjects features, labels, names and subject to id lookup loaded
-{0: 0.5564284261392061, 1: 4.9303911539773}
-Finished on Mon Nov 11 18:01:41 PST 2024
-Total runtime (sec): 11.975062131881714
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  6.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  5.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  5.9min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  6.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  6.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  6.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  6.1min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  6.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  6.2min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  6.3min
