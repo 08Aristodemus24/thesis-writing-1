@@ -67,7 +67,7 @@ def select_features(subjects_features: pd.DataFrame,
 
     # select best features first by means of backward
     # feature selection based on support vector classifiers
-    model = RandomForestClassifier(class_weight=class_weights)
+    model = RandomForestClassifier(class_weight=class_weights, verbose=1)
     selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
 
     # train feature selector on data
