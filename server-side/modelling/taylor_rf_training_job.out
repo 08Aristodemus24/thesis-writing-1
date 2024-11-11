@@ -1,26 +1,27 @@
-Submitted on Fri Nov  8 12:10:55 PST 2024
+Submitted on Sat Nov  9 14:51:58 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 33516
+SLURM_JOB_ID          : 33643
 SLURM_JOB_NAME        : taylor_rf_training_job
 SLURM_JOB_NUM_NODES   : 1
-SLURM_JOB_NODELIST    : saliksik-cpu-17
+SLURM_JOB_NODELIST    : saliksik-cpu-18
 SLURM_NTASKS          : 64
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 102400
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/33516
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/33643
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.3min
-[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.3min
-[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 21.0min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.5min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 21.5min
 [Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    3.2s
-[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   12.9s
-[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   29.0s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   13.1s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   29.6s
 False
 subjects features, labels, names and subject to id lookup loaded
-8.87
+0.5563800216439515 4.934194821328527
+{0: 0.5563800216439515, 1: 4.934194821328527}
 <class 'int'>
-{'n_estimators': 600, 'class_weight': {0: 1, 1: 8.87}}
+{'n_estimators': 600, 'class_weight': {0: 0.5563800216439515, 1: 4.934194821328527}}
 Index(['raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_std', 'raw_128hz_1d_min',
        'raw_128hz_1d_amp', 'raw_128hz_1d_std', 'raw_128hz_1d_avg_abs',
        'raw_128hz_2d_avg_abs', 'filt_128hz_min', 'filt_128hz_median',
@@ -39,5 +40,5 @@ Index(['raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_std', 'raw_128hz_1d_min',
       dtype='object')
 Index(['0'], dtype='object')
 rf score: 0.9999703796587243
-Finished on Fri Nov  8 12:40:07 PST 2024
-Total runtime (sec): 1752.502631187439
+Finished on Sat Nov  9 15:21:37 PST 2024
+Total runtime (sec): 1778.4440426826477
