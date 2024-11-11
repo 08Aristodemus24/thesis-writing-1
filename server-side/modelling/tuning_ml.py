@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.feature_selection import RFE
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_validate
-from sklearn.utils import class_weight
+from sklearn.utils.class_weight import compute_class_weight
 
 import matplotlib.pyplot as plt
 import os
@@ -550,13 +550,7 @@ if __name__ == "__main__":
     print(args.exc_lof)
     subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl, exc_lof=args.exc_lof)
 
-    # determine class ratio and calculate weights for each class
-    class_ratio = subjects_labels['0'].value_counts().to_dict()
-    neg_class_weight = subjects_features.shape[0] / (2 * class_ratio[0])
-    pos_class_weight = subjects_features.shape[0] / (2 * class_ratio[1])
-    print(neg_class_weight, pos_class_weight)
-
-    cw_obj = class_weight.compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
+    cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
     class_weights = dict(enumerate(cw_obj))
     print(class_weights)
 
@@ -566,7 +560,7 @@ if __name__ == "__main__":
         'lr': {
             # used in Taylor et al. (2015) and Hossain et al. (2022)
             'model': LogisticRegression, 
-            'hyper_params': {'C': [0.01, 0.1, 1, 10, 100], 'class_weight': [{0: neg_class_weight, 1: pos_class_weight}]}
+            'hyper_params': {'C': [0.01, 0.1, 1, 10, 100], 'class_weight': [class_weights]}
         },
         'svm': {
             # used in Taylor et al. (2015) and Hossain et al. (2022)
@@ -578,7 +572,7 @@ if __name__ == "__main__":
                 'probability': [True],
                 'degree': [3, 5, 6],
                 # this indicates that there is class imbalance of 80% to 20% of negative to positive classes 
-                'class_weight': [{0: neg_class_weight, 1: pos_class_weight}]
+                'class_weight': [class_weights]
             }
             # 'model': LinearSVC, 
             # 'hyper_params': {'C': [1, 10, 100, 1000]}
@@ -586,7 +580,7 @@ if __name__ == "__main__":
         'rf': {
             # used in Taylor et al. (2015)
             'model': RandomForestClassifier, 
-            'hyper_params': {'n_estimators': [200, 400, 600], 'class_weight': [{0: neg_class_weight, 1: pos_class_weight}]}
+            'hyper_params': {'n_estimators': [200, 400, 600], 'class_weight': [class_weights]}
         },
         'gbt': {
             # used in Hossain et al. (2022)

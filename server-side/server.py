@@ -149,7 +149,7 @@ def load_models():
 
     # load side task model and convert it to a feature extractor model 
     lstm_fe = LSTM_FE(**models['cueva-lstm-fe']['hyper_params'])
-    lstm_fe.load_weights('./modelling/saved/weights/cueva_lstm-fe_20_0.7291.weights.h5')
+    lstm_fe.load_weights('./modelling/saved/weights/cueva_lstm-fe_21_0.7489.weights.h5')
     lstm_layer_2 = lstm_fe.get_layer('lstm-layer-2')
     cueva_first_phase_lstm = tf.keras.Model(inputs=lstm_fe.inputs, outputs=lstm_layer_2.output)
 
