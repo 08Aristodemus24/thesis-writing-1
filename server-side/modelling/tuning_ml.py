@@ -398,7 +398,7 @@ def grid_search_cv(subjects_features: pd.DataFrame,
     sampled_ids = sample_ids(subjects_features, n_rows_to_sample)
 
     # use returned features from select_features()
-    class_weights_param = hyper_params['hyper_params'].get('class_weight')
+    class_weights_param = hyper_params.get('class_weight')
     class_weights = class_weights_param[0] if class_weights_param != None else None
     selected_feats = select_features(subjects_features,
         subjects_labels,
