@@ -1,13 +1,13 @@
-Submitted on Tue Nov 12 12:20:20 PST 2024
+Submitted on Tue Nov 12 12:38:25 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 34186
+SLURM_JOB_ID          : 34192
 SLURM_JOB_NAME        : taylor_lr_training_job
 SLURM_JOB_NUM_NODES   : 1
-SLURM_JOB_NODELIST    : saliksik-cpu-36
+SLURM_JOB_NODELIST    : saliksik-cpu-34
 SLURM_NTASKS          : 12
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 24576
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34186
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34192
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
 False
@@ -44,7 +44,7 @@ At X0         0 variables are exactly at the bounds
 
 At iterate    0    f=  6.93147D-01    |proj g|=  3.07266D-01
 
-At iterate   50    f=  5.40828D-01    |proj g|=  4.54488D-04
+At iterate   50    f=  5.40828D-01    |proj g|=  4.54645D-04
 
            * * *
 
@@ -59,9 +59,9 @@ F     = final function value
            * * *
 
    N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
-   41     51     65      1     0     0   9.680D-05   5.408D-01
-  F =  0.54082573468435391     
+   41     51     65      1     0     0   9.675D-05   5.408D-01
+  F =  0.54082573087712571     
 
 CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_<=_PGTOL            
-Finished on Tue Nov 12 12:20:45 PST 2024
-Total runtime (sec): 25.13533639907837
+Finished on Tue Nov 12 12:38:43 PST 2024
+Total runtime (sec): 17.823112964630127

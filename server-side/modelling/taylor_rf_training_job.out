@@ -11,3 +11,4 @@ TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34187
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
 [Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  3.0min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 12.2min
