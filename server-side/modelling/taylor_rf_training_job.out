@@ -1,44 +1,13 @@
-Submitted on Sat Nov  9 14:51:58 PST 2024
+Submitted on Tue Nov 12 12:20:26 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 33643
+SLURM_JOB_ID          : 34187
 SLURM_JOB_NAME        : taylor_rf_training_job
 SLURM_JOB_NUM_NODES   : 1
-SLURM_JOB_NODELIST    : saliksik-cpu-18
+SLURM_JOB_NODELIST    : saliksik-cpu-25
 SLURM_NTASKS          : 64
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 102400
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/33643
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34187
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  2.4min
-[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:  9.5min
-[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 21.5min
-[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    3.2s
-[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   13.1s
-[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   29.6s
-False
-subjects features, labels, names and subject to id lookup loaded
-0.5563800216439515 4.934194821328527
-{0: 0.5563800216439515, 1: 4.934194821328527}
-<class 'int'>
-{'n_estimators': 600, 'class_weight': {0: 0.5563800216439515, 1: 4.934194821328527}}
-Index(['raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_std', 'raw_128hz_1d_min',
-       'raw_128hz_1d_amp', 'raw_128hz_1d_std', 'raw_128hz_1d_avg_abs',
-       'raw_128hz_2d_avg_abs', 'filt_128hz_min', 'filt_128hz_median',
-       'filt_128hz_std', 'filt_128hz_range', 'filt_128hz_1d_min',
-       'filt_128hz_1d_std', 'filt_128hz_1d_range', 'third_16thofa_sec_max',
-       'first_16thofa_sec_mean', 'third_16thofa_sec_mean',
-       'second_16thofa_sec_std', 'third_16thofa_sec_std',
-       'first_16thofa_sec_median', 'first_32thofa_sec_mean',
-       'second_32thofa_sec_mean', 'first_32thofa_sec_std',
-       'second_32thofa_sec_std', 'raw_16hz_min', 'raw_16hz_amp',
-       'raw_16hz_std', 'filt_16hz_min', 'filt_16hz_std', 'filt_16hz_range',
-       'filt_16hz_1d_min', 'filt_16hz_1d_std', 'filt_16hz_1d_range',
-       'second_2thofa_sec_max', 'second_2thofa_sec_mean',
-       'third_2thofa_sec_mean', 'first_4thofa_sec_max',
-       'second_4thofa_sec_max', 'second_4thofa_sec_std'],
-      dtype='object')
-Index(['0'], dtype='object')
-rf score: 0.9999703796587243
-Finished on Sat Nov  9 15:21:37 PST 2024
-Total runtime (sec): 1778.4440426826477
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  3.0min

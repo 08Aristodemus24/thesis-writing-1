@@ -1,13 +1,13 @@
-Submitted on Sat Nov  9 14:56:23 PST 2024
+Submitted on Tue Nov 12 12:20:47 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 33647
+SLURM_JOB_ID          : 34188
 SLURM_JOB_NAME        : hossain_lr_training_job
 SLURM_JOB_NUM_NODES   : 1
-SLURM_JOB_NODELIST    : saliksik-cpu-30
+SLURM_JOB_NODELIST    : saliksik-cpu-36
 SLURM_NTASKS          : 12
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 24576
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/33647
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34188
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
 /home/michael.cueva/.conda/envs/thesis-writing-1/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:469: ConvergenceWarning: lbfgs failed to converge (status=1):
@@ -20,10 +20,8 @@ Please also refer to the documentation for alternative solver options:
   n_iter_i = _check_optimize_result(
 False
 subjects features, labels, names and subject to id lookup loaded
-0.5563800216439515 4.934194821328527
-{0: 0.5563800216439515, 1: 4.934194821328527}
 <class 'int'>
-{'C': 10, 'class_weight': {0: 0.5563800216439515, 1: 4.934194821328527}}
+{'C': 10, 'class_weight': {0: 1, 1: 6.5}}
 Index(['raw_128hz_max', 'raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_median',
        'raw_128hz_std', 'raw_128hz_range', 'raw_128hz_shannon_entropy',
        'raw_128hz_1d_max', 'raw_128hz_1d_min', 'raw_128hz_1d_amp',
@@ -42,7 +40,7 @@ Index(['raw_128hz_max', 'raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_median',
        'second_32thofa_sec_std'],
       dtype='object')
 Index(['0'], dtype='object')
-lr score: 0.8250647327874963
+lr score: 0.8686584700600058
  This problem is unconstrained.
 RUNNING THE L-BFGS-B CODE
 
@@ -53,11 +51,11 @@ Machine precision = 2.220D-16
 
 At X0         0 variables are exactly at the bounds
 
-At iterate    0    f=  6.93147D-01    |proj g|=  3.71970D-01
+At iterate    0    f=  6.93147D-01    |proj g|=  3.26264D-01
 
-At iterate   50    f=  4.51064D-01    |proj g|=  7.83112D-04
+At iterate   50    f=  4.41545D-01    |proj g|=  6.85364D-04
 
-At iterate  100    f=  4.50094D-01    |proj g|=  2.89861D-04
+At iterate  100    f=  4.40586D-01    |proj g|=  5.31815D-04
 
            * * *
 
@@ -72,9 +70,9 @@ F     = final function value
            * * *
 
    N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
-   41    100    111      1     0     0   2.899D-04   4.501D-01
-  F =  0.45009374932199975     
+   41    100    109      1     0     0   5.318D-04   4.406D-01
+  F =  0.44058571576759409     
 
 STOP: TOTAL NO. of ITERATIONS REACHED LIMIT                 
-Finished on Sat Nov  9 14:56:43 PST 2024
-Total runtime (sec): 19.933393955230713
+Finished on Tue Nov 12 12:21:11 PST 2024
+Total runtime (sec): 24.22697949409485
