@@ -10,3 +10,33 @@ SLURM_MEM_PER_NODE    : 102400
 TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34197
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:  3.0min
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed: 12.3min
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed: 27.8min
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    3.6s
+[Parallel(n_jobs=1)]: Done 199 tasks      | elapsed:   14.5s
+[Parallel(n_jobs=1)]: Done 449 tasks      | elapsed:   32.7s
+False
+subjects features, labels, names and subject to id lookup loaded
+<class 'int'>
+{'n_estimators': 600, 'class_weight': {0: 1, 1: 5}}
+Index(['raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_std', 'raw_128hz_1d_min',
+       'raw_128hz_1d_amp', 'raw_128hz_1d_std', 'raw_128hz_1d_avg_abs',
+       'raw_128hz_2d_avg_abs', 'filt_128hz_min', 'filt_128hz_median',
+       'filt_128hz_std', 'filt_128hz_range', 'filt_128hz_1d_min',
+       'filt_128hz_1d_std', 'filt_128hz_1d_range', 'third_16thofa_sec_max',
+       'first_16thofa_sec_mean', 'third_16thofa_sec_mean',
+       'second_16thofa_sec_std', 'third_16thofa_sec_std',
+       'first_16thofa_sec_median', 'first_32thofa_sec_mean',
+       'second_32thofa_sec_mean', 'first_32thofa_sec_std',
+       'second_32thofa_sec_std', 'raw_16hz_min', 'raw_16hz_amp',
+       'raw_16hz_std', 'filt_16hz_min', 'filt_16hz_std', 'filt_16hz_range',
+       'filt_16hz_1d_min', 'filt_16hz_1d_std', 'filt_16hz_1d_range',
+       'second_2thofa_sec_max', 'second_2thofa_sec_mean',
+       'third_2thofa_sec_mean', 'first_4thofa_sec_max',
+       'second_4thofa_sec_max', 'second_4thofa_sec_std'],
+      dtype='object')
+Index(['0'], dtype='object')
+rf score: 0.9999703796587243
+Finished on Tue Nov 12 13:23:43 PST 2024
+Total runtime (sec): 2288.63609957695
