@@ -552,7 +552,7 @@ if __name__ == "__main__":
 
     cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
     class_weights = dict(enumerate(cw_obj))
-    class_weights = {0: 1, 1: 6.5}
+    class_weights = {0: 1, 1: 5}
     # print(class_weights)
 
 
