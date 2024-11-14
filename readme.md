@@ -20,6 +20,7 @@
 * `python tuning_ml.py -m svm -pl taylor --mode training --hyper_param_list C_10 gamma_0.1 probability_True`
 
 * `scp -r -i C:/Users/LARRY/.ssh/id_rsa "C:/Users/LARRY/Documents/Scripts/thesis-writing-1/server-side/modelling/data/Artifact Detection Data/" michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/data/`
+* `scp -r -i C:/Users/LARRY/.ssh/id_rsa michael.cueva@202.90.149.55:/home/michael.cueva/scratch1/thesis-writing-1/server-side/modelling/saved/models/taylor_svm_clf.pkl C:/Users/LARRY/documents/scripts/thesis-writing-1/server-side/modelling/saved/models/`
 
 # This repository contains all generalized code snippets and templates relating to model experimentation, training, evaluation, testing, server-side loading, client-side requests, usage documentation, loaders, evaluators, visualizers, and preprocessor utilities, and the model architectures, figures, and final folder
 
@@ -1209,3 +1210,6 @@ a. I've already tried removing outliers in the training dataset
 - If the LSTM-SVM you have now only has comparable results to other models what's the point of addressing the gap when the gap itself of supposedly traditional ML models that use only lower order features achieve lower results when compared to DL architectures wasn't solved? Yes although our model doesn't entirely address the currently present problem because of numerous reasons such as class imbalance, choice of model i.e. SVM, this could serve as a benchmark for future researchers to not only balance out the class imbalance present in the data to achieve better results but to use perhaps other traditional ML models instead of an SVM i.e. Gradient Boosted Trees, Xgboost, Random Forest, etc.
 
 - What is really the gap? It was the problem of ML models having lower performance because of low level features as opposed to DL models that were able to extract higher order features. We proposed a solution that could not only use low level features but incorporate higher level features, with respect to previous models
+
+- correct lof.csv's
+- send follow up email to llanes-jurado
