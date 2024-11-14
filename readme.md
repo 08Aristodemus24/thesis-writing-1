@@ -1198,7 +1198,8 @@ a. I've already tried removing outliers in the training dataset
 - Evaluator para masabi kung tama yung na smooth na signals. Easy kasi hindi naman tayo ang gumawa ng smoothing function sila Llanes-Jurado et al. (2023) they set the standard and so we are just merely using what they already had to correct the signals since it is out of our scope to build our own signal correction pipeline. Pero need pa rin ng written approval kina Llanes-Jurado et al. (2023) proving that the correction pipeline we used is theirs and that they can vouch that the signals that were corrected using their correction pipeline are verified and approved
 - Saan metric nakikita yung smoother, kilangan rin matanong kina Llanes-Jurado et al. (2023) how they had the justification to say that the corrected signals were suitable for other tasks like stress detection. 
 
-- As the user clicks the user must have the option of seeing the noise and the corrected noise 
+- As the user clicks the user must have the option of seeing the noise and the corrected noise
+* https://d3-graph-gallery.com/graph/interactivity_zoom.html
 
 - Parameters of SVM 
 - Specify SOP2 sabihin niyo nalang "...SVM part of the LSTM-SVM model"
