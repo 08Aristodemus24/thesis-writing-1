@@ -1211,5 +1211,4 @@ a. I've already tried removing outliers in the training dataset
 
 - What is really the gap? It was the problem of ML models having lower performance because of low level features as opposed to DL models that were able to extract higher order features. We proposed a solution that could not only use low level features but incorporate higher level features, with respect to previous models
 
-- correct lof.csv's
 - send follow up email to llanes-jurado
