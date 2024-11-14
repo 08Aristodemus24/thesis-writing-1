@@ -23,7 +23,7 @@ filt_128hz_1d_max_abs
 ar_coeff_1_128hz
 ar_coeff_2_128hz
 raw_128hz_skewness
-raw_128hz_skewness.1
+raw_128hz_kurt
 third_16thofa_sec_max
 first_16thofa_sec_mean
 second_16thofa_sec_mean
