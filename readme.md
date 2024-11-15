@@ -1200,6 +1200,7 @@ a. I've already tried removing outliers in the training dataset
 
 - As the user clicks the user must have the option of seeing the noise and the corrected noise
 * https://d3-graph-gallery.com/graph/interactivity_zoom.html
+* https://codepen.io/jjjj60110/pen/RMLBpG
 
 - Parameters of SVM 
 - Specify SOP2 sabihin niyo nalang "...SVM part of the LSTM-SVM model"

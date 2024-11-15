@@ -211,7 +211,7 @@ export default function Visualizer({ children }){
             .range([0, width]);
 
             // we create a g element which will draw the x-axis
-            g.append('g')
+            let x_axis = g.append('g')
             .attr("class", "x-axis")
             .attr('transform', `translate(0, ${height})`)
             .call(d3.axisBottom(x));
@@ -222,7 +222,7 @@ export default function Visualizer({ children }){
             .range([height, 0]);
 
             // we create a g element which will draw the y-axis
-            g.append("g")
+            let y_axis = g.append("g")
             .attr("class", "y-axis")
             .call(d3.axisLeft(y));
 
@@ -301,6 +301,26 @@ export default function Visualizer({ children }){
                 .x((d) => x(d['time']))
                 .y((d) => y(d['raw_signal']))
             );
+
+            // Set the zoom and Pan features: how much you can zoom, on which part, and what to do when there is a zoom
+            let zoom = d3.zoom()
+            .scaleExtent([2, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+            .extent([[0, 0], [width, height]])
+            .on("zoom", updateChart);
+            
+
+            // This add an invisible rect on top of the chart area. This rect can recover pointer events: necessary to understand when the user zoom
+            g.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .style("fill", "none")
+            .style("pointer-events", "all")
+            .attr('transform', `translate(${margin["top"]}, ${margin["left"]})`)
+            .call(zoom);
+
+            const updateChart = () => {
+                
+            }
 
         }else{
             console.log('spreadsheet input mounted');

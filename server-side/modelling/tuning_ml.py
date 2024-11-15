@@ -544,17 +544,17 @@ if __name__ == "__main__":
     parser.add_argument("--hyper_param_list", type=str, default="C_100", nargs="+", help="list of hyper parameters to be used as configuration during training")
     parser.add_argument("--exc_lof", action="store_true", help="boolean whether to include lower  \
         order features in training hybrid lstm svm. Note that feature selection is turned off when this is True")
+    parser.add_argument("--inc_class_weight", action="store_true", help="boolean whether to enable a weighted version of a \
+        classifier during training on imbalanced datasets")
     args = parser.parse_args()
 
     # read and load data
-    print(args.exc_lof)
     subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl, exc_lof=args.exc_lof)
 
     cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
-    class_weights = dict(enumerate(cw_obj))
-    class_weights = {0: 1, 1: 5}
-    # print(class_weights)
-
+    # class_weights = dict(enumerate(cw_obj)) if args.inc_class_weight == True else None
+    class_weights = {0: 1, 1: 5} if args.inc_class_weight == True else None
+    print(class_weights)
 
     # model hyper params
     models = {
@@ -614,11 +614,11 @@ if __name__ == "__main__":
         hyper_param_config['class_weight'] = class_weights
         print(hyper_param_config)
         
-        # we can just modify this script such that it doesn't loop through hyper param configs anymore and
-        # will just only now 1. load the preprocessed features, load the reduced feature set, 
-        # exclude use of grid serach loso cv, loso cross validation, and leave one subject out
-        # and instead use the best hyper param config obtained from summarization.ipynb and train the model
-        # not on a specific fold or set of subjects but all subjects
+        we can just modify this script such that it doesn't loop through hyper param configs anymore and
+        will just only now 1. load the preprocessed features, load the reduced feature set, 
+        exclude use of grid serach loso cv, loso cross validation, and leave one subject out
+        and instead use the best hyper param config obtained from summarization.ipynb and train the model
+        not on a specific fold or set of subjects but all subjects
         train_final_estimator(
             subjects_features,
             subjects_labels, 
