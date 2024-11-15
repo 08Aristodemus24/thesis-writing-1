@@ -31,7 +31,7 @@ CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5000", "https://ed
 
 # global variables
 models = {
-    'cueva-lstm-svm':{
+    'cueva_second_phase-svm':{
 
     },
     'cueva-lstm-fe': {
@@ -109,7 +109,7 @@ def load_miscs():
     models['hossain-lr']['selected_feats'] = hossain_lr_red_feats
     models['hossain-svm']['selected_feats'] = hossain_svm_red_feats
     models['hossain-gbt']['selected_feats'] = hossain_gbt_red_feats
-    models['cueva-lstm-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
+    models['cueva_second_phase-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
 
     print('miscellaneous loaded.')
 
@@ -151,30 +151,28 @@ def load_models():
     lstm_fe = LSTM_FE(**models['cueva-lstm-fe']['hyper_params'])
     lstm_fe.load_weights('./modelling/saved/weights/cueva_lstm-fe_21_0.7489.weights.h5')
     lstm_layer_2 = lstm_fe.get_layer('lstm-layer-2')
-    cueva_first_phase_lstm = tf.keras.Model(inputs=lstm_fe.inputs, outputs=lstm_layer_2.output)
+    lstm_fe_main = tf.keras.Model(inputs=lstm_fe.inputs, outputs=lstm_layer_2.output)
 
-    # # pre load saved machine learning models
+    # pre load saved machine learning models
     taylor_lr = load_model('./modelling/saved/models/taylor_lr_clf.pkl')
     taylor_svm = load_model('./modelling/saved/models/taylor_svm_clf.pkl')
     taylor_rf = load_model('./modelling/saved/models/taylor_rf_clf.pkl')
     hossain_lr = load_model('./modelling/saved/models/hossain_lr_clf.pkl')
     hossain_svm = load_model('./modelling/saved/models/hossain_svm_clf.pkl')
     hossain_gbt = load_model('./modelling/saved/models/hossain_gbt_clf.pkl')
-    cueva_second_phase_svm = load_model('./modelling/saved/models/cueva_second_phase_svm_clf1.pkl')
+    # cueva_second_phase_svm = load_model('./modelling/saved/models/cueva_second_phase_svm_clf.pkl')
 
     # populate dictionary with loaded models
     models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
     models['cueva-lstm-fe']['model'] = lstm_fe
-    
+
     models['taylor-lr']['model'] = taylor_lr
     models['taylor-svm']['model'] = taylor_svm
     models['taylor-rf']['model'] = taylor_rf
     models['hossain-lr']['model'] = hossain_lr
     models['hossain-svm']['model'] = hossain_svm
     models['hossain-gbt']['model'] = hossain_gbt
-
-    models['cueva-lstm-svm']['feature_extractor'] = cueva_first_phase_lstm
-    models['cueva-lstm-svm']['model'] = cueva_second_phase_svm
+    # models['cueva_second_phase-svm']['model'] = cueva_second_phase_svm
 
     print('models loaded.')
     
@@ -438,6 +436,7 @@ def predict():
     # once predictions have been extracted from respective models
     # pass to the correct_signals() function
     res_test_df, dict_metrics = correct_signals(Y_pred, subject_eda_data, selector_config, estimator_name)
-    print(f'dict_metrics: {dict_metrics}')
+    print(f'dict metrics: {dict_metrics}')
+    print(f'resultant test df: {res_test_df['clean_signal'] == res_test_df['raw_signal']}')
     
     return jsonify({'corrected_df': res_test_df.to_dict("records")})

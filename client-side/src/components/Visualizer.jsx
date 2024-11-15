@@ -32,12 +32,25 @@ export default function Visualizer({ children }){
     useEffect(() => {
         console.log("state updated");
         console.log(initSprSheet);
-        console.log()
 
         // upon upload of user of .csv file or new .csv file
         // check also if there is already an existing g child
         // under the svg element, if there is remove it so it can
         // be replaced by new g element
+
+        /*
+        initSprSheet and finalSprSheet are states that when
+        component is mounted or updated this useEffect will fire
+
+        what I want is when the initSprSheet state changes
+        I want to have the option to let the user see the artifacts in
+        the signal i.e. show artifact as a checkbox
+
+        and I don't want anymore to remove the initSprSheet but rather
+        update it such that it includes the new_signals column 
+
+        maybe instead of two spreadsheets 
+        */
         svg.selectAll("*").remove();
         
         // when initial spreadsheet is removed because of submit
@@ -149,8 +162,17 @@ export default function Visualizer({ children }){
         }else if(finalSprSheet.length != 0){
             console.log(finalSprSheet);
 
-            let max_signal = d3.max(finalSprSheet, (row) => row['new_signal']);
-            let min_signal = d3.min(finalSprSheet, (row) => row['new_signal']);
+            // get the 
+            let max_raw_signal = d3.max(finalSprSheet, (row) => row['raw_signal']);
+            let min_raw_signal = d3.min(finalSprSheet, (row) => row['raw_signal']);
+            let max_clean_signal = d3.max(finalSprSheet, (row) => row['new_signal']);
+            let min_clean_signal = d3.min(finalSprSheet, (row) => row['new_signal']);
+            
+            // get final max value between the max of the raw signal and the 
+            // max of the clean signal
+            let max_signal = Math.max(max_raw_signal, max_clean_signal);
+            let min_signal = Math.max(min_raw_signal, min_clean_signal);
+
             let min_sec = finalSprSheet[0]['time'];
             let max_sec = finalSprSheet[finalSprSheet.length - 1]['time'];
 
@@ -220,10 +242,10 @@ export default function Visualizer({ children }){
             .attr("x", -margin["left"] * 3) // moves up if positive value and down if negative value
             .text("microsiemens (μS)");
 
-            // set the gradient
+            // set the gradient for corrected signal
             g.append("linearGradient")
-            .attr("class", "line-gradient")
-            .attr("id", "line-gradient")
+            .attr("class", "clean-line-gradient")
+            .attr("id", "clean-line-gradient")
             .attr("gradientUnits", "userSpaceOnUse")
             .attr("x1", 0)
             .attr("y1", y(0))
@@ -239,15 +261,45 @@ export default function Visualizer({ children }){
             .attr("offset", (d) => d["offset"])
             .attr("stop-color", (d) => d["color"]);
       
-            // Add the line
+            // Add the line containing corrected signal
             g.append("path")
             .datum(finalSprSheet)
             .attr("fill", "none")
-            .attr("stroke", "url(#line-gradient)" )
+            .attr("stroke", "url(#clean-line-gradient)" )
             .attr("stroke-width", 2)
             .attr("d", d3.line()
                 .x((d) => x(d['time']))
                 .y((d) => y(d['new_signal']))
+            );
+
+            // set the gradient for raw signal
+            g.append("linearGradient")
+            .attr("class", "raw-line-gradient")
+            .attr("id", "raw-line-gradient")
+            .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", 0)
+            .attr("y1", y(0))
+            .attr("x2", 0)
+            .attr("y2", y(max_signal))
+            .selectAll("stop")
+            .data([
+                {offset: "0%", color: "#c78324"},
+                {offset: "50%", color: "#ab229d"},
+                {offset: "100%", color: "#2823ba"}
+            ])
+            .enter().append("stop")
+            .attr("offset", (d) => d["offset"])
+            .attr("stop-color", (d) => d["color"]);
+      
+            // Add the line containing the raw signal
+            g.append("path")
+            .datum(finalSprSheet)
+            .attr("fill", "none")
+            .attr("stroke", "url(#raw-line-gradient)" )
+            .attr("stroke-width", 2)
+            .attr("d", d3.line()
+                .x((d) => x(d['time']))
+                .y((d) => y(d['raw_signal']))
             );
 
         }else{
