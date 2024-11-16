@@ -1178,6 +1178,8 @@ class_weights = dict(enumerate(weights))
 
 * we already tried a class weight of 1 to 8.86 for all models including lstm-svm they show promising increase in test roc-auc however there tends to be a slight over prediction of 1s over 0s maybe try lessening the weights of the positive class 1 to 6.5 such that our argument value for `class_weight` would now be `{0: 1, 1: 6.5}`. We also already tried using a balanced class weight of 0.5 to 4.9 however this ratio when divided by 0.5 still comes out to 1 to 9.8 which is even higher than 8.86. so we need to redo training again and try a ratio of 1 to 6.5 to lessen the over prediction of models of 1s
 
+* tried a ratio of 1 to 5 not 1 to 6.5 but the former and it still overpredicts ones and even lowered the precision, recall, and f1-score previously
+
 * another thing I can do is retrain the lstm model on the imbalanced dataset and set the `model.fit()`s `class_weight` arg to the calculated class weights and again use the model to predict 
 
 d. removed collinear features
