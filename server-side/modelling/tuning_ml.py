@@ -494,7 +494,14 @@ def train_final_estimator(subjects_features: pd.DataFrame,
     score = model.score(X, Y)
     print(f'{estimator_name} score: {score}')
 
-    save_model(model, f'./saved/models/{selector_config}_{estimator_name}_clf.pkl')
+    if hyper_param_config.get('class_weight') != None:
+        neg_class_ratio = round(hyper_param_config['class_weight'][0])
+        pos_class_ratio = round(hyper_param_config['class_weight'][1])
+        path = f'./saved/models/{selector_config}_{neg_class_ratio}_{pos_class_ratio}_weighted_{estimator_name}_clf.pkl'
+    else:
+        path = f'./saved/models/{selector_config}_{estimator_name}_clf.pkl'
+
+    save_model(model, path)
 
 def create_hyper_param_config(hyper_param_list: list[str]):
     """
@@ -551,9 +558,15 @@ if __name__ == "__main__":
     # read and load data
     subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl, exc_lof=args.exc_lof)
 
-    cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
+    # just to determine class ratio
+    
+
+    # cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
     # class_weights = dict(enumerate(cw_obj)) if args.inc_class_weight == True else None
-    class_weights = {0: 1, 1: 2.5} if args.inc_class_weight == True else None
+    class_ratio = subjects_labels['0'].value_counts().to_dict()
+    maj_class_ratio = round(class_ratio[0] / class_ratio[1], 2)
+    class_weights = {0: 1, 1: maj_class_ratio} if args.inc_class_weight == True else None
+    # class_weights = {0: 1, 1: 2.5} if args.inc_class_weight == True else None
     print(class_weights)
 
     # model hyper params
@@ -613,6 +626,14 @@ if __name__ == "__main__":
         hyper_param_config = create_hyper_param_config(hyper_param_list=args.hyper_param_list)
         hyper_param_config['class_weight'] = class_weights
         print(hyper_param_config)
+
+        # if hyper_param_config.get('class_weight') != None:
+        #     neg_class_ratio = round(hyper_param_config['class_weight'][0])
+        #     pos_class_ratio = round(hyper_param_config['class_weight'][1])
+        #     path = f'./saved/models/{args.pl}_{neg_class_ratio}_{pos_class_ratio}_weighted_{args.m}_clf.pkl'
+        # else:
+        #     path = f'./saved/models/{args.pl}_{args.m}_clf.pkl'
+        # print(path)
         
         # we can just modify this script such that it doesn't loop through hyper param configs anymore and
         # will just only now 1. load the preprocessed features, load the reduced feature set, 
