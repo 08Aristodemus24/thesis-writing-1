@@ -3,7 +3,7 @@
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode tuning`
 * `python tuning_ml.py -m lr -pl hossain --n_rows_to_sample 5000 --mode tuning`
 
-* `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_10 gamma_0.5 units_10`: command for preliminary modelling of proposed model 
+* `python tuning_dl.py -m lstm-svm -pl cueva -lr 1e-3 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_10 gamma_0.5 units_10`: command for preliminary modelling of proposed model
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 75e-4 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_1 gamma_0.1 units_10`
 * `python tuning_dl.py -m lstm-svm -pl cueva -lr 75e-4 --batch_size 1024 --mode training --hyper_param_list window_size_640 n_a_16 drop_prob_0.05 C_0.7 gamma_0.5 units_10`
 

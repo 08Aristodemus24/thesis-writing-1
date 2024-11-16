@@ -67,7 +67,7 @@ def select_features(subjects_features: pd.DataFrame,
 
     # select best features first by means of backward
     # feature selection based on support vector classifiers
-    model = RandomForestClassifier(class_weight=class_weights, verbose=1)
+    model = RandomForestClassifier(verbose=1)
     selector = RFE(estimator=model, n_features_to_select=n_features_to_select, verbose=1)
 
     # train feature selector on data
@@ -553,7 +553,7 @@ if __name__ == "__main__":
 
     cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
     # class_weights = dict(enumerate(cw_obj)) if args.inc_class_weight == True else None
-    class_weights = {0: 1, 1: 5} if args.inc_class_weight == True else None
+    class_weights = {0: 1, 1: 2.5} if args.inc_class_weight == True else None
     print(class_weights)
 
     # model hyper params
