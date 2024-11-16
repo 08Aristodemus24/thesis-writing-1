@@ -43,3 +43,5 @@
 /client-side/*.njsproj
 /client-side/*.sln
 /client-side/*.sw?
+
+/client-side/src/assets/scripts/
