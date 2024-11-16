@@ -1,19 +1,19 @@
-Submitted on Tue Nov 12 12:39:55 PST 2024
+Submitted on Fri Nov 15 19:18:57 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 34193
+SLURM_JOB_ID          : 34944
 SLURM_JOB_NAME        : taylor_lr_training_job
 SLURM_JOB_NUM_NODES   : 1
-SLURM_JOB_NODELIST    : saliksik-cpu-36
+SLURM_JOB_NODELIST    : saliksik-cpu-18
 SLURM_NTASKS          : 12
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 24576
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34193
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/34944
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-False
 subjects features, labels, names and subject to id lookup loaded
+None
 <class 'float'>
-{'C': 0.1, 'class_weight': {0: 1, 1: 5}}
+{'C': 0.1, 'class_weight': None}
 Index(['raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_std', 'raw_128hz_1d_max',
        'raw_128hz_1d_min', 'raw_128hz_1d_amp', 'raw_128hz_1d_std',
        'raw_128hz_1d_avg_abs', 'raw_128hz_2d_avg_abs', 'filt_128hz_min',
@@ -31,7 +31,7 @@ Index(['raw_128hz_min', 'raw_128hz_amp', 'raw_128hz_std', 'raw_128hz_1d_max',
        'second_4thofa_sec_max', 'second_4thofa_sec_std'],
       dtype='object')
 Index(['0'], dtype='object')
-lr score: 0.9098060608154973
+lr score: 0.9096505540237999
  This problem is unconstrained.
 RUNNING THE L-BFGS-B CODE
 
@@ -42,9 +42,9 @@ Machine precision = 2.220D-16
 
 At X0         0 variables are exactly at the bounds
 
-At iterate    0    f=  6.93147D-01    |proj g|=  5.12710D-01
+At iterate    0    f=  6.93147D-01    |proj g|=  1.36820D+00
 
-At iterate   50    f=  5.28728D-01    |proj g|=  5.81105D-02
+At iterate   50    f=  2.78730D-01    |proj g|=  1.83774D-02
 
            * * *
 
@@ -59,9 +59,9 @@ F     = final function value
            * * *
 
    N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
-   41     85    102      1     0     0   5.223D-05   5.214D-01
-  F =  0.52144222432840059     
+   41     53     60      1     0     0   9.805D-05   2.783D-01
+  F =  0.27827475291457032     
 
 CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_<=_PGTOL            
-Finished on Tue Nov 12 12:40:16 PST 2024
-Total runtime (sec): 20.93973994255066
+Finished on Fri Nov 15 19:19:11 PST 2024
+Total runtime (sec): 14.654540538787842
