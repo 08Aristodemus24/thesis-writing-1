@@ -1168,19 +1168,23 @@ b. undersampling data of hte majority class by deleting some of the datapoints i
 * https://datascience.stackexchange.com/questions/106642/improving-performance-of-machine-learning-for-a-small-imbalanced-dataset
 * https://machinelearningmastery.com/undersampling-algorithms-for-imbalanced-classification/
 c. try class weighted svm, because there is an imbalance of data with ratio of 80 to 20 on the negative to positive samples, a weighted svm may do the trick by
-* https://scikit-learn.org/dev/auto_examples/svm/plot_separating_hyperplane_unbalanced.html
-* wj=n_samples / (n_classes * n_samplesj) e.g. if we have 400000 rows, 2 unique classes, with the negative class having 360000 rows, and the positive class having only 40000 rows thus havving a ratio of 9 to 1, then the weights we calculate for both classes will be 400000 / (2 * 360000) = 0.55 and 400000 / (2 * 40000) = 5 for the 0 and 1 labels respectively, this would in sklearn look like `class_weight={0:0.55,1:5}`. we can also do this by using the `class_weight` object from `sklearn.utils` i.e.
+* <s>https://scikit-learn.org/dev/auto_examples/svm/plot_separating_hyperplane_unbalanced.html</s>
+* <s>wj=n_samples / (n_classes * n_samplesj) e.g. if we have 400000 rows, 2 unique classes, with the negative class having 360000 rows, and the positive class having only 40000 rows thus havving a ratio of 9 to 1, then the weights we calculate for both classes will be 400000 / (2 * 360000) = 0.55 and 400000 / (2 * 40000) = 5 for the 0 and 1 labels respectively, this would in sklearn look like `class_weight={0:0.55,1:5}`. we can also do this by using the `class_weight` object from `sklearn.utils` i.e.</s>
 
 ```
 weights = class_weight.compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
 class_weights = dict(enumerate(weights))
 ```
 
-* we already tried a class weight of 1 to 8.86 for all models including lstm-svm they show promising increase in test roc-auc however there tends to be a slight over prediction of 1s over 0s maybe try lessening the weights of the positive class 1 to 6.5 such that our argument value for `class_weight` would now be `{0: 1, 1: 6.5}`. We also already tried using a balanced class weight of 0.5 to 4.9 however this ratio when divided by 0.5 still comes out to 1 to 9.8 which is even higher than 8.86. so we need to redo training again and try a ratio of 1 to 6.5 to lessen the over prediction of models of 1s
+* <s>we already tried a class weight of 1 to 8.86 for all models including lstm-svm they show promising increase in test roc-auc however there tends to be a slight over prediction of 1s over 0s maybe try lessening the weights of the positive class 1 to 6.5 such that our argument value for `class_weight` would now be `{0: 1, 1: 6.5}`. We also already tried using a balanced class weight of 0.5 to 4.9 however this ratio when divided by 0.5 still comes out to 1 to 9.8 which is even higher than 8.86. so we need to redo training again and try a ratio of 1 to 6.5 to lessen the over prediction of models of 1s</s>
 
-* tried a ratio of 1 to 5 not 1 to 6.5 but the former and it still overpredicts ones and even lowered the precision, recall, and f1-score previously
+* <s>tried a ratio of 1 to 5 not 1 to 6.5 but the former and it still overpredicts ones and even lowered the precision, recall, and f1-score previously</s>
 
-* another thing I can do is retrain the lstm model on the imbalanced dataset and set the `model.fit()`s `class_weight` arg to the calculated class weights and again use the model to predict 
+* I can try 1 to 2.5 and lower it some more, if 2.5 performs the best then it could replace the 1 to 9 ratio (or 0.5 to 4.9) but if not then we keep the latter ratio and label it the best model
+
+* change the feature selector to have no class weights as the features it could choose could have an effect on the svm model itself due to it being weighted so redo feature selection
+
+* <s>another thing I can do is retrain the lstm model on the imbalanced dataset and set the `model.fit()`s `class_weight` arg to the calculated class weights and again use the model to predict. To expensive and did it to no avail in the end</s>
 
 d. removed collinear features
 e. use polynomial or linear kernel
@@ -1189,7 +1193,6 @@ g. try to retrain a feature extractor LSTM again but with more powerful hyperpar
 
 because...
 a. I've already tried removing outliers in the training dataset
-
 
 - Yung unang picture ng system architecture ay nasa work flow part nalang 
 
