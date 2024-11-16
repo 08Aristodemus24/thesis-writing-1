@@ -407,4 +407,30 @@ optimization finished, #iter = 162877
 obj = -121119.197661, rho = 1.228703
 nSV = 123908, nBSV = 112556
 Total nSV = 123908
-............................................................................................................................
+..............................................................................................................................................................
+Warning: using -h 0 may be faster
+*..
+Warning: using -h 0 may be faster
+*....
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*.
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 164166
+obj = -121527.589677, rho = 1.299706
+nSV = 124384, nBSV = 113068
+Total nSV = 124384
+.............................................................................................................................................................
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*...
+Warning: using -h 0 may be faster
+*
+optimization finished, #iter = 162847
+obj = -120800.219396, rho = 1.363789
+nSV = 123553, nBSV = 112119
+Total nSV = 123553
+slurmstepd: error: *** JOB 34073 ON saliksik-cpu-08 CANCELLED AT 2024-11-16T14:50:43 ***
