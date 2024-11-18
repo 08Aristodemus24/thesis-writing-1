@@ -4,7 +4,7 @@
 #SBATCH --qos=batch_default
 ##SBATCH --nodes=1
 #SBATCH --ntasks=12
-#SBATCH --job-name="cueva_lstm_svm_1_3_training_job"
+#SBATCH --job-name="cueva_lstm_svm_1_2_training_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
 ##SBATCH --mail-user=<email_add>  ## optional

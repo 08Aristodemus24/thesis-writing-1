@@ -18,6 +18,7 @@ import numpy as np
 import ast
 import re
 import seaborn as sb
+import math
 
 from utilities.loaders import concur_load_data, save_lookup_array, load_lookup_array, save_model
 
@@ -473,10 +474,6 @@ def train_final_estimator(subjects_features: pd.DataFrame,
     print(subjects_features.columns)
     print(subjects_labels.columns)
 
-    # # # visualizing data before training
-    # # sb.pairplot(subjects_features.sample(n=20, axis='columns'))
-    # # plt.show()
-
     # remove subject_id column of both dataframes then
     # convert to numpy arrays
     X = subjects_features.to_numpy()
@@ -532,20 +529,28 @@ def create_hyper_param_config(hyper_param_list: list[str]):
 
 
 def get_class_weight(comp_type: str | int | float | None):
+    try:
+        comp_type = ast.literal_eval(comp_type)
+    except ValueError:
+        comp_type = comp_type
+
     if comp_type == 'balanced':
-        cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
-        class_weights = dict(enumerate(cw_obj))
+            cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
+            class_weights = dict(enumerate(cw_obj))
+            return class_weights
 
     elif comp_type == 'my-balanced':
         class_ratio = subjects_labels['0'].value_counts().to_dict()
         maj_class_ratio = round(class_ratio[0] / class_ratio[1], 2)
         class_weights = {0: 1, 1: maj_class_ratio}
+        return class_weights
 
     elif type(comp_type) == int or type(comp_type) == float:
-        class_weights = {0: 1, 1: comp_type} 
+        class_weights = {0: 1, 1: comp_type}
+        return class_weights
     
 
-    return class_weights
+    
 
 
 if __name__ == "__main__":
