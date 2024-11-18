@@ -4,7 +4,7 @@
 #SBATCH --qos=batch_default
 ##SBATCH --nodes=1
 #SBATCH --ntasks=12
-#SBATCH --job-name="cueva_lstm_svm_training_job"
+#SBATCH --job-name="cueva_lstm_svm_1_5_training_job"
 #SBATCH --output="%x.out"         ## <jobname>.<jobid>.out
 ##SBATCH --mail-type=ALL          ## optional
 ##SBATCH --mail-user=<email_add>  ## optional
@@ -50,7 +50,7 @@ module load anaconda/3-2023.07-2
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
-python tuning_ml.py -m svm -pl cueva_second_phase --mode training --hyper_param_list C_10 gamma_0.1 probability_True --inc_class_weight
+python tuning_ml.py -m svm -pl cueva_second_phase --mode training --hyper_param_list C_10 gamma_0.1 probability_True --inc_class_weight --comp_type 5
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then

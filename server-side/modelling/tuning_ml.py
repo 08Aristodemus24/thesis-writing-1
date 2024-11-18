@@ -531,6 +531,23 @@ def create_hyper_param_config(hyper_param_list: list[str]):
     return hyper_param_config
 
 
+def get_class_weight(comp_type: str | int | float | None):
+    if comp_type == 'balanced':
+        cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
+        class_weights = dict(enumerate(cw_obj))
+
+    elif comp_type == 'my-balanced':
+        class_ratio = subjects_labels['0'].value_counts().to_dict()
+        maj_class_ratio = round(class_ratio[0] / class_ratio[1], 2)
+        class_weights = {0: 1, 1: maj_class_ratio}
+
+    elif type(comp_type) == int or type(comp_type) == float:
+        class_weights = {0: 1, 1: comp_type} 
+    
+
+    return class_weights
+
+
 if __name__ == "__main__":
     # read and parse user arguments
     parser = ArgumentParser()
@@ -553,21 +570,15 @@ if __name__ == "__main__":
         order features in training hybrid lstm svm. Note that feature selection is turned off when this is True")
     parser.add_argument("--inc_class_weight", action="store_true", help="boolean whether to enable a weighted version of a \
         classifier during training on imbalanced datasets")
+    parser.add_argument("--comp_type", default="balanced", help="value representing the ratio of the majority \
+        class to be computed by compute_class_weight() for classification")
     args = parser.parse_args()
 
     # read and load data
     subjects_features, subjects_labels, subjects_names, subject_to_id = concur_load_data(feat_config=args.pl, exc_lof=args.exc_lof)
 
     # just to determine class ratio
-    
-
-    # cw_obj = compute_class_weight('balanced', classes=subjects_labels['0'].unique(), y=subjects_labels['0'])
-    # class_weights = dict(enumerate(cw_obj)) if args.inc_class_weight == True else None
-    class_ratio = subjects_labels['0'].value_counts().to_dict()
-    maj_class_ratio = round(class_ratio[0] / class_ratio[1], 2)
-    class_weights = {0: 1, 1: maj_class_ratio} if args.inc_class_weight == True else None
-    # class_weights = {0: 1, 1: 2.5} if args.inc_class_weight == True else None
-    print(class_weights)
+    class_weights = get_class_weight(args.comp_type) if args.inc_class_weight == True else None
 
     # model hyper params
     models = {
