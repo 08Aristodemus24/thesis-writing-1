@@ -28,6 +28,24 @@ export default function Visualizer({ children }){
     // the document tree object
     const svgRef = useRef();
     const svg = d3.select(svgRef.current);
+    const zoomed = () => {
+        var xz = d3.event.transform.rescaleX(x);
+      
+        // so the xAxis is used here
+        // g.append("g")
+        // .attr("transform", "translate(0," + height + ")")
+        // .call(d3.axisBottom(x))
+        // the only difference is instead of d3.axisBottom(x) or xAxis being passed
+        // to .call we use the xAxis variable further to access .scale to pass
+        // the new scaled x value returned from d3.event.transform.resecaleX(x)
+        xGroup.call(xAxis.scale(xz));
+        areaPath.attr(
+            "d",
+            area.x(function (d) {
+            return xz(d["time"]);
+            })
+        );
+    };
 
     useEffect(() => {
         console.log("state updated");
@@ -149,6 +167,8 @@ export default function Visualizer({ children }){
             .attr("stop-color", (d) => d["color"]);
       
             // Add the line
+            // WE ALSO SOMEHOW ALSO NEED TO SET THE CLIP PATH
+            // BECAUSE IT IS IN THIS LINE THAT WE WILL ZOOM IN
             g.append("path")
             .datum(initSprSheet)
             .attr("fill", "none")
@@ -158,6 +178,46 @@ export default function Visualizer({ children }){
                 .x((d) => x(d['time']))
                 .y((d) => y(d['raw_signal']))
             );
+
+            // define area
+            let area = d3.area()
+            .curve(d3.curveStepAfter)
+            .y0(y(0))
+            .y1((d) => y(d['new_signal']));
+
+            // THIS IS THE LINE COLORED TURQOISE THAT USES THE FLIGHTS
+            // FILE WHICH MEANS WE WOULD HAVE TO APPLY WHAT THIS PATH
+            // OBJECT HAS TO OUR OWN PATH OBJECT THAT IS OUR TRUE LINE
+            // let area_path = g.append("path")
+            // .attr("clip-path", "url(#clip)")
+            // .attr("fill", "none")
+            // .attr("stroke", "#017c8d")
+            // .attr("stroke-width", "2px");
+
+            // g.append("clipPath")
+            // .attr("id", "clip")
+            // .append("rect")
+            // .attr("width", width)
+            // .attr("height", height);
+
+            // define zoom
+            let zoom = d3.zoom()
+            // scale extent is simply the amount d3 will
+            // have to zoom out or zoom in
+            .scaleExtent([1 / 4, 8])
+            .translateExtent([
+                [-width, -Infinity],
+                [2 * width, Infinity]
+            ])
+            .on("zoom", zoomed);
+
+            let zoom_rect = svg.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("fill", "none")
+            .attr("pointer-events", "all")
+            .call(zoom);
+
 
         }else if(finalSprSheet.length != 0){
             console.log(finalSprSheet);
