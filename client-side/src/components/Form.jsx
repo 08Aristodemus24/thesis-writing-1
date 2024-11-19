@@ -94,9 +94,9 @@ export default function Form(){
         }
     };
 
-    console.log(`response: ${response}`);
-    console.log(`message status: ${msgStatus}`);
-    console.log(`error type: ${errorType}`)
+    // console.log(`response: ${response}`);
+    // console.log(`message status: ${msgStatus}`);
+    // console.log(`error type: ${errorType}`)
 
     return (
         <FormInputsContext.Provider value={{

@@ -80,8 +80,8 @@ export default function SpreadSheetInput({ children }){
     } : null;
 
     useEffect(() => {
-        console.log("spreadsheet uploaded");
-        console.log(initSprSheet);
+        // console.log("spreadsheet uploaded");
+        // console.log(initSprSheet);
     }, [initSprSheet])
 
     return (

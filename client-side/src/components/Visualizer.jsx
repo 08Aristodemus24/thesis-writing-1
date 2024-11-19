@@ -28,28 +28,10 @@ export default function Visualizer({ children }){
     // the document tree object
     const svgRef = useRef();
     const svg = d3.select(svgRef.current);
-    const zoomed = () => {
-        var xz = d3.event.transform.rescaleX(x);
-      
-        // so the xAxis is used here
-        // g.append("g")
-        // .attr("transform", "translate(0," + height + ")")
-        // .call(d3.axisBottom(x))
-        // the only difference is instead of d3.axisBottom(x) or xAxis being passed
-        // to .call we use the xAxis variable further to access .scale to pass
-        // the new scaled x value returned from d3.event.transform.resecaleX(x)
-        xGroup.call(xAxis.scale(xz));
-        areaPath.attr(
-            "d",
-            area.x(function (d) {
-            return xz(d["time"]);
-            })
-        );
-    };
 
     useEffect(() => {
         console.log("state updated");
-        console.log(initSprSheet);
+        // console.log(initSprSheet);
 
         // upon upload of user of .csv file or new .csv file
         // check also if there is already an existing g child
@@ -81,10 +63,10 @@ export default function Visualizer({ children }){
             let min_sec = initSprSheet[0]['time'];
             let max_sec = initSprSheet[initSprSheet.length - 1]['time'];
 
-            console.log(`max signal: ${max_signal}`);
-            console.log(`min_signal: ${min_signal}`);
-            console.log(`max_sec: ${max_sec}`);
-            console.log(`min_sec: ${min_sec}`);
+            // console.log(`max signal: ${max_signal}`);
+            // console.log(`min_signal: ${min_signal}`);
+            // console.log(`max_sec: ${max_sec}`);
+            // console.log(`min_sec: ${min_sec}`);
 
             // const width = 'clamp(500px, 75vw, 1260px)';
             // const height = '250px';
@@ -108,28 +90,34 @@ export default function Visualizer({ children }){
             const g = svg.append("g")
             .attr("class", "cartesian-plane")
             .attr("transform", `translate(${margin["left"]}, ${margin["top"]})`); // this is the g element which draws the line
-            console.log(g);
 
             // x here is a callback function
             let x = d3.scaleLinear()
             .domain([min_sec, max_sec])
             .range([0, width]);
 
+            let x_axis = d3.axisBottom(x)
+
             // we create a g element which will draw the x-axis
-            g.append('g')
+            let x_group = g.append('g')
             .attr("class", "x-axis")
             .attr('transform', `translate(0, ${height})`)
-            .call(d3.axisBottom(x));
             
             // y here is also callback function
             let y = d3.scaleLinear()
             .domain([0, max_signal])
             .range([height, 0]);
 
+            let y_axis = d3.axisLeft(y)
+
             // we create a g element which will draw the y-axis
-            g.append("g")
+            let y_group = g.append("g")
             .attr("class", "y-axis")
-            .call(d3.axisLeft(y));
+
+            x_group.call(x_axis)
+            y_group.call(y_axis);
+
+            // y_group.call(y_axis).select(".domain").remove();
 
             // add title/label to both x and y axes
             // x axis label
@@ -166,10 +154,22 @@ export default function Visualizer({ children }){
             .attr("offset", (d) => d["offset"])
             .attr("stop-color", (d) => d["color"]);
       
+            // define area
+            let area = d3.area()
+            .curve(d3.curveStepAfter)
+            .y0(y(0))
+            .y1((d) => y(d['new_signal']));
+
+            g.append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
+
             // Add the line
             // WE ALSO SOMEHOW ALSO NEED TO SET THE CLIP PATH
             // BECAUSE IT IS IN THIS LINE THAT WE WILL ZOOM IN
-            g.append("path")
+            let area_path = g.append("path")
             .datum(initSprSheet)
             .attr("fill", "none")
             .attr("stroke", "url(#line-gradient)" )
@@ -177,13 +177,9 @@ export default function Visualizer({ children }){
             .attr("d", d3.line()
                 .x((d) => x(d['time']))
                 .y((d) => y(d['raw_signal']))
-            );
+            )
+            .attr("clip-path", "url(#clip)")
 
-            // define area
-            let area = d3.area()
-            .curve(d3.curveStepAfter)
-            .y0(y(0))
-            .y1((d) => y(d['new_signal']));
 
             // THIS IS THE LINE COLORED TURQOISE THAT USES THE FLIGHTS
             // FILE WHICH MEANS WE WOULD HAVE TO APPLY WHAT THIS PATH
@@ -198,18 +194,40 @@ export default function Visualizer({ children }){
             // .attr("id", "clip")
             // .append("rect")
             // .attr("width", width)
-            // .attr("height", height);
+            // .attr("height", height
 
             // define zoom
+            // scale extent is simply the amount d3 will have to 
+            // zoom out or zoom in. .on is alsos an event listener
+            // and will trigger 
             let zoom = d3.zoom()
-            // scale extent is simply the amount d3 will
-            // have to zoom out or zoom in
             .scaleExtent([1 / 4, 8])
             .translateExtent([
                 [-width, -Infinity],
                 [2 * width, Infinity]
             ])
-            .on("zoom", zoomed);
+            .on("zoom", () => {
+                var xz = d3.event.transform.rescaleX(x);
+              
+                // so the xAxis is used here
+                // g.append("g")
+                // .attr("transform", "translate(0," + height + ")")
+                // .call(d3.axisBottom(x))
+                // the only difference is instead of d3.axisBottom(x) or xAxis being passed
+                // to .call we use the xAxis variable further to access .scale to pass
+                // the new scaled x value returned from d3.event.transform.resecaleX(x)
+                x_group.call(x_axis.scale(xz));
+                area_path.attr(
+                    "d",
+                    area.x((d) => xz(d["time"]))
+                );
+                console.log('triggered')
+            });
+
+            zoom.translateExtent([
+                [x(min_sec, -Infinity)],
+                [x(max_sec, Infinity)]
+            ])
 
             let zoom_rect = svg.append("rect")
             .attr("width", width)
@@ -218,9 +236,10 @@ export default function Visualizer({ children }){
             .attr("pointer-events", "all")
             .call(zoom);
 
+            // zoom_rect.call(zoom.transform, d3.zoomIdentity)
 
         }else if(finalSprSheet.length != 0){
-            console.log(finalSprSheet);
+            // console.log(finalSprSheet);
 
             // get the 
             let max_raw_signal = d3.max(finalSprSheet, (row) => row['raw_signal']);

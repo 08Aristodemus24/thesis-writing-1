@@ -49,9 +49,9 @@ export default function Checkbox(props){
     } : null;
 
     useEffect(() => {
-        console.log(`show artifact: ${showArt}`);
-        console.log(`show correct: ${showCorrect}`);
-        console.log(`show raw: ${showRaw}`);
+        // console.log(`show artifact: ${showArt}`);
+        // console.log(`show correct: ${showCorrect}`);
+        // console.log(`show raw: ${showRaw}`);
     }, [showArt, showCorrect, showRaw]);
 
     return (
