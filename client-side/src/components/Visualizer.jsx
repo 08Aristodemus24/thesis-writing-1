@@ -30,7 +30,7 @@ export default function Visualizer({ children }){
     const svg = d3.select(svgRef.current);
 
     useEffect(() => {
-        console.log("state updated");
+        // console.log("state updated");
         // console.log(initSprSheet);
 
         // upon upload of user of .csv file or new .csv file
@@ -160,13 +160,7 @@ export default function Visualizer({ children }){
             .y0(y(0))
             .y1((d) => y(d['new_signal']));
 
-            g.append("clipPath")
-            .attr("id", "clip")
-            .append("rect")
-            .attr("width", width)
-            .attr("height", height);
-
-            // Add the line
+             // Add the line
             // WE ALSO SOMEHOW ALSO NEED TO SET THE CLIP PATH
             // BECAUSE IT IS IN THIS LINE THAT WE WILL ZOOM IN
             let area_path = g.append("path")
@@ -179,6 +173,14 @@ export default function Visualizer({ children }){
                 .y((d) => y(d['raw_signal']))
             )
             .attr("clip-path", "url(#clip)")
+
+            g.append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
+
+           
 
 
             // THIS IS THE LINE COLORED TURQOISE THAT USES THE FLIGHTS
@@ -206,8 +208,24 @@ export default function Visualizer({ children }){
                 [-width, -Infinity],
                 [2 * width, Infinity]
             ])
-            .on("zoom", () => {
-                var xz = d3.event.transform.rescaleX(x);
+            .on("zoom", (event, datum) => {
+                let new_x = event.transform.rescaleX(x);
+                console.log(new_x)
+                // var Gen = d3.line() 
+                // .x((p) => p.xpoint) 
+                // .y((p) => p.ypoint); 
+
+                // d3.select("#gfg") 
+                // .append("path") 
+                // .attr("d", Gen(points)) 
+                
+                // // somehow we have to replicate this as d3.line().x().y() 
+                // // will return a value the d attribute can take as a value 
+                // .attr("d", d3.line()
+                //     .x((d) => x(d['time']))
+                //     .y((d) => y(d['raw_signal']))
+                // )
+                // and unfortunately area.x doesn't return such values
               
                 // so the xAxis is used here
                 // g.append("g")
@@ -216,12 +234,12 @@ export default function Visualizer({ children }){
                 // the only difference is instead of d3.axisBottom(x) or xAxis being passed
                 // to .call we use the xAxis variable further to access .scale to pass
                 // the new scaled x value returned from d3.event.transform.resecaleX(x)
-                x_group.call(x_axis.scale(xz));
+                x_group.call(x_axis.scale(new_x));
+                // error path attribute d: Expected number, "M-1014.345,NaNL-1014.343,Na…".
                 area_path.attr(
                     "d",
-                    area.x((d) => xz(d["time"]))
+                    area.x((d) => new_x(d["time"]))
                 );
-                console.log('triggered')
             });
 
             zoom.translateExtent([
@@ -236,7 +254,10 @@ export default function Visualizer({ children }){
             .attr("pointer-events", "all")
             .call(zoom);
 
-            // zoom_rect.call(zoom.transform, d3.zoomIdentity)
+            // console.log(zoom.transform)
+            // console.log(d3.zoomIdentity)
+
+            console.log(zoom_rect);
 
         }else if(finalSprSheet.length != 0){
             // console.log(finalSprSheet);
@@ -402,7 +423,7 @@ export default function Visualizer({ children }){
             }
 
         }else{
-            console.log('spreadsheet input mounted');
+            // console.log('spreadsheet input mounted');
         }
         
     }, [initSprSheet, finalSprSheet]);

@@ -1148,8 +1148,6 @@ Polytechnic University of the Philippines
 9. after approval of app team will create your COARE acc
 10. team will email your acc. credentials and instructions for first time users
 
-"Larry, Taline, Deseree, and Wana will graduaate in 2025"
-
 * <s>we already have our request approved next steps now is to use the ssh key and enter the VM with the 250gb ram and 100gb storage and we can get to tuning and then training the models. But before this I have to do a cleanout of the test models because we will now be using the space for saving the real tuned and trained models</s>
 
 * Solve the following critical questions from Maam Alet
@@ -1199,7 +1197,102 @@ a. I've already tried removing outliers in the training dataset
 
 - If supervised, dapat labeled yung data. Meron naman labels ang data i.e. Artifact and Non-Artifact
 
-- Transition (Tool) para maintindihan ng non-IT people, meaning the app must be able to smooth out the signals with noise by removing the noise via detecting the parts with noise and then smoothing out these parts 
+- Transition (Tool) para maintindihan ng non-IT people, meaning the app must be able to smooth out the signals with noise by removing the noise via detecting the parts with noise and then smoothing out these parts
+
+```
+import * as d3 from "d3";
+import React, { useState, useEffect, RefObject } from "react";
+
+function Chart() {
+  const svgRef: RefObject<SVGSVGElement> = React.createRef();
+
+  function toggleFill() {
+    if (fill === "red") {
+      setFill("blue");
+    } else {
+      setFill("red");
+    }
+  }
+
+  const [fill, setFill] = useState("red");
+
+  const [zoomState, setZoomState] = useState(d3.zoomIdentity);
+
+  const width = 500;
+  const height = 400;
+  const margin = { top: 50, right: 50, bottom: 50, left: 100 };
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const data = [
+    [-100, 100],
+    [-100, 200],
+    [-100, 300],
+    [-100, 400]
+  ];
+  useEffect(() => draw(), [fill, zoomState]);
+  function draw() {
+    let yScale = d3.scaleLinear().domain([100, 400]).range([innerHeight, 0]);
+
+    if (zoomState) {
+      const newYscale = zoomState.rescaleY(yScale);
+      yScale.domain(newYscale.domain());
+    }
+
+    let yAxis: any = d3.axisLeft(yScale);
+
+    const zoomer: any = d3.zoom().on("zoom", zoom);
+
+    function zoom(event: any) {
+      const zoomState = event.transform;
+      setZoomState(zoomState);
+    }
+
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width)
+      .attr("height", height)
+      .call(zoomer);
+
+    svg
+      .select("text.button")
+      .attr("transform", "translate(200,20)")
+      .on("click", toggleFill);
+
+    svg
+      .select("#circles-group")
+      .attr("transform", "translate(200, 0)")
+      .selectAll("circle")
+      .data(data)
+      .join("circle")
+      .style("fill", fill)
+      .attr("r", 4)
+      .attr("cx", function (d) {
+        return d[0];
+      })
+      .attr("cy", function (d) {
+        return yScale(d[1]);
+      });
+
+    svg.select("#y-axis").attr("transform", "translate(75,0)").call(yAxis);
+  }
+
+  return (
+    <div
+      style={{ margin: 50, position: "relative" }}
+      className="OptionsDataChart"
+    >
+      <svg ref={svgRef}>
+        <text className="button">toggle fill</text>
+        <g id="circles-group" />
+        <g id="y-axis" />
+      </svg>
+    </div>
+  );
+}
+
+export default Chart;
+```
+
 - Paano tinatanggal yung error. Easy yung correction pipeline/smoothing function nila Llanes-Jurado et al. (2023) ginamit namin
 - Evaluator para masabi kung tama yung na smooth na signals. Easy kasi hindi naman tayo ang gumawa ng smoothing function sila Llanes-Jurado et al. (2023) they set the standard and so we are just merely using what they already had to correct the signals since it is out of our scope to build our own signal correction pipeline. Pero need pa rin ng written approval kina Llanes-Jurado et al. (2023) proving that the correction pipeline we used is theirs and that they can vouch that the signals that were corrected using their correction pipeline are verified and approved
 - Saan metric nakikita yung smoother, kilangan rin matanong kina Llanes-Jurado et al. (2023) how they had the justification to say that the corrected signals were suitable for other tasks like stress detection. 
@@ -1220,3 +1313,6 @@ a. I've already tried removing outliers in the training dataset
 - What is really the gap? It was the problem of ML models having lower performance because of low level features as opposed to DL models that were able to extract higher order features. We proposed a solution that could not only use low level features but incorporate higher level features, with respect to previous models
 
 - send follow up email to llanes-jurado
+
+
+"Larry, Taline, Deseree, and Wana will graduaate in 2025"
