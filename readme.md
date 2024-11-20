@@ -1199,6 +1199,18 @@ a. I've already tried removing outliers in the training dataset
 
 - Transition (Tool) para maintindihan ng non-IT people, meaning the app must be able to smooth out the signals with noise by removing the noise via detecting the parts with noise and then smoothing out these parts
 
+* https://stackoverflow.com/questions/72581298/how-to-zoom-only-on-the-x-axis-in-a-line-chart-in-d3-js-v7
+* https://d3-graph-gallery.com/graph/area_brushZoom.html
+
+* PS: the M command of the "d" attribute uses (as pretty much everything in every language) the coordinate pair x,y (horizontal/vertical). Thus, when you have the error:
+`MNaN,42...`
+...you know the problem is in your x scale, while the error:
+`M42,NaN...`
+...shows you the problem is in the y scale.
+
+so what does the error `error path attribute d: Expected number, "M-1014.345,NaNL-1014.343,Na…".` mean?
+
+
 ```
 import * as d3 from "d3";
 import React, { useState, useEffect, RefObject } from "react";

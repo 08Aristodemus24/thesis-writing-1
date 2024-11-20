@@ -154,25 +154,21 @@ export default function Visualizer({ children }){
             .attr("offset", (d) => d["offset"])
             .attr("stop-color", (d) => d["color"]);
       
-            // define area
-            let area = d3.area()
-            .curve(d3.curveStepAfter)
-            .y0(y(0))
-            .y1((d) => y(d['new_signal']));
+            // define line generator
+            let line = d3.line()
+            .x(d => x(d['time']))
+            .y(d => y(d['raw_signal']));
 
-             // Add the line
+            // Add the line
             // WE ALSO SOMEHOW ALSO NEED TO SET THE CLIP PATH
             // BECAUSE IT IS IN THIS LINE THAT WE WILL ZOOM IN
-            let area_path = g.append("path")
+            let line_path = g.append("path")
             .datum(initSprSheet)
             .attr("fill", "none")
             .attr("stroke", "url(#line-gradient)" )
             .attr("stroke-width", 2)
-            .attr("d", d3.line()
-                .x((d) => x(d['time']))
-                .y((d) => y(d['raw_signal']))
-            )
             .attr("clip-path", "url(#clip)")
+            .attr("d", line);
 
             g.append("clipPath")
             .attr("id", "clip")
@@ -180,28 +176,6 @@ export default function Visualizer({ children }){
             .attr("width", width)
             .attr("height", height);
 
-           
-
-
-            // THIS IS THE LINE COLORED TURQOISE THAT USES THE FLIGHTS
-            // FILE WHICH MEANS WE WOULD HAVE TO APPLY WHAT THIS PATH
-            // OBJECT HAS TO OUR OWN PATH OBJECT THAT IS OUR TRUE LINE
-            // let area_path = g.append("path")
-            // .attr("clip-path", "url(#clip)")
-            // .attr("fill", "none")
-            // .attr("stroke", "#017c8d")
-            // .attr("stroke-width", "2px");
-
-            // g.append("clipPath")
-            // .attr("id", "clip")
-            // .append("rect")
-            // .attr("width", width)
-            // .attr("height", height
-
-            // define zoom
-            // scale extent is simply the amount d3 will have to 
-            // zoom out or zoom in. .on is alsos an event listener
-            // and will trigger 
             let zoom = d3.zoom()
             .scaleExtent([1 / 4, 8])
             .translateExtent([
@@ -210,42 +184,14 @@ export default function Visualizer({ children }){
             ])
             .on("zoom", (event, datum) => {
                 let new_x = event.transform.rescaleX(x);
-                console.log(new_x)
-                // var Gen = d3.line() 
-                // .x((p) => p.xpoint) 
-                // .y((p) => p.ypoint); 
-
-                // d3.select("#gfg") 
-                // .append("path") 
-                // .attr("d", Gen(points)) 
-                
-                // // somehow we have to replicate this as d3.line().x().y() 
-                // // will return a value the d attribute can take as a value 
-                // .attr("d", d3.line()
-                //     .x((d) => x(d['time']))
-                //     .y((d) => y(d['raw_signal']))
-                // )
-                // and unfortunately area.x doesn't return such values
-              
-                // so the xAxis is used here
-                // g.append("g")
-                // .attr("transform", "translate(0," + height + ")")
-                // .call(d3.axisBottom(x))
-                // the only difference is instead of d3.axisBottom(x) or xAxis being passed
-                // to .call we use the xAxis variable further to access .scale to pass
-                // the new scaled x value returned from d3.event.transform.resecaleX(x)
                 x_group.call(x_axis.scale(new_x));
-                // error path attribute d: Expected number, "M-1014.345,NaNL-1014.343,Na…".
-                area_path.attr(
-                    "d",
-                    area.x((d) => new_x(d["time"]))
-                );
+                line_path.attr("d", line.x((d) => new_x(d['time'])));
             });
 
             zoom.translateExtent([
                 [x(min_sec, -Infinity)],
                 [x(max_sec, Infinity)]
-            ])
+            ]);
 
             let zoom_rect = svg.append("rect")
             .attr("width", width)
@@ -254,10 +200,7 @@ export default function Visualizer({ children }){
             .attr("pointer-events", "all")
             .call(zoom);
 
-            // console.log(zoom.transform)
-            // console.log(d3.zoomIdentity)
-
-            console.log(zoom_rect);
+            zoom_rect.call(zoom.transform, d3.zoomIdentity);
 
         }else if(finalSprSheet.length != 0){
             // console.log(finalSprSheet);
