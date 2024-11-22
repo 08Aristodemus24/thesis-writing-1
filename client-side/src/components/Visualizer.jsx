@@ -117,8 +117,6 @@ export default function Visualizer({ children }){
             x_group.call(x_axis)
             y_group.call(y_axis);
 
-            // y_group.call(y_axis).select(".domain").remove();
-
             // add title/label to both x and y axes
             // x axis label
             g.append("text")
@@ -164,20 +162,94 @@ export default function Visualizer({ children }){
             // BECAUSE IT IS IN THIS LINE THAT WE WILL ZOOM IN
             let line_path = g.append("path")
             .datum(initSprSheet)
+            .attr("class", "line")
             .attr("fill", "none")
             .attr("stroke", "url(#line-gradient)" )
             .attr("stroke-width", 2)
             .attr("clip-path", "url(#clip)")
             .attr("d", line);
 
-            g.append("clipPath")
+            g.append("defs")
+            .append("clipPath")
             .attr("id", "clip")
             .append("rect")
             .attr("width", width)
             .attr("height", height);
 
+            // create the line generator that will represent the artifacts
+            // if d['label'] is 1 then the coordinates of the line must
+            // be from (time, 0) to (time, max_signal)
+            let artifact = d3.line()
+            .x(d => x(d['time']))
+            .y(d => d['label'] == 1 ? y(max_signal): y(0))
+
+            // add the lines that represent the artifacts
+            let artifact_path = g.append("path")
+            .datum(initSprSheet)
+            .attr("fill", "none")
+            .attr("stroke", "rgba(252, 36, 3, 0.25)")
+            .attr("stroke-width", 2)
+            .attr("clip-path", "url(#clip)")
+            .attr("d", artifact);
+
+            // // A function that set idleTimeOut to null
+            // let idleTimeout
+            // const idled = () => { 
+            //     idleTimeout = null; 
+            // }
+            // // Add brushing
+            // // Add the brush feature using the d3.brush function
+            // // initialise the brush area: start at (0, 0) and 
+            // // finishes at (width, height): it means I select the 
+            // // whole graph area
+            // const brush = d3.brushX()
+            // .extent([
+            //     [0, 0], 
+            //     [width, height]
+            // ])
+            // .on("end", (event, datum) => {
+            //     // What are the selected boundaries?
+            //     extent = event.selection
+
+            //     // If no selection, back to initial coordinate. Otherwise, update X axis domain
+            //     if(!extent){
+            //         if(!idleTimeout){ 
+            //            idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
+            //         }
+            //         x.domain([4, 8])
+            //     }else{
+            //         x.domain([x.invert(extent[0]), x.invert(extent[1])])
+            //         line.select(".brush").call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
+            //     }
+
+            //     // Update axis and line position
+            //     x_axis.transition().duration(1000).call(d3.axisBottom(x))
+            //     line.select('.line')
+            //     .transition()
+            //     .duration(1000)
+            //     .attr("d", d3.line()
+            //         .x((d) => x(d["time"]))
+            //         .y((d) => y(d["raw_signal"]))
+            //     )
+            // });
+
+            // // Add the brushing
+            // line_path.append("g")
+            // .attr("class", "brush")
+            // .call(brush);
+
+            // // If user double click, reinitialize the chart
+            // svg.on("dblclick", () => {
+            //     x.domain(d3.extent(data, (d) => d['time']))
+            //     x_axis.transition().call(x_axis)
+            //     line_path
+            //     .select('.line')
+            //     .transition()
+            //     .attr("d", line)
+            // });
+
             let zoom = d3.zoom()
-            .scaleExtent([1 / 4, 8])
+            .scaleExtent([1 / 4, Infinity])
             .translateExtent([
                 [-width, -Infinity],
                 [2 * width, Infinity]
@@ -186,6 +258,7 @@ export default function Visualizer({ children }){
                 let new_x = event.transform.rescaleX(x);
                 x_group.call(x_axis.scale(new_x));
                 line_path.attr("d", line.x((d) => new_x(d['time'])));
+                artifact_path.attr("d", artifact.x((d) => new_x(d['time'])))
             });
 
             zoom.translateExtent([

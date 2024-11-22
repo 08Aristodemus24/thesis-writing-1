@@ -31,7 +31,13 @@ CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5000", "https://ed
 
 # global variables
 models = {
-    'cueva_second_phase-svm':{
+    'cueva_second_phase-1-5-weighted-svm':{
+
+    },
+    'cueva_second_phase-1-9-weighted-svm':{
+
+    },
+    'cueva_second_phase-1-2-weighted-svm':{
 
     },
     'cueva-lstm-fe': {
@@ -73,8 +79,6 @@ models = {
 
 
 # functions to load miscellaneous variables, hyperparameters, and the model itself
-
-
 def load_miscs():
     """
     loads miscellaneous variables to be used by the model
@@ -109,7 +113,9 @@ def load_miscs():
     models['hossain-lr']['selected_feats'] = hossain_lr_red_feats
     models['hossain-svm']['selected_feats'] = hossain_svm_red_feats
     models['hossain-gbt']['selected_feats'] = hossain_gbt_red_feats
-    models['cueva_second_phase-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
+    models['cueva_second_phase-1-2-weighted-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
+    models['cueva_second_phase-1-5-weighted-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
+    models['cueva_second_phase-1-9-weighted-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
 
     print('miscellaneous loaded.')
 
@@ -153,14 +159,16 @@ def load_models():
     lstm_layer_2 = lstm_fe.get_layer('lstm-layer-2')
     lstm_fe_main = tf.keras.Model(inputs=lstm_fe.inputs, outputs=lstm_layer_2.output)
 
-    # pre load saved machine learning models
+    # # pre load saved machine learning models
     taylor_lr = load_model('./modelling/saved/models/taylor_lr_clf.pkl')
     taylor_svm = load_model('./modelling/saved/models/taylor_svm_clf.pkl')
     taylor_rf = load_model('./modelling/saved/models/taylor_rf_clf.pkl')
     hossain_lr = load_model('./modelling/saved/models/hossain_lr_clf.pkl')
     hossain_svm = load_model('./modelling/saved/models/hossain_svm_clf.pkl')
     hossain_gbt = load_model('./modelling/saved/models/hossain_gbt_clf.pkl')
-    # cueva_second_phase_svm = load_model('./modelling/saved/models/cueva_second_phase_svm_clf.pkl')
+    cueva_second_phase_1_5_weighted_svm = load_model('./modelling/saved/models/cueva_second_phase_1_5_weighted_svm_clf.pkl')
+    cueva_second_phase_1_9_weighted_svm = load_model('./modelling/saved/models/cueva_second_phase_1_9_weighted_svm_clf.pkl')
+    cueva_second_phase_1_2_weighted_svm = load_model('./modelling/saved/models/cueva_second_phase_1_2_weighted_svm_clf.pkl')
 
     # populate dictionary with loaded models
     models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
@@ -172,7 +180,9 @@ def load_models():
     models['hossain-lr']['model'] = hossain_lr
     models['hossain-svm']['model'] = hossain_svm
     models['hossain-gbt']['model'] = hossain_gbt
-    # models['cueva_second_phase-svm']['model'] = cueva_second_phase_svm
+    models['cueva_second_phase-1-5-weighted-svm']['model'] = cueva_second_phase_1_5_weighted_svm
+    models['cueva_second_phase-1-9-weighted-svm']['model'] = cueva_second_phase_1_9_weighted_svm
+    models['cueva_second_phase-1-2-weighted-svm']['model'] = cueva_second_phase_1_2_weighted_svm
 
     print('models loaded.')
     
