@@ -1161,6 +1161,9 @@ c. test precision of lstm-SVM is 0.1% higher than logistic regression, but 2% lo
 c. test recall of lstm-svm is 2% higher than logistic regression, 2% higher than lstm-cnn
 d. test roc-auc of LSTM-SVM is higher than hossain et al. (2022) svm by 2% while being lower than all others and being lower by 11% than the lstm-cnn 
 
+the 1-2-weighted-svm might probably be the best one since it outperforms the lstm-cnn in terms of test accuracy, outperforms taylor et al. (2015) lr and svm in terms of test f1-score, outperforms taylor et al. (2015) lr in terms of precision, outperforms taylor et al. (2015) and hossain et al. (2022) lr and svm by a whopping 4%, 3%, 1%, and 8% respectively, lstm-svm also outperforms lstm-cnn by 2% in terms of true negative rate or specificity, lstm-svm outperforms all other models in terms of true positive rate or sensitivity except lstm-cnn which is still ahead by 11% 
+
+
 - If imbalanced ang dataset, bakit mas mataas sa iba? bakit ang proposed model ay di nakakaungos sa iba? Anong problem? This is a big one because how caan we know the answers? Do we scour the internet to find the answer? How do our experiments reveal this? Kaya we must never saay na imbalanced ang dataset kasi pupuntiryahin tayo. Ok so solutions can be to tackle this are the ff.
 a. oversampling data of the minority class by introducing synthetic datapoints
 b. undersampling data of hte majority class by deleting some of the datapoints in the majority class, because there may be rows that include repetitions (After trial and error it increased the score by 8%)
