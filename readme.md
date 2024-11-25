@@ -667,6 +667,16 @@ If you want to evaluate the overall performance of the model without considering
 If you want to evaluate the performance of the model for each class equally, use the macro F1-score.
 You can also experiment with different F1-score variants to see which one best suits your specific needs.
 
+27. One can also use filezilla as a GUI instead of a command line interface for accessing the DOST COARE HPC resource or virtual machine
+
+* Open FileZilla and navigate to the File menu, select Site ManagerFrom My Sites, select the site you're updating or otherwise create a New SiteSet the following values in the settings:
+* Protocol: SFTP - SSH File Transfer Protocol
+* Host: Your server hostname or IP address i.e. 202.90.149.55 
+* Port: 22 (however coare dost asti does not have a port so leave this blank)
+* Logon Type: Key file
+* User: Your SFTP username i.e. michael.cueva or whatever username coare verified in your application for an account
+* Key file: Use Browse to select your SSH private key or otherwise add the path to your SSH private key. For MacOS users, your private SSH key is typically stored at /Users/USERNAME/.ssh/id_rsa (replace USERNAME with your device username).
+
 
 ## artifact detection and correction:
 * <s>clone and review repo of Taylor et al.</s>
