@@ -10,3 +10,11 @@ SLURM_MEM_PER_NODE    : 204800
 TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/36380
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
+.................................................................................
+Warning: using -h 0 may be faster
+*...........................................................*.....*
+optimization finished, #iter = 145241
+obj = -49085.555121, rho = 0.215466
+nSV = 52180, nBSV = 49075
+Total nSV = 52180
+.....................
