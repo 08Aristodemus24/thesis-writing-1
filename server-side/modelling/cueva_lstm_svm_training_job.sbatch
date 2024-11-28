@@ -50,7 +50,7 @@ module load anaconda/3-2023.07-2
 ## Main job. Run your codes, commands, and executables here; `srun` is optional.
 conda activate thesis-writing-1
 python --version
-python tuning_ml.py -m svm -pl cueva_second_phase --mode training --hyper_param_list C_10 gamma_0.5 probability_True
+python tuning_ml.py -m svm -pl cueva_second_phase --mode training --hyper_param_list C_1 gamma_0.5 probability_True
 
 ## Flush the TMPDIR.
 if [[ $custom_tmp == "yes" ]]; then
