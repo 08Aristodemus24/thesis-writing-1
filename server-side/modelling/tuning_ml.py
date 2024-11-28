@@ -479,7 +479,7 @@ def train_final_estimator(subjects_features: pd.DataFrame,
     X = subjects_features.to_numpy()
     Y = subjects_labels.to_numpy().ravel()
 
-    if selector_config == "hossain":
+    if selector_config == "hossain" == selector_config == "cueva_second_phase":
         scaler = StandardScaler()
         X = scaler.fit_transform(X)
         save_model(scaler, f'./saved/misc/{selector_config}_{estimator_name}_scaler.pkl')
