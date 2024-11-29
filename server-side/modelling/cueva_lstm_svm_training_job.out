@@ -1,12 +1,12 @@
-Submitted on Fri Nov 29 17:35:17 PST 2024
+Submitted on Fri Nov 29 17:38:33 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 36537
+SLURM_JOB_ID          : 36540
 SLURM_JOB_NAME        : cueva_lstm_svm_training_job
 SLURM_JOB_NUM_NODES   : 1
-SLURM_JOB_NODELIST    : saliksik-cpu-01
+SLURM_JOB_NODELIST    : saliksik-cpu-18
 SLURM_NTASKS          : 12
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 204800
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/36537
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/36540
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
