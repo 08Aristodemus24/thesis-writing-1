@@ -1,87 +1,12 @@
-Submitted on Thu Nov 28 10:14:02 PST 2024
+Submitted on Fri Nov 29 17:33:16 PST 2024
 JOB PARAMETERS
-SLURM_JOB_ID          : 36380
+SLURM_JOB_ID          : 36536
 SLURM_JOB_NAME        : cueva_lstm_svm_training_job
-SLURM_JOB_NUM_NODES   : 3
-SLURM_JOB_NODELIST    : saliksik-cpu-[34-36]
+SLURM_JOB_NUM_NODES   : 1
+SLURM_JOB_NODELIST    : saliksik-cpu-01
 SLURM_NTASKS          : 12
 SLURM_NTASKS_PER_NODE : 
 SLURM_MEM_PER_NODE    : 204800
-TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/36380
+TMPDIR                : /tmp/michael.cueva/SLURM_JOB_ID/36536
 Module load: anaconda/3-2023.07-2
 Python 3.12.3
-.................................................................................
-Warning: using -h 0 may be faster
-*...........................................................*.....*
-optimization finished, #iter = 145241
-obj = -49085.555121, rho = 0.215466
-nSV = 52180, nBSV = 49075
-Total nSV = 52180
-.................................................................................
-Warning: using -h 0 may be faster
-*...............................................................*...*
-optimization finished, #iter = 146300
-obj = -49262.796930, rho = 0.181553
-nSV = 52316, nBSV = 49226
-Total nSV = 52316
-..................................................................................
-Warning: using -h 0 may be faster
-*........................................................*.*
-optimization finished, #iter = 139601
-obj = -49155.521476, rho = 0.191109
-nSV = 52214, nBSV = 49191
-Total nSV = 52214
-...................................................................................
-Warning: using -h 0 may be faster
-*.....................................................*
-optimization finished, #iter = 136664
-obj = -48947.311702, rho = 0.201588
-nSV = 52031, nBSV = 48948
-Total nSV = 52031
-..............................................................................
-Warning: using -h 0 may be faster
-*.............................................................*..........*.
-Warning: using -h 0 may be faster
-*
-optimization finished, #iter = 149471
-obj = -49041.754522, rho = 0.174411
-nSV = 52077, nBSV = 49021
-Total nSV = 52077
-................................................................................................
-Warning: using -h 0 may be faster
-*............................................................*
-optimization finished, #iter = 156398
-obj = -61122.715807, rho = -0.176738
-nSV = 64676, nBSV = 61311
-Total nSV = 64676
-subjects features, labels, names and subject to id lookup loaded
-<class 'int'>
-<class 'float'>
-<class 'bool'>
-{'C': 1, 'gamma': 0.1, 'probability': True, 'class_weight': None}
-Index(['HOF_2', 'HOF_7', 'HOF_8', 'HOF_9', 'HOF_10', 'HOF_12', 'HOF_14',
-       'HOF_16', 'HOF_17', 'HOF_18', 'HOF_19', 'HOF_20', 'HOF_21', 'HOF_22',
-       'HOF_26', 'HOF_27', 'HOF_32', 'raw_128hz_min', 'raw_128hz_amp',
-       'raw_128hz_std', 'raw_128hz_range', 'raw_128hz_shannon_entropy',
-       'raw_128hz_1d_min', 'raw_128hz_1d_range',
-       'raw_128hz_1d_shannon_entropy', 'filt_128hz_median',
-       'filt_128hz_1d_min', 'ar_coeff_1_128hz', 'ar_coeff_2_128hz',
-       'raw_128hz_skewness', 'third_16thofa_sec_max', 'first_16thofa_sec_mean',
-       'second_16thofa_sec_std', 'third_16thofa_sec_std',
-       'first_16thofa_sec_median', 'second_16thofa_sec_median',
-       'third_16thofa_sec_range', 'first_32thofa_sec_mean',
-       'second_32thofa_sec_mean', 'first_32thofa_sec_std',
-       'first_32thofa_sec_median', 'second_32thofa_sec_median',
-       'second_32thofa_sec_range', 'raw_16hz_min', 'raw_16hz_range',
-       'raw_16hz_1d_min', 'raw_16hz_1d_range', 'filt_16hz_1d_avg_abs',
-       'ar_coeff_1_16hz', 'ar_coeff_2_16hz', 'ar_err_var_16hz',
-       'first_2thofa_sec_max', 'first_2thofa_sec_mean',
-       'third_2thofa_sec_mean', 'first_2thofa_sec_std',
-       'second_2thofa_sec_std', 'third_2thofa_sec_std',
-       'first_2thofa_sec_median', 'second_2thofa_sec_median',
-       'second_2thofa_sec_range'],
-      dtype='object')
-Index(['0'], dtype='object')
-[LibSVM]svm score: 0.9305099984192222
-Finished on Fri Nov 29 11:46:00 PST 2024
-Total runtime (sec): 91917.72102928162
