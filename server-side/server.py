@@ -18,7 +18,7 @@ from modelling.utilities.preprocessors import correct_signals
 from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
 from modelling.utilities.feature_extractors import extract_features, extract_features_hybrid, extract_features_per_hour
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
 
 # # configure location of build file and the static html template file
 app = Flask(__name__, template_folder='static')
@@ -89,21 +89,21 @@ def load_miscs():
     print('loading miscellaneous...')
     # this is for loading miscellaneous variables for 
     # deep learning models such as hyper parameters
-    lstm_fe_hp = load_meta_data('./modelling/saved/misc/cueva_lstm-fe_meta_data.json')
-    lstm_cnn_hp = load_meta_data('./modelling/saved/misc/jurado_lstm-cnn_meta_data.json')
+    lstm_fe_hp = load_meta_data('./saved/misc/cueva_lstm-fe_meta_data.json')
+    lstm_cnn_hp = load_meta_data('./saved/misc/jurado_lstm-cnn_meta_data.json')
 
     models['cueva-lstm-fe']['hyper_params'] = lstm_fe_hp
     models['jurado-lstm-cnn']['hyper_params'] = lstm_cnn_hp
 
     # this is for loading miscellaneous variables for
     # machine learning models such as the reduced feature set
-    taylor_lr_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_lr_feature_set.txt')
-    taylor_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_svm_feature_set.txt')
-    taylor_rf_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_rf_feature_set.txt')
-    hossain_lr_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_lr_feature_set.txt')
-    hossain_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_svm_feature_set.txt')
-    hossain_gbt_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_gbt_feature_set.txt')
-    cueva_second_phase_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_cueva_second_phase_svm_feature_set.txt')
+    taylor_lr_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_lr_feature_set.txt')
+    taylor_svm_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_svm_feature_set.txt')
+    taylor_rf_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_rf_feature_set.txt')
+    hossain_lr_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_lr_feature_set.txt')
+    hossain_svm_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_svm_feature_set.txt')
+    hossain_gbt_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_gbt_feature_set.txt')
+    cueva_second_phase_svm_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_cueva_second_phase_svm_feature_set.txt')
 
     # pre-load reduced features here so that features don't have to 
     # be loaded every single time user makes a request
@@ -114,8 +114,7 @@ def load_miscs():
     models['hossain-svm']['selected_feats'] = hossain_svm_red_feats
     models['hossain-gbt']['selected_feats'] = hossain_gbt_red_feats
     models['cueva_second_phase-1-2-weighted-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
-    models['cueva_second_phase-1-5-weighted-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
-    models['cueva_second_phase-1-9-weighted-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
+    models['cueva_second_phase-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
 
     print('miscellaneous loaded.')
 
@@ -131,9 +130,9 @@ def load_preprocessors():
     print('loading preprocessors...')
 
     # pre-load here scaler of hossain used during training
-    hossain_lr_scaler = load_model('./modelling/saved/misc/hossain_lr_scaler.pkl')
-    hossain_svm_scaler = load_model('./modelling/saved/misc/hossain_svm_scaler.pkl')
-    hossain_gbt_scaler = load_model('./modelling/saved/misc/hossain_gbt_scaler.pkl')
+    hossain_lr_scaler = load_model('./saved/misc/hossain_lr_scaler.pkl')
+    hossain_svm_scaler = load_model('./saved/misc/hossain_svm_scaler.pkl')
+    hossain_gbt_scaler = load_model('./saved/misc/hossain_gbt_scaler.pkl')
 
     models['hossain-lr']['scaler'] = hossain_lr_scaler
     models['hossain-svm']['scaler'] = hossain_svm_scaler
@@ -151,24 +150,23 @@ def load_models():
     print('loading models...')
     # pre load saved weights for deep learning models
     jurado_lstm_cnn = LSTM_CNN(**models['jurado-lstm-cnn']['hyper_params'])
-    jurado_lstm_cnn.load_weights('./modelling/saved/weights/EDABE_LSTM_1DCNN_Model.h5')
+    jurado_lstm_cnn.load_weights('./saved/weights/EDABE_LSTM_1DCNN_Model.h5')
 
     # load side task model and convert it to a feature extractor model 
     lstm_fe = LSTM_FE(**models['cueva-lstm-fe']['hyper_params'])
-    lstm_fe.load_weights('./modelling/saved/weights/cueva_lstm-fe_21_0.7489.weights.h5')
+    lstm_fe.load_weights('./saved/weights/cueva_lstm-fe_21_0.7489.weights.h5')
     lstm_layer_2 = lstm_fe.get_layer('lstm-layer-2')
     lstm_fe_main = tf.keras.Model(inputs=lstm_fe.inputs, outputs=lstm_layer_2.output)
 
     # # pre load saved machine learning models
-    taylor_lr = load_model('./modelling/saved/models/taylor_lr_clf.pkl')
-    taylor_svm = load_model('./modelling/saved/models/taylor_svm_clf.pkl')
-    taylor_rf = load_model('./modelling/saved/models/taylor_rf_clf.pkl')
-    hossain_lr = load_model('./modelling/saved/models/hossain_lr_clf.pkl')
-    hossain_svm = load_model('./modelling/saved/models/hossain_svm_clf.pkl')
-    hossain_gbt = load_model('./modelling/saved/models/hossain_gbt_clf.pkl')
-    cueva_second_phase_1_5_weighted_svm = load_model('./modelling/saved/models/cueva_second_phase_1_5_weighted_svm_clf.pkl')
-    cueva_second_phase_1_9_weighted_svm = load_model('./modelling/saved/models/cueva_second_phase_1_9_weighted_svm_clf.pkl')
-    cueva_second_phase_1_2_weighted_svm = load_model('./modelling/saved/models/cueva_second_phase_1_2_weighted_svm_clf.pkl')
+    taylor_lr = load_model('./saved/models/taylor_lr_clf.pkl')
+    taylor_svm = load_model('./saved/models/taylor_svm_clf.pkl')
+    taylor_rf = load_model('./saved/models/taylor_rf_clf.pkl')
+    hossain_lr = load_model('./saved/models/hossain_lr_clf.pkl')
+    hossain_svm = load_model('./saved/models/hossain_svm_clf.pkl')
+    hossain_gbt = load_model('./saved/models/hossain_gbt_clf.pkl')
+    cueva_second_phase_svm = load_model('./saved/models/cueva_second_phase_svm_clf.pkl')
+    cueva_second_phase_1_2_weighted_svm = load_model('./saved/models/cueva_second_phase_1_2_weighted_svm_clf.pkl')
 
     # populate dictionary with loaded models
     models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
@@ -180,8 +178,7 @@ def load_models():
     models['hossain-lr']['model'] = hossain_lr
     models['hossain-svm']['model'] = hossain_svm
     models['hossain-gbt']['model'] = hossain_gbt
-    models['cueva_second_phase-1-5-weighted-svm']['model'] = cueva_second_phase_1_5_weighted_svm
-    models['cueva_second_phase-1-9-weighted-svm']['model'] = cueva_second_phase_1_9_weighted_svm
+    models['cueva_second_phase-svm']['model'] = cueva_second_phase_svm
     models['cueva_second_phase-1-2-weighted-svm']['model'] = cueva_second_phase_1_2_weighted_svm
 
     print('models loaded.')
@@ -324,12 +321,26 @@ def predict():
         test_rec = recall_score(y_true=Y, y_pred=Y_pred, average="weighted")
         test_f1 = f1_score(y_true=Y, y_pred=Y_pred, average="weighted")
         test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred_prob[:, 1], average="weighted", multi_class="ovo")
+        test_conf_matrix = confusion_matrix(Y, Y_pred).tolist()
+        test_true_neg = test_conf_matrix[0][0]
+        test_false_pos = test_conf_matrix[0][1]
+        test_false_neg = test_conf_matrix[1][0]
+        test_true_pos = test_conf_matrix[1][1]
+        test_tpr = test_true_pos / (test_true_pos + test_false_neg)
+        test_tnr = test_true_neg / (test_true_neg + test_false_pos)
+        test_fpr = test_false_pos / (test_false_pos + test_true_neg)
+        test_fnr = test_false_neg / (test_false_neg + test_true_pos)
 
         print(f"test acc: {test_acc} \
-              \ntest prec: {test_prec} \
-              \ntest rec: {test_rec} \
-              \ntest f1: {test_f1} \
-              \ntest roc_auc: {test_roc_auc}")
+            \ntest prec: {test_prec} \
+            \ntest rec: {test_rec} \
+            \ntest f1: {test_f1} \
+            \ntest roc_auc: {test_roc_auc} \
+            \ntest conf_matrix: {test_conf_matrix} \
+            \ntest tpr: {test_tpr} \
+            \ntest tnr: {test_tnr} \
+            \ntest fpr: {test_fpr} \
+            \ntest fnr: {test_fnr}")
         
 
         # next task here is once predictions are out I need tsome way to map the 
@@ -376,12 +387,26 @@ def predict():
         test_rec = recall_score(y_true=Y, y_pred=Y_pred, average="weighted")
         test_f1 = f1_score(y_true=Y, y_pred=Y_pred, average="weighted")
         test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred_prob, average="weighted", multi_class="ovo")
+        test_conf_matrix = confusion_matrix(Y, Y_pred).tolist()
+        test_true_neg = test_conf_matrix[0][0]
+        test_false_pos = test_conf_matrix[0][1]
+        test_false_neg = test_conf_matrix[1][0]
+        test_true_pos = test_conf_matrix[1][1]
+        test_tpr = test_true_pos / (test_true_pos + test_false_neg)
+        test_tnr = test_true_neg / (test_true_neg + test_false_pos)
+        test_fpr = test_false_pos / (test_false_pos + test_true_neg)
+        test_fnr = test_false_neg / (test_false_neg + test_true_pos)
 
         print(f"test acc: {test_acc} \
             \ntest prec: {test_prec} \
             \ntest rec: {test_rec} \
             \ntest f1: {test_f1} \
-            \ntest roc_auc: {test_roc_auc}")
+            \ntest roc_auc: {test_roc_auc} \
+            \ntest conf_matrix: {test_conf_matrix} \
+            \ntest tpr: {test_tpr} \
+            \ntest tnr: {test_tnr} \
+            \ntest fpr: {test_fpr} \
+            \ntest fnr: {test_fnr}")
         
     # this condition is triggered whenever user picks the cueva but uses the lstm-svm as estimator name
     else:
@@ -435,13 +460,26 @@ def predict():
         test_rec = recall_score(y_true=Y, y_pred=Y_pred, average="weighted")
         test_f1 = f1_score(y_true=Y, y_pred=Y_pred, average="weighted")
         test_roc_auc = roc_auc_score(y_true=Y, y_score=Y_pred_prob[:, 1], average="weighted", multi_class="ovo")
+        test_conf_matrix = confusion_matrix(Y, Y_pred).tolist()
+        test_true_neg = test_conf_matrix[0][0]
+        test_false_pos = test_conf_matrix[0][1]
+        test_false_neg = test_conf_matrix[1][0]
+        test_true_pos = test_conf_matrix[1][1]
+        test_tpr = test_true_pos / (test_true_pos + test_false_neg)
+        test_tnr = test_true_neg / (test_true_neg + test_false_pos)
+        test_fpr = test_false_pos / (test_false_pos + test_true_neg)
+        test_fnr = test_false_neg / (test_false_neg + test_true_pos)
 
         print(f"test acc: {test_acc} \
-              \ntest prec: {test_prec} \
-              \ntest rec: {test_rec} \
-              \ntest f1: {test_f1} \
-              \ntest roc_auc: {test_roc_auc}")
-
+            \ntest prec: {test_prec} \
+            \ntest rec: {test_rec} \
+            \ntest f1: {test_f1} \
+            \ntest roc_auc: {test_roc_auc} \
+            \ntest conf_matrix: {test_conf_matrix} \
+            \ntest tpr: {test_tpr} \
+            \ntest tnr: {test_tnr} \
+            \ntest fpr: {test_fpr} \
+            \ntest fnr: {test_fnr}")
 
     # once predictions have been extracted from respective models
     # pass to the correct_signals() function
