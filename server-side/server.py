@@ -14,7 +14,7 @@ import numpy as np
 # import and load model architectures as well as decoder
 from modelling.models.cueva import LSTM_FE
 from modelling.models.llanes_jurado import LSTM_CNN
-from modelling.utilities.preprocessors import correct_signals
+from modelling.utilities.preprocessors import correct_signals, prep_stress_feats, mark_signals
 from modelling.utilities.loaders import load_meta_data, load_model, load_lookup_array, charge_raw_data
 from modelling.utilities.feature_extractors import extract_features, extract_features_hybrid, extract_features_per_hour
 
@@ -31,13 +31,16 @@ CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5000", "https://ed
 
 # global variables
 models = {
-    'cueva_second_phase-1-5-weighted-svm':{
+    # 'cueva_second_phase-1-5-weighted-svm':{
+
+    # },
+    # 'cueva_second_phase-1-9-weighted-svm':{
+
+    # },
+    'cueva-lstm-1-2-weighted-svm':{
 
     },
-    'cueva_second_phase-1-9-weighted-svm':{
-
-    },
-    'cueva_second_phase-1-2-weighted-svm':{
+    'cueva-lstm-svm':{
 
     },
     'cueva-lstm-fe': {
@@ -74,6 +77,9 @@ models = {
         # 'model':
         # 'selected_feats':
         # 'scaler':
+    },
+    'stress-detector': {
+
     }
 }
 
@@ -89,21 +95,21 @@ def load_miscs():
     print('loading miscellaneous...')
     # this is for loading miscellaneous variables for 
     # deep learning models such as hyper parameters
-    lstm_fe_hp = load_meta_data('./saved/misc/cueva_lstm-fe_meta_data.json')
-    lstm_cnn_hp = load_meta_data('./saved/misc/jurado_lstm-cnn_meta_data.json')
+    lstm_fe_hp = load_meta_data('./modelling/saved/misc/cueva_lstm-fe_meta_data.json')
+    lstm_cnn_hp = load_meta_data('./modelling/saved/misc/jurado_lstm-cnn_meta_data.json')
 
     models['cueva-lstm-fe']['hyper_params'] = lstm_fe_hp
     models['jurado-lstm-cnn']['hyper_params'] = lstm_cnn_hp
 
     # this is for loading miscellaneous variables for
     # machine learning models such as the reduced feature set
-    taylor_lr_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_lr_feature_set.txt')
-    taylor_svm_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_svm_feature_set.txt')
-    taylor_rf_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_taylor_rf_feature_set.txt')
-    hossain_lr_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_lr_feature_set.txt')
-    hossain_svm_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_svm_feature_set.txt')
-    hossain_gbt_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_hossain_gbt_feature_set.txt')
-    cueva_second_phase_svm_red_feats = load_lookup_array(f'./data/Artifact Detection Data/reduced_cueva_second_phase_svm_feature_set.txt')
+    taylor_lr_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_lr_feature_set.txt')
+    taylor_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_svm_feature_set.txt')
+    taylor_rf_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_taylor_rf_feature_set.txt')
+    hossain_lr_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_lr_feature_set.txt')
+    hossain_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_svm_feature_set.txt')
+    hossain_gbt_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_hossain_gbt_feature_set.txt')
+    cueva_second_phase_svm_red_feats = load_lookup_array(f'./modelling/data/Artifact Detection Data/reduced_cueva_second_phase_svm_feature_set.txt')
 
     # pre-load reduced features here so that features don't have to 
     # be loaded every single time user makes a request
@@ -113,8 +119,8 @@ def load_miscs():
     models['hossain-lr']['selected_feats'] = hossain_lr_red_feats
     models['hossain-svm']['selected_feats'] = hossain_svm_red_feats
     models['hossain-gbt']['selected_feats'] = hossain_gbt_red_feats
-    models['cueva_second_phase-1-2-weighted-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
-    models['cueva_second_phase-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
+    models['cueva-lstm-1-2-weighted-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
+    models['cueva-lstm-svm']['selected_feats'] = cueva_second_phase_svm_red_feats
 
     print('miscellaneous loaded.')
 
@@ -130,13 +136,18 @@ def load_preprocessors():
     print('loading preprocessors...')
 
     # pre-load here scaler of hossain used during training
-    hossain_lr_scaler = load_model('./saved/misc/hossain_lr_scaler.pkl')
-    hossain_svm_scaler = load_model('./saved/misc/hossain_svm_scaler.pkl')
-    hossain_gbt_scaler = load_model('./saved/misc/hossain_gbt_scaler.pkl')
+    hossain_lr_scaler = load_model('./modelling/saved/misc/hossain_lr_scaler.pkl')
+    hossain_svm_scaler = load_model('./modelling/saved/misc/hossain_svm_scaler.pkl')
+    hossain_gbt_scaler = load_model('./modelling/saved/misc/hossain_gbt_scaler.pkl')
+
+    # separate loading of scaler for stress detection
+    xgb_scaler = load_model('./modelling/saved/misc/xgb_scaler.pkl')
 
     models['hossain-lr']['scaler'] = hossain_lr_scaler
     models['hossain-svm']['scaler'] = hossain_svm_scaler
     models['hossain-gbt']['scaler'] = hossain_gbt_scaler
+
+    models['stress-detector']['scaler'] = xgb_scaler
 
     print('preprocessors loaded.')
 
@@ -150,23 +161,26 @@ def load_models():
     print('loading models...')
     # pre load saved weights for deep learning models
     jurado_lstm_cnn = LSTM_CNN(**models['jurado-lstm-cnn']['hyper_params'])
-    jurado_lstm_cnn.load_weights('./saved/weights/EDABE_LSTM_1DCNN_Model.h5')
+    jurado_lstm_cnn.load_weights('./modelling/saved/weights/EDABE_LSTM_1DCNN_Model.h5')
 
     # load side task model and convert it to a feature extractor model 
     lstm_fe = LSTM_FE(**models['cueva-lstm-fe']['hyper_params'])
-    lstm_fe.load_weights('./saved/weights/cueva_lstm-fe_21_0.7489.weights.h5')
+    lstm_fe.load_weights('./modelling/saved/weights/cueva_lstm-fe_21_0.7489.weights.h5')
     lstm_layer_2 = lstm_fe.get_layer('lstm-layer-2')
     lstm_fe_main = tf.keras.Model(inputs=lstm_fe.inputs, outputs=lstm_layer_2.output)
 
     # # pre load saved machine learning models
-    taylor_lr = load_model('./saved/models/taylor_lr_clf.pkl')
-    taylor_svm = load_model('./saved/models/taylor_svm_clf.pkl')
-    taylor_rf = load_model('./saved/models/taylor_rf_clf.pkl')
-    hossain_lr = load_model('./saved/models/hossain_lr_clf.pkl')
-    hossain_svm = load_model('./saved/models/hossain_svm_clf.pkl')
-    hossain_gbt = load_model('./saved/models/hossain_gbt_clf.pkl')
-    cueva_second_phase_svm = load_model('./saved/models/cueva_second_phase_svm_clf.pkl')
-    cueva_second_phase_1_2_weighted_svm = load_model('./saved/models/cueva_second_phase_1_2_weighted_svm_clf.pkl')
+    taylor_lr = load_model('./modelling/saved/models/taylor_lr_clf.pkl')
+    taylor_svm = load_model('./modelling/saved/models/taylor_svm_clf.pkl')
+    taylor_rf = load_model('./modelling/saved/models/taylor_rf_clf.pkl')
+    hossain_lr = load_model('./modelling/saved/models/hossain_lr_clf.pkl')
+    hossain_svm = load_model('./modelling/saved/models/hossain_svm_clf.pkl')
+    hossain_gbt = load_model('./modelling/saved/models/hossain_gbt_clf.pkl')
+    cueva_lstm_svm = load_model('./modelling/saved/models/cueva_second_phase_svm_C_10_gamma_1_clf.pkl')
+    cueva_lstm_1_2_weighted_svm = load_model('./modelling/saved/models/cueva_second_phase_1_2_weighted_svm_clf.pkl')
+
+    # load stress detector model separately
+    stress_detector = load_model('./modelling/saved/models/stress_detector.pkl')
 
     # populate dictionary with loaded models
     models['jurado-lstm-cnn']['model'] = jurado_lstm_cnn
@@ -178,8 +192,10 @@ def load_models():
     models['hossain-lr']['model'] = hossain_lr
     models['hossain-svm']['model'] = hossain_svm
     models['hossain-gbt']['model'] = hossain_gbt
-    models['cueva_second_phase-svm']['model'] = cueva_second_phase_svm
-    models['cueva_second_phase-1-2-weighted-svm']['model'] = cueva_second_phase_1_2_weighted_svm
+    models['cueva-lstm-svm']['model'] = cueva_lstm_svm
+    models['cueva-lstm-1-2-weighted-svm']['model'] = cueva_lstm_1_2_weighted_svm
+
+    models['stress-detector']['model'] = stress_detector
 
     print('models loaded.')
     
@@ -197,19 +213,6 @@ print(models)
 # @app.route('/')
 # def index():
 #     return render_template('index.html')
-
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     raw_data = request.json
-#     prompt = [preprocess(raw_data['prompt'])]
-#     temperature = float(raw_data['temperature'])
-#     T_x = int(raw_data['sequence_length'])
-#     print(raw_data)
-
-#     pred_ids = generate(model, prompts=prompt, char_to_idx=char_to_idx, T_x=T_x, temperature=temperature)
-#     decoded_ids = decode_predictions(pred_ids, idx_to_char=idx_to_char)
-
-#     return jsonify({'message': decoded_ids})
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -341,15 +344,6 @@ def predict():
             \ntest tnr: {test_tnr} \
             \ntest fpr: {test_fpr} \
             \ntest fnr: {test_fnr}")
-        
-
-        # next task here is once predictions are out I need tsome way to map the 
-        # predictions to correct the artifacts in the raw data
-
-        # take each 0.5s signal and see if that segment is to be corrected or spline or not
-        # according to the prediction of the model on the test data
-
-        # so lets say we have our signals we'd have to divide these segments into 
 
     elif selector_config == "jurado" or (selector_config == "cueva" and estimator_name == "lstm-fe"):
         # pass
@@ -483,8 +477,35 @@ def predict():
 
     # once predictions have been extracted from respective models
     # pass to the correct_signals() function
-    res_test_df, dict_metrics = correct_signals(Y_pred, subject_eda_data, selector_config, estimator_name)
-    print(f'dict metrics: {dict_metrics}')
-    print(f'resultant test df: {res_test_df['clean_signal'] == res_test_df['raw_signal']}')
+    corrected_df, dict_metrics = correct_signals(Y_pred, subject_eda_data, selector_config, estimator_name)
+    # print(f'dict metrics: {dict_metrics}')
+
+    # use dataframe to obtain phasic and tonic components of corrected signal
+    # and then from it compute features that will be used by the trained stress
+    # detection model
+    corrected_stress_feats = prep_stress_feats(corrected_df=corrected_df)
+
+    # remove label column 
+    corrected_stress_feats = corrected_stress_feats.drop(columns=['label']).to_numpy()
     
+    # assign variables to stress detection scaler and model 
+    xgb_scaler = models['stress-detector']['scaler']
+    stress_detector = models['stress-detector']['model']
+
+    # use scaler to transform features and to predict
+    # the stress levels of a subject
+    corrected_stress_feats_scaled = xgb_scaler.transform(corrected_stress_feats)
+    stress_labels = stress_detector.predict(corrected_stress_feats_scaled)
+
+    # resultant df will now contain stress levels. Why we set the target size to 640
+    # is because even though we trained the model on 4hz its target size frequency or
+    # window size we chose was still 5 seconds or 20 rows per 5 seconds and because
+    # we want a window size of 5 seconds also for 128hz this means 128 * 5 which is 640
+    # rows per 5 seconds. This will somehow reinterpolate our data to that of 128hz even
+    # if the predicted labels are at 4hz
+    res_test_df = mark_signals(stress_labels, corrected_df, target_size_freq=640, freq_signal=128)
+    # res_test_df.to_csv(f'./modelling/results/{spreadsheet_fname}.csv')
+    
+    # corrected df is automatically converted to an array of records e.g.
+    # {'time': 0.0, 'raw_signal': 42.1234, 'new_signal': 23.123}
     return jsonify({'corrected_df': res_test_df.to_dict("records")})

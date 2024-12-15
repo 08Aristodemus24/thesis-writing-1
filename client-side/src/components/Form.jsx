@@ -18,11 +18,11 @@ export default function Form(){
 
     let [sprSheetFile, setSprSheetFile] = useState(null);
     let [initSprSheet, setInitSprSheet] = useState([]);
-    let [finalSprSheet, setFinalSprSheet] = useState([]);
 
-    let [showRaw, setShowRaw] = useState(false);
+    let [showRaw, setShowRaw] = useState(true);
     let [showCorrect, setShowCorrect] = useState(false);
-    let [showArt, setShowArt] = useState(false);
+    let [showArt, setShowArt] = useState(true);
+    let [showStressLevels, setShowStressLevels] = useState(false);
 
     let style;
     const designs = useContext(DesignsContext);
@@ -52,14 +52,16 @@ export default function Form(){
             form_data.append('show_raw', showRaw);
             form_data.append('show_correct', showCorrect);
             form_data.append('show_art', showArt);
+            form_data.append('show_stress_levels', showStressLevels);
 
             // once data is validated submitted and then extracted
             // reset form components form element
             setModelName(modelNames.length != 0 ? modelNames[0] : "");
-            setInitSprSheet([]);
-            setShowRaw(false);
+            // setInitSprSheet([]);
+            setShowRaw(true);
             setShowCorrect(false);
-            setShowArt(false);
+            setShowArt(true);
+            setShowStressLevels(false);
 
             // send here the data from the contact component to 
             // the backend proxy server
@@ -74,7 +76,7 @@ export default function Form(){
             });
             const data = await resp.json();
             setResponse(resp);
-            setFinalSprSheet(data['corrected_df']);
+            setInitSprSheet(data['corrected_df']);
 
             // if response.status is 200 then that means contact information
             // has been successfully sent to the email.js api
@@ -104,10 +106,11 @@ export default function Form(){
             modelName, setModelName,
             sprSheetFile, setSprSheetFile,
             initSprSheet, setInitSprSheet,
-            finalSprSheet, setFinalSprSheet,
+            // finalSprSheet, setFinalSprSheet,
             showRaw, setShowRaw,
             showCorrect, setShowCorrect,
             showArt, setShowArt,
+            showStressLevels, setShowStressLevels,
             
             response,
             msgStatus, setMsgStatus,
@@ -126,6 +129,7 @@ export default function Form(){
                         <Checkbox label="show raw" name="show_raw"/>
                         <Checkbox label="show correct" name="show_correct"/>
                         <Checkbox label="show artifact" name="show_artifact"/>
+                        <Checkbox label="show stress levels" name="show_stress_levels"/>
                     </InputGroup>
                     <Button/>
                 </form>

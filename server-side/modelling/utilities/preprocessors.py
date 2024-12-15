@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d, splrep, UnivariateSpline, BSpline, splev
 from scipy.signal import butter, filtfilt, lfilter, firwin, hilbert, sosfiltfilt
+from .stress_feature_extractors import get_features
+from .feature_extractors import interpolate_signals
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -114,6 +116,80 @@ def decompose_signal(raw_signal, samp_freq: int=128, method: str="highpass"):
 
         return tonic_component, phasic_component
 
+
+
+def prep_stress_feats(corrected_df):
+    """
+    prepares corrected stress features
+     
+    args:
+        y_pred - contains the predictions of the stress detection
+        model trained on 4hz of data and a window size of 5, that
+        means y_pred will also be in a frequency of 4hz and a window
+        size of 5
+
+        corrected_df - the dataframe that has its raw signals already
+        corrected and now containing the newly corrected signals 
+    """
+    res_df = corrected_df.copy()
+    tonic, phasic = decompose_signal(res_df['new_signal'])
+    res_df['phasic'] = phasic
+    res_df['tonic'] = tonic
+
+    res_df_4hz = interpolate_signals(res_df, sample_rate=128, target_hz=4)
+
+    corrected_stress_features = get_features(subjects={'test': [('na', res_df_4hz)]}, hertz=4, window_size=5)
+    corrected_stress_features = corrected_stress_features['test'][0]
+
+    cols_to_remove = [f'raw_4hz_1d_median',
+        f'raw_4hz_2d_median',
+        f'phasic_4hz_1d_median',
+        f'phasic_4hz_2d_median'
+    ]
+    corrected_stress_features.drop(columns=cols_to_remove, inplace=True)
+    corrected_stress_features.dropna(inplace=True)
+
+    return corrected_stress_features
+
+
+
+def mark_signals(y_pred, df, target_size_freq=640, freq_signal=128):
+    """
+    marks which of corrected signals are at a baseline, medium, or high level of stress 
+
+    args:
+        y_pred - 
+        df -
+        target_size_freq - 
+        freq_signal - 
+        signal_column - 
+        time_column - 
+    """
+    # the goal is to map the contents of the 128hz to 4hz 
+    res_df = df.copy()
+    
+    # get rows of original corrected df
+    n_rows = df.shape[0]
+
+    # this will contain the labels indicating the stress level of
+    # the subject 
+    future_labels_auto = np.zeros(n_rows)
+    for label_i, label in enumerate(y_pred):
+        # start = i * samples_per_win_size
+        # end = min((i + 1) * samples_per_win_size, n_rows)
+        start = label_i * target_size_freq
+        end = min((label_i + 1) * target_size_freq, n_rows) 
+
+        if label_i == 0 or (label_i == y_pred.shape[0] - 1):    
+            print(f"index {label_i}: start {start} - end {end}")
+        
+        future_labels_auto[start:end] += label
+
+    res_df['stress_level'] = future_labels_auto
+    return res_df
+
+
+
 def correct_signals(y_pred, df, selector_config, estimator_name, target_size_freq=64, freq_signal=128, th_t_postprocess=2.5, signal_column="raw_signal", time_column="time"):
     """
     args:
@@ -133,7 +209,11 @@ def correct_signals(y_pred, df, selector_config, estimator_name, target_size_fre
         estimator_name - 
 
         target_size_freq - sampling frequency or how many rows per seconds
-        must be taken into account for the label
+        must be taken into account for the label, this can also be calculated
+        by multiplying the desired window size to the frequency of the signal
+        i.e. we want a window of 0.5s and we have a frequency of 128hz, that
+        means the target size frequency will be 64hz or 64 rows to take into 
+        account
 
         freq_signal - sampling frequency of the raw signals
 

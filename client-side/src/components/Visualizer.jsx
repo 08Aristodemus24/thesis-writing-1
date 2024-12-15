@@ -5,6 +5,39 @@ import { FormInputsContext } from "../contexts/FormInputsContext";
 
 import * as d3 from 'd3';
 
+function calculateMinMaxSignal(sprSheet){
+    let max_signal, min_signal, min_sec, max_sec;
+            
+    // if new_signal does not yet exist that means user has not
+    // yet submitted and dataframe still has the same columns
+    if(!('new_signal' in sprSheet[0])){
+        max_signal = d3.max(sprSheet, (row) => row['raw_signal']);
+        min_signal = d3.min(sprSheet, (row) => row['raw_signal']);
+        min_sec = sprSheet[0]['time'];
+        max_sec = sprSheet[sprSheet.length - 1]['time'];
+    }
+
+    // if the new_signal does indeed already exist then the
+    // make new calculations to the max_signal and min_signal
+    // as these will obviously change right after correction
+    else{ 
+        const max_raw_signal = d3.max(sprSheet, (row) => row['raw_signal']);
+        const min_raw_signal = d3.min(sprSheet, (row) => row['raw_signal']);
+        const max_clean_signal = d3.max(sprSheet, (row) => row['new_signal']);
+        const min_clean_signal = d3.min(sprSheet, (row) => row['new_signal']);
+        
+        // get final max value between the max of the raw signal and the 
+        // max of the clean signal
+        max_signal = Math.max(max_raw_signal, max_clean_signal);
+        min_signal = Math.max(min_raw_signal, min_clean_signal);
+
+        min_sec = sprSheet[0]['time'];
+        max_sec = sprSheet[sprSheet.length - 1]['time'];
+    }
+
+    return [max_signal, min_signal, min_sec, max_sec];
+}
+
 export default function Visualizer({ children }){
 
     // initialize and define theme of component by using
@@ -22,13 +55,17 @@ export default function Visualizer({ children }){
         style = designs[design];
     }
 
-    let { initSprSheet, finalSprSheet } = useContext(FormInputsContext);
+    /** where to actually display or undisplay path object when either show raw or show correct states are changed */
+    let { initSprSheet, showRaw, showCorrect, showArt, showStressLevels } = useContext(FormInputsContext);
 
     // recall useRef() is akin in html to selecting an element via
     // the document tree object
     const svgRef = useRef();
     const svg = d3.select(svgRef.current);
 
+    // when user uploads and when corrected df is returned
+    // setInitSprSheet() updater is always called and when the
+    // initSprSheet is updated this will fire
     useEffect(() => {
         // console.log("state updated");
         // console.log(initSprSheet);
@@ -57,16 +94,13 @@ export default function Visualizer({ children }){
         // and be replaced by final spreadsheet, final spreadsheet
         // will now replace this initial spreadsheet svg
         if(initSprSheet.length != 0){
+            let [max_signal, min_signal, min_sec, max_sec] = calculateMinMaxSignal(initSprSheet);
             
-            let max_signal = d3.max(initSprSheet, (row) => row['raw_signal']);
-            let min_signal = d3.min(initSprSheet, (row) => row['raw_signal']);
-            let min_sec = initSprSheet[0]['time'];
-            let max_sec = initSprSheet[initSprSheet.length - 1]['time'];
-
-            // console.log(`max signal: ${max_signal}`);
-            // console.log(`min_signal: ${min_signal}`);
-            // console.log(`max_sec: ${max_sec}`);
-            // console.log(`min_sec: ${min_sec}`);
+            // calculated max and min of signals and seconds
+            console.log(`max signal: ${max_signal}`);
+            console.log(`min_signal: ${min_signal}`);
+            console.log(`max_sec: ${max_sec}`);
+            console.log(`min_sec: ${min_sec}`);
 
             // const width = 'clamp(500px, 75vw, 1260px)';
             // const height = '250px';
@@ -133,262 +167,7 @@ export default function Visualizer({ children }){
             .attr("x", -margin["left"] * 3) // moves up if positive value and down if negative value
             .text("microsiemens (μS)");
 
-            // set the gradient
-            g.append("linearGradient")
-            .attr("class", "line-gradient")
-            .attr("id", "line-gradient")
-            .attr("gradientUnits", "userSpaceOnUse")
-            .attr("x1", 0)
-            .attr("y1", y(0))
-            .attr("x2", 0)
-            .attr("y2", y(max_signal))
-            .selectAll("stop")
-            .data([
-                {offset: "0%", color: "#c78324"},
-                {offset: "50%", color: "#ab229d"},
-                {offset: "100%", color: "#2823ba"}
-            ])
-            .enter().append("stop")
-            .attr("offset", (d) => d["offset"])
-            .attr("stop-color", (d) => d["color"]);
-      
-            // define line generator
-            let line = d3.line()
-            .x(d => x(d['time']))
-            .y(d => y(d['raw_signal']));
-
-            // Add the line
-            // WE ALSO SOMEHOW ALSO NEED TO SET THE CLIP PATH
-            // BECAUSE IT IS IN THIS LINE THAT WE WILL ZOOM IN
-            let line_path = g.append("path")
-            .datum(initSprSheet)
-            .attr("class", "line")
-            .attr("fill", "none")
-            .attr("stroke", "url(#line-gradient)" )
-            .attr("stroke-width", 2)
-            .attr("clip-path", "url(#clip)")
-            .attr("d", line);
-
-            g.append("defs")
-            .append("clipPath")
-            .attr("id", "clip")
-            .append("rect")
-            .attr("width", width)
-            .attr("height", height);
-
-            // create the line generator that will represent the artifacts
-            // if d['label'] is 1 then the coordinates of the line must
-            // be from (time, 0) to (time, max_signal)
-            let artifact = d3.line()
-            .x(d => x(d['time']))
-            .y(d => d['label'] == 1 ? y(max_signal): y(0))
-
-            // add the lines that represent the artifacts
-            let artifact_path = g.append("path")
-            .datum(initSprSheet)
-            .attr("fill", "none")
-            .attr("stroke", "rgba(252, 36, 3, 0.25)")
-            .attr("stroke-width", 2)
-            .attr("clip-path", "url(#clip)")
-            .attr("d", artifact);
-
-            // // A function that set idleTimeOut to null
-            // let idleTimeout
-            // const idled = () => { 
-            //     idleTimeout = null; 
-            // }
-            // // Add brushing
-            // // Add the brush feature using the d3.brush function
-            // // initialise the brush area: start at (0, 0) and 
-            // // finishes at (width, height): it means I select the 
-            // // whole graph area
-            // const brush = d3.brushX()
-            // .extent([
-            //     [0, 0], 
-            //     [width, height]
-            // ])
-            // .on("end", (event, datum) => {
-            //     // What are the selected boundaries?
-            //     extent = event.selection
-
-            //     // If no selection, back to initial coordinate. Otherwise, update X axis domain
-            //     if(!extent){
-            //         if(!idleTimeout){ 
-            //            idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
-            //         }
-            //         x.domain([4, 8])
-            //     }else{
-            //         x.domain([x.invert(extent[0]), x.invert(extent[1])])
-            //         line.select(".brush").call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
-            //     }
-
-            //     // Update axis and line position
-            //     x_axis.transition().duration(1000).call(d3.axisBottom(x))
-            //     line.select('.line')
-            //     .transition()
-            //     .duration(1000)
-            //     .attr("d", d3.line()
-            //         .x((d) => x(d["time"]))
-            //         .y((d) => y(d["raw_signal"]))
-            //     )
-            // });
-
-            // // Add the brushing
-            // line_path.append("g")
-            // .attr("class", "brush")
-            // .call(brush);
-
-            // // If user double click, reinitialize the chart
-            // svg.on("dblclick", () => {
-            //     x.domain(d3.extent(data, (d) => d['time']))
-            //     x_axis.transition().call(x_axis)
-            //     line_path
-            //     .select('.line')
-            //     .transition()
-            //     .attr("d", line)
-            // });
-
-            let zoom = d3.zoom()
-            .scaleExtent([1 / 4, Infinity])
-            .translateExtent([
-                [-width, -Infinity],
-                [2 * width, Infinity]
-            ])
-            .on("zoom", (event, datum) => {
-                let new_x = event.transform.rescaleX(x);
-                x_group.call(x_axis.scale(new_x));
-                line_path.attr("d", line.x((d) => new_x(d['time'])));
-                artifact_path.attr("d", artifact.x((d) => new_x(d['time'])))
-            });
-
-            zoom.translateExtent([
-                [x(min_sec, -Infinity)],
-                [x(max_sec, Infinity)]
-            ]);
-
-            let zoom_rect = svg.append("rect")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("fill", "none")
-            .attr("pointer-events", "all")
-            .call(zoom);
-
-            zoom_rect.call(zoom.transform, d3.zoomIdentity);
-
-        }else if(finalSprSheet.length != 0){
-            // console.log(finalSprSheet);
-
-            // get the 
-            let max_raw_signal = d3.max(finalSprSheet, (row) => row['raw_signal']);
-            let min_raw_signal = d3.min(finalSprSheet, (row) => row['raw_signal']);
-            let max_clean_signal = d3.max(finalSprSheet, (row) => row['new_signal']);
-            let min_clean_signal = d3.min(finalSprSheet, (row) => row['new_signal']);
-            
-            // get final max value between the max of the raw signal and the 
-            // max of the clean signal
-            let max_signal = Math.max(max_raw_signal, max_clean_signal);
-            let min_signal = Math.max(min_raw_signal, min_clean_signal);
-
-            let min_sec = finalSprSheet[0]['time'];
-            let max_sec = finalSprSheet[finalSprSheet.length - 1]['time'];
-
-            console.log(`max signal: ${max_signal}`);
-            console.log(`min_signal: ${min_signal}`);
-            console.log(`max_sec: ${max_sec}`);
-            console.log(`min_sec: ${min_sec}`);
-
-            // const width = 'clamp(500px, 75vw, 1260px)';
-            // const height = '250px';
-            const margin = {top: 10, right: 30, bottom: 30, left: 60, }
-            const width = 800 - margin["left"] - margin["right"];
-            const height = 400 - margin["top"] - margin["bottom"]; 
-
-            // recall translate takes in x and y coordinates of how much
-            // to move the element along the x and y axis respectively
-            // NOTE: although the svg is selected is is not actually returned
-            // as an append is used where the g element is added and so the 
-            // g element is actually used here
-            const g = svg
-            .attr("width", width + margin.left + margin.right) // still is 768 since we add back the subtracted values from margin top and margin bottom
-            .attr("height", height + margin.top + margin.bottom) // still is 486 since we add back the subtracted values from margin top and margin bottom
-            .attr("viewBox", [
-                0,
-                0,
-                (width + margin["left"] + margin["right"]),
-                (height + margin["top"] + margin["bottom"])])
-            .append("g")
-            .attr("class", "cartesian-plane")
-            .attr("transform", `translate(${margin["left"]}, ${margin["top"]})`); // this is the g element which draws the line
-            console.log(g)
-
-            // x here is a callback function
-            let x = d3.scaleLinear()
-            .domain([min_sec, max_sec])
-            .range([0, width]);
-
-            // we create a g element which will draw the x-axis
-            let x_axis = g.append('g')
-            .attr("class", "x-axis")
-            .attr('transform', `translate(0, ${height})`)
-            .call(d3.axisBottom(x));
-            
-            // y here is also callback function
-            let y = d3.scaleLinear()
-            .domain([0, max_signal])
-            .range([height, 0]);
-
-            // we create a g element which will draw the y-axis
-            let y_axis = g.append("g")
-            .attr("class", "y-axis")
-            .call(d3.axisLeft(y));
-
-            // add title/label to both x and y axes
-            // x axis label
-            g.append("text")
-            .attr("text-anchor", "middle")
-            .attr("x", width / 2) // positive values makes the label go right
-            .attr("y", height + margin["bottom"]) // positive values makes the label go down further
-            .text("time (s)");
-
-            // y axis label
-            g.append("text")
-            .attr("text-anchor", "middle")
-            .attr("transform", "rotate(-90)") // rotated 90 degrees to the left in a counterclock wise manner
-            .attr("y", -margin["bottom"]) // moves to the right if positive value and left if negative value
-            .attr("x", -margin["left"] * 3) // moves up if positive value and down if negative value
-            .text("microsiemens (μS)");
-
-            // set the gradient for corrected signal
-            g.append("linearGradient")
-            .attr("class", "clean-line-gradient")
-            .attr("id", "clean-line-gradient")
-            .attr("gradientUnits", "userSpaceOnUse")
-            .attr("x1", 0)
-            .attr("y1", y(0))
-            .attr("x2", 0)
-            .attr("y2", y(max_signal))
-            .selectAll("stop")
-            .data([
-                {offset: "0%", color: "#258a11"},
-                {offset: "50%", color: "#08639c"},
-                {offset: "100%", color: "#460699"}
-            ])
-            .enter().append("stop")
-            .attr("offset", (d) => d["offset"])
-            .attr("stop-color", (d) => d["color"]);
-      
-            // Add the line containing corrected signal
-            g.append("path")
-            .datum(finalSprSheet)
-            .attr("fill", "none")
-            .attr("stroke", "url(#clean-line-gradient)" )
-            .attr("stroke-width", 2)
-            .attr("d", d3.line()
-                .x((d) => x(d['time']))
-                .y((d) => y(d['new_signal']))
-            );
-
-            // set the gradient for raw signal
+            // set the gradient for the raw signal
             g.append("linearGradient")
             .attr("class", "raw-line-gradient")
             .attr("id", "raw-line-gradient")
@@ -407,42 +186,195 @@ export default function Visualizer({ children }){
             .attr("offset", (d) => d["offset"])
             .attr("stop-color", (d) => d["color"]);
       
-            // Add the line containing the raw signal
-            g.append("path")
-            .datum(finalSprSheet)
+            // define line generator for raw signal
+            let raw_line = d3.line()
+            .x(d => x(d['time']))
+            .y(d => y(d['raw_signal']));
+
+            // Add the line
+            // WE ALSO SOMEHOW ALSO NEED TO SET THE CLIP PATH
+            // BECAUSE IT IS IN THIS LINE THAT WE WILL ZOOM IN
+            let raw_line_path = g.append("path")
+            .datum(initSprSheet)
+            .attr("class", "raw-line")
             .attr("fill", "none")
             .attr("stroke", "url(#raw-line-gradient)" )
             .attr("stroke-width", 2)
-            .attr("d", d3.line()
-                .x((d) => x(d['time']))
-                .y((d) => y(d['raw_signal']))
-            );
+            .attr("clip-path", "url(#clip)")
+            .attr("d", raw_line)
+            .style("display", showRaw == true ? "block" : "none");
 
-            // Set the zoom and Pan features: how much you can zoom, on which part, and what to do when there is a zoom
-            let zoom = d3.zoom()
-            .scaleExtent([2, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
-            .extent([[0, 0], [width, height]])
-            .on("zoom", updateChart);
+            let artifact = d3.line()
+            .x(d => x(d['time']))
+            .y(d => d['label'] == 1 ? y(max_signal): y(0));
+
+            let artifact_path = g.append("path")
+            .datum(initSprSheet)
+            .attr("class", "artifact")
+            .attr("fill", "none")
+            .attr("stroke", "rgba(252, 36, 3, 0.25)")
+            .attr("stroke-width", 1)
+            .attr("clip-path", "url(#clip)")
+            .attr("d", artifact);
             
+            let clean_line_path, clean_line;
+            if('new_signal' in initSprSheet[0]){
+                // set the gradient for corrected signal
+                g.append("linearGradient")
+                .attr("class", "clean-line-gradient")
+                .attr("id", "clean-line-gradient")
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("x1", 0)
+                .attr("y1", y(0))
+                .attr("x2", 0)
+                .attr("y2", y(max_signal))
+                .selectAll("stop")
+                .data([
+                    {offset: "0%", color: "#f7a50c"},
+                    {offset: "50%", color: "#f77e0c"},
+                    {offset: "100%", color: "#e8340c"}
+                ])
+                .enter().append("stop")
+                .attr("offset", (d) => d["offset"])
+                .attr("stop-color", (d) => d["color"]);
 
-            // This add an invisible rect on top of the chart area. This rect can recover pointer events: necessary to understand when the user zoom
-            g.append("rect")
-            .attr("width", width)
-            .attr("height", height)
-            .style("fill", "none")
-            .style("pointer-events", "all")
-            .attr('transform', `translate(${margin["top"]}, ${margin["left"]})`)
-            .call(zoom);
+                // define line generator for clean signal
+                clean_line = d3.line()
+                .x(d => x(d['time']))
+                .y(d => y(d['new_signal']));
 
-            const updateChart = () => {
-                
+                // Add the line containing corrected signal
+                clean_line_path = g.append("path")
+                .datum(initSprSheet)
+                .attr("class", "clean-line")
+                .attr("fill", "none")
+                .attr("stroke", "url(#clean-line-gradient)" )
+                .attr("stroke-width", 2)
+                .attr("clip-path", "url(#clip)")
+                .attr("d", clean_line)
+                .style("display", showCorrect == true ? "block" : "none");
             }
 
-        }else{
-            // console.log('spreadsheet input mounted');
+            let baseline, baseline_path, medium_stress, medium_stress_path, high_stress, high_stress_path;
+            if('stress_level' in initSprSheet[0]){
+                baseline = d3.line()
+                .x(d => x(d['time']))
+                .y(d => d['stress_level'] == 0 ? y(max_signal) : y(0));
+
+                baseline_path = g.append("path")
+                .datum(initSprSheet)
+                .attr("class", "baseline")
+                .attr("fill", "none")
+                .attr("stroke", "rgb(255, 0, 93)")
+                .attr("stroke-width", 1)
+                .attr("clip-path", "url(#clip)")
+                .attr("d", baseline);
+
+                medium_stress = d3.line()
+                .x(d => x(d['time']))
+                .y(d => d['stress_level'] == 1 ? y(max_signal) : y(0));
+
+                medium_stress_path = g.append("path")
+                .datum(initSprSheet)
+                .attr("class", "medium-stress")
+                .attr("fill", "none")
+                .attr("stroke", "rgb(93, 0, 255)")
+                .attr("stroke-width", 1)
+                .attr("clip-path", "url(#clip)")
+                .attr("d", medium_stress);
+
+                high_stress = d3.line()
+                .x(d => x(d['time']))
+                .y(d => d['stress_level'] == 2 ? y(max_signal) : y(0));
+
+                high_stress_path = g.append("path")
+                .datum(initSprSheet)
+                .attr("class", "high-stress")
+                .attr("fill", "none")
+                .attr("stroke", "rgb(11, 0, 90)")
+                .attr("stroke-width", 1)
+                .attr("clip-path", "url(#clip)")
+                .attr("d", high_stress); 
+            }
+
+            g.append("defs")
+            .append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
+
+            // setup zoom object
+            let zoom = d3.zoom()
+            .scaleExtent([1 / 4, Infinity])
+            .translateExtent([
+                [-width, -Infinity],
+                [2 * width, Infinity]
+            ])
+            .on("zoom", (event, datum) => {
+                let new_x = event.transform.rescaleX(x);
+                x_group.call(x_axis.scale(new_x));
+                raw_line_path.attr("d", raw_line.x((d) => new_x(d['time'])));
+                if('new_signal' in initSprSheet[0]){
+                    clean_line_path.attr("d", clean_line.x((d) => new_x(d['time'])))
+                }
+
+                if('stress_level' in initSprSheet[0]){
+                    baseline_path.attr("d", baseline.x((d) => new_x(d['time'])));
+                    medium_stress_path.attr("d", medium_stress.x((d) => new_x(d['time'])));
+                    high_stress_path.attr("d", high_stress.x((d) => new_x(d['time'])));
+                }
+
+                // for(let line of lines){
+                //     line
+                //     .attr("x1", x((d) => new_x(d['time'])))
+                //     .attr("x2", x((d) => new_x(d['time'])));
+                // }
+                artifact_path.attr("d", artifact.x((d) => new_x(d['time'])))
+            });
+
+            zoom.translateExtent([
+                [x(min_sec, -Infinity)],
+                [x(max_sec, Infinity)]
+            ]);
+
+            let zoom_rect = svg.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("fill", "none")
+            .attr("pointer-events", "all")
+            .call(zoom);
+
+            zoom_rect.call(zoom.transform, d3.zoomIdentity);
+
         }
-        
-    }, [initSprSheet, finalSprSheet]);
+    }, [initSprSheet]);
+
+    useEffect(() => {
+        // get id or class of path object appended to g object containing the
+        // raw signal or corrected signal
+        let raw_line_path = d3.select('.raw-line');
+        // if this is null due to the element not existing then
+        // this line will not anyway run because of conditional chain
+        raw_line_path?.style("display", showRaw == true ? "block" : "none");
+
+        // apply same rule to clean line path object
+        let clean_line_path = d3.select('.clean-line');
+        clean_line_path?.style("display", showCorrect == true ? "block" : "none");
+
+        let artifact_path = d3.select('.artifact');
+        artifact_path?.style("display", showArt == true ? "block": "none");
+
+        let baseline_path = d3.select('.baseline');
+        baseline_path?.style("display", showStressLevels == true ? "block": "none");
+
+        let medium_stress_path = d3.select('.medium-stress');
+        medium_stress_path?.style("display", showStressLevels == true ? "block": "none");
+
+        let high_stress_path = d3.select('.high-stress');
+        high_stress_path?.style("display", showStressLevels == true ? "block": "none");
+
+    }, [showCorrect, showArt, showRaw, showStressLevels])
 
     return (
         

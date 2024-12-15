@@ -49,10 +49,8 @@ export default function SpreadSheetInput({ children }){
     const csvToJSON = (csv, delimiter) => {
         let lines = csv.split("\n");
         let result = [];
-        let headers;
-        // headers = lines[0].split(delimiter);
-        headers = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art'];
-    
+        let headers = ['time', 'raw_signal', 'clean_signal', 'label', 'auto_signal', 'pred_art', 'post_proc_pred_art'];
+        
         for (let i = 1; i < lines.length; i++) {
             let obj = {};
     

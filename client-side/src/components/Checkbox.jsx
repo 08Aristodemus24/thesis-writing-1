@@ -25,11 +25,12 @@ export default function Checkbox(props){
     // all its states we use the state appropriate to the ImageInput
     // component and its setter to set from this component the state of
     // the form
-    const { showRaw, setShowRaw, showCorrect, setShowCorrect, showArt, setShowArt } = useContext(FormInputsContext);
+    const { showRaw, setShowRaw, showCorrect, setShowCorrect, showArt, setShowArt, showStressLevels, setShowStressLevels } = useContext(FormInputsContext);
     const check_setter = {
         show_raw: [showRaw, setShowRaw],
         show_correct: [showCorrect, setShowCorrect],
-        show_artifact: [showArt, setShowArt]
+        show_artifact: [showArt, setShowArt],
+        show_stress_levels: [showStressLevels, setShowStressLevels]
     };
     const [check, setter] = check_setter[props["name"]] ;
 
